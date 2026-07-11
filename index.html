@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>realiostats — RIO circulating supply across every chain</title>
+<title>realiostats · RIO circulating supply across every chain</title>
 <meta name="description" content="An independent, community-led, reproducible measure of RIO circulating supply across every chain it lives on. One transparent method, with its assumptions stated openly." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -236,7 +236,7 @@
     <div class="ah">One method, stated openly</div>
     <p>Circulating supply can be measured in more than one legitimate way. This is one of them, built to be transparent and reproducible. It rests on two assumptions:</p>
     <ul>
-      <li><b>Counted unless shown otherwise.</b> Any RIO sitting in a public on-chain wallet is treated as circulating, unless it can be identified as a Realio-controlled reserve, treasury or bridge balance — those are listed and excluded below.</li>
+      <li><b>Counted unless shown otherwise.</b> Any RIO sitting in a public on-chain wallet is treated as circulating, unless it can be identified as a Realio-controlled reserve, treasury or bridge balance. Those are listed and excluded below.</li>
       <li><b>Staked RIO is included.</b> Tokens bonded to validators count, because a holder can unbond them within the seven-day unbonding period and sell them.</li>
     </ul>
   </div>
@@ -441,7 +441,7 @@ function render(latest, liveSeries, fullArr){
       it.textContent="Global RIO supply is growing within the scheduled ~"+pct+"% emission. No unexplained minting detected over the measured window.";
     } else if(ed){
       dot.className="idot warn";
-      it.textContent="Global RIO supply grew faster than the ~"+pct+"% schedule over the measured window — worth a closer look.";
+      it.textContent="Global RIO supply grew faster than the ~"+pct+"% schedule over the measured window, worth a closer look.";
     }
   }
 
@@ -460,13 +460,13 @@ function render(latest, liveSeries, fullArr){
 
   const a = latest.chains.algorand, s = latest.chains.stellar;
   document.getElementById("exclGrid").innerHTML = `
-    <div class="ex"><div class="exk">Algorand — reserve</div><div class="exv">${fmtM(M(a.reserve))}</div>
+    <div class="ex"><div class="exk">Algorand · reserve</div><div class="exv">${fmtM(M(a.reserve))}</div>
       <div class="exa">GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA</div>
       <div style="margin-top:8px"><a href="https://allo.info/account/GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA" target="_blank" rel="noopener">Verify ↗</a></div></div>
-    <div class="ex"><div class="exk">Algorand — bridge wallet</div><div class="exv">${fmtM(M(a.bridge_wallet))}</div>
+    <div class="ex"><div class="exk">Algorand · bridge wallet</div><div class="exv">${fmtM(M(a.bridge_wallet))}</div>
       <div class="exa">M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM</div>
       <div style="margin-top:8px"><a href="https://allo.info/account/M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM" target="_blank" rel="noopener">Verify ↗</a></div></div>
-    <div class="ex"><div class="exk">Stellar — treasury (realio.fund)</div><div class="exv">${fmtM(M(s.treasury))}</div>
+    <div class="ex"><div class="exk">Stellar · treasury (realio.fund)</div><div class="exv">${fmtM(M(s.treasury))}</div>
       <div class="exa">GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L</div>
       <div style="margin-top:8px"><a href="https://stellar.expert/explorer/public/account/GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L" target="_blank" rel="noopener">Verify ↗</a></div></div>`;
 
