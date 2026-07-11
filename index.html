@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>realiostats — RIO circulating supply across every chain</title>
+<meta name="description" content="An independent, community-led, reproducible measure of RIO circulating supply across every chain it lives on — one transparent method, with its assumptions stated openly." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root{
+    --bg:#ffffff; --alt:#f5f7f8; --ink:#0b1015; --muted:#69747f; --line:#e7eaee;
+    --green:#10b981; --green-ink:#059669; --mint:#34d399; --slate:#64748b;
+    --card:#0b1015; --card-ink:#eef2f5; --card-muted:#95a3af; --radius:20px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:Inter,system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.num{font-family:"Space Grotesk",Inter,sans-serif;letter-spacing:-.01em}
+  a{color:var(--green-ink);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  .eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  /* header */
+  header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.82);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:"Space Grotesk";font-weight:700;font-size:19px}
+  .dot{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,var(--mint),var(--green));display:inline-block}
+  .nav nav a{color:var(--ink);font-size:14px;font-weight:500;margin-left:22px}
+  .nav nav a:hover{color:var(--green-ink);text-decoration:none}
+  /* hero */
+  .hero{padding:60px 0 36px}
+  .hero h1{font-size:clamp(30px,4.4vw,50px);line-height:1.05;margin:14px 0 16px;font-weight:700}
+  .hero p.lede{font-size:18px;color:var(--muted);max-width:640px;margin:0}
+  .hero-stat{margin:38px 0 22px;background:var(--card);color:var(--card-ink);border-radius:var(--radius);
+    padding:40px;position:relative;overflow:hidden}
+  .hero-stat::after{content:"";position:absolute;right:-70px;top:-70px;width:320px;height:320px;
+    background:radial-gradient(circle,rgba(52,211,153,.20),transparent 70%)}
+  .hero-stat .k{font-size:13.5px;color:var(--card-muted);font-weight:500;margin-bottom:10px}
+  .hero-stat .num{font-size:clamp(46px,8vw,84px);font-weight:700;line-height:.98;color:var(--mint)}
+  .hero-stat .sub{font-size:14px;color:var(--card-muted);margin-top:10px}
+  .hero-stat .updated{font-size:12.5px;color:var(--card-muted);margin-top:16px}
+  .hero-stat .updated b{color:var(--mint)}
+  .hero-metrics{display:flex;gap:44px;flex-wrap:wrap;margin-top:22px;padding-top:20px;
+    border-top:1px solid rgba(255,255,255,.09)}
+  .hm .hmk{font-size:12.5px;color:var(--card-muted);font-weight:500;margin-bottom:6px}
+  .hm .hmv{font-family:"Space Grotesk";font-size:28px;font-weight:600;color:var(--card-ink);line-height:1}
+  .hm .hmx{font-size:11.5px;color:var(--card-muted);margin-top:5px}
+  /* assumptions callout */
+  .assume{border:1px solid var(--line);border-left:3px solid var(--green);border-radius:14px;
+    padding:22px 24px;background:var(--alt)}
+  .assume .ah{font-family:"Space Grotesk";font-weight:600;font-size:16px;margin-bottom:6px}
+  .assume p{margin:0 0 12px;color:var(--muted);font-size:14.5px;max-width:720px}
+  .assume ul{margin:0;padding-left:18px}
+  .assume li{margin:7px 0;font-size:14.5px;color:#3f4a55}
+  .assume li b{color:var(--ink)}
+  /* sections */
+  section{padding:52px 0;border-top:1px solid var(--line)}
+  section h2{font-size:26px;margin:0 0 6px;font-weight:700}
+  section .sec-lede{color:var(--muted);margin:0 0 26px;max-width:680px}
+  /* chain grid */
+  .chains{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+  .chip{border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;background:var(--bg);transition:.15s}
+  .chip:hover{border-color:#d6dbe1;box-shadow:0 6px 20px rgba(15,23,32,.05)}
+  .chip .cn{font-size:13px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:8px}
+  .chip .cv{font-family:"Space Grotesk";font-size:26px;font-weight:600;margin:8px 0 2px}
+  .chip .cx{font-size:12px;color:var(--muted)}
+  .chip a{font-size:12.5px}
+  .cdot{width:9px;height:9px;border-radius:3px;display:inline-block}
+  .total-row{margin-top:16px;display:flex;align-items:baseline;justify-content:space-between;
+    border-top:2px solid var(--ink);padding-top:14px;flex-wrap:wrap;gap:6px}
+  .total-row .tl{font-weight:600}
+  .total-row .tv{font-family:"Space Grotesk";font-size:30px;font-weight:700;color:var(--green-ink)}
+  /* emissions */
+  .emit{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+  .integrity{margin-top:16px;display:flex;align-items:center;gap:11px;background:var(--alt);
+    border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px;color:#3f4a55}
+  .idot{width:11px;height:11px;border-radius:50%;background:#cbd5e1;flex:none}
+  .idot.ok{background:var(--green)} .idot.warn{background:#f59e0b}
+  /* excluded */
+  .excl{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .excl .ex{background:var(--alt);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .excl .exk{font-size:13px;font-weight:600}
+  .excl .exv{font-family:"Space Grotesk";font-size:22px;font-weight:600;margin:6px 0}
+  .excl .exa{font-size:11.5px;color:var(--muted);word-break:break-all;font-family:ui-monospace,monospace}
+  /* chart */
+  .chartcard{border:1px solid var(--line);border-radius:var(--radius);padding:22px;background:var(--bg)}
+  .chartwrap{position:relative;height:400px}
+  .cap{font-size:12.5px;color:var(--muted);margin-top:14px}
+  /* methodology */
+  .rules{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .rule{border:1px solid var(--line);border-radius:16px;padding:20px}
+  .rule h3{margin:0 0 6px;font-size:16px}
+  .rule p{margin:0;color:var(--muted);font-size:14.5px}
+  /* callouts */
+  .disclaimer{background:var(--alt);border:1px solid var(--line);border-radius:var(--radius);padding:26px;font-size:14.5px;color:#3f4a55}
+  .disclaimer b{color:var(--ink)}
+  /* footer */
+  footer{border-top:1px solid var(--line);padding:44px 0 60px;background:var(--alt)}
+  .support{background:var(--card);color:var(--card-ink);border-radius:var(--radius);padding:28px;margin-bottom:28px}
+  .support h3{margin:0 0 6px;color:#fff;font-size:19px}
+  .support p{margin:0 0 16px;color:var(--card-muted);font-size:14.5px;max-width:640px}
+  .btns{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#04140d;font-weight:600;
+    padding:11px 18px;border-radius:12px;font-size:14px;border:none;cursor:pointer}
+  .btn:hover{background:var(--mint);text-decoration:none}
+  .wallet{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+    border-radius:12px;padding:9px 12px;font-family:ui-monospace,monospace;font-size:12.5px;color:var(--card-ink)}
+  .copy{cursor:pointer;background:none;border:none;color:var(--mint);font-weight:600;font-size:12.5px}
+  .foot-links{display:flex;gap:20px;flex-wrap:wrap;font-size:14px;margin-bottom:14px}
+  .foot-note{font-size:12.5px;color:var(--muted);max-width:720px}
+  @media(max-width:720px){
+    .excl,.rules{grid-template-columns:1fr}
+    .nav nav{display:none}
+    .hero-stat{padding:30px}
+  }
+</style>
+</head>
+<body>
+<header><div class="wrap nav">
+  <div class="brand"><span class="dot"></span> realiostats</div>
+  <nav>
+    <a href="#emissions">Emissions</a>
+    <a href="#chains">Per chain</a>
+    <a href="#chart">Evolution</a>
+    <a href="#method">Methodology</a>
+    <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">Source</a>
+  </nav>
+</div></header>
+
+<div class="wrap hero">
+  <div class="eyebrow">Independent · community-led · not affiliated with the Realio team</div>
+  <h1>RIO circulating supply, counted across every chain</h1>
+  <p class="lede">Every RIO token that exists in a public wallet and can be traded, summed once across all seven chains it lives on, net of Realio-controlled reserve, treasury and bridge wallets.</p>
+
+  <div class="hero-stat">
+    <div class="k">Multichain circulating supply</div>
+    <div class="num" id="multiNum">326M</div>
+    <div class="sub" id="multiSub">RIO · across 7 chains, counted once</div>
+    <div class="hero-metrics">
+      <div class="hm"><div class="hmk">RIO price</div><div class="hmv" id="priceNum">—</div><div class="hmx" id="priceSrc">at time of refresh</div></div>
+      <div class="hm"><div class="hmk">Circulating market cap</div><div class="hmv" id="mcapNum">—</div><div class="hmx">circulating supply × price</div></div>
+    </div>
+    <div class="updated">Last updated <b id="updated">—</b> · refreshes daily from a public, open-source pipeline.</div>
+  </div>
+
+  <div class="assume">
+    <div class="ah">One method, stated openly</div>
+    <p>Circulating supply can be measured in more than one legitimate way. This is one of them, built to be transparent and reproducible. It rests on two assumptions:</p>
+    <ul>
+      <li><b>Counted unless shown otherwise.</b> Any RIO sitting in a public on-chain wallet is treated as circulating, unless it can be identified as a Realio-controlled reserve, treasury or bridge balance — those are listed and excluded below.</li>
+      <li><b>Staked RIO is included.</b> Tokens bonded to validators count, because a holder can unbond them within the seven-day unbonding period and sell them.</li>
+    </ul>
+  </div>
+</div>
+
+<section id="emissions"><div class="wrap">
+  <h2>Emissions &amp; supply integrity</h2>
+  <p class="sec-lede">New RIO is created only through scheduled block-reward emissions, paid in RIO to stakers, and capped at 175M. Bridging moves RIO between chains but never changes the global total, so the global supply should grow only at the scheduled rate. We check that every day.</p>
+  <div class="emit">
+    <div class="chip"><div class="cn">Emission rate</div><div class="cv" id="emRate">—</div><div class="cx">RIO block rewards, per year</div></div>
+    <div class="chip"><div class="cn">Expected new RIO</div><div class="cv" id="emDaily">—</div><div class="cx" id="emAnnual">per day</div></div>
+    <div class="chip"><div class="cn">Long-term cap</div><div class="cv">175M</div><div class="cx">~38-year schedule, with halvings</div></div>
+    <div class="chip"><div class="cn">Observed net-new</div><div class="cv" id="emObserved">—</div><div class="cx" id="emObservedNote">accruing daily</div></div>
+  </div>
+  <div class="integrity">
+    <span class="idot" id="iDot"></span>
+    <span id="iText">Building the daily baseline. As readings accrue, this confirms whether global RIO supply is growing within the scheduled emission and flags anything above it.</span>
+  </div>
+  <p class="cap">Emission parameters are read live from Realio's on-chain mint module (<code>/realionetwork/mint/v1/params</code>). Bridging is burn-and-mint, so it nets to zero across chains; only block-reward emission, minus burns, changes the global total. 8% a year is real, scheduled issuance, not zero dilution.</p>
+</div></section>
+
+<section id="chains"><div class="wrap">
+  <h2>Circulating supply, chain by chain</h2>
+  <p class="sec-lede">Each figure is public float on that chain: total minted, minus any Realio-controlled wallets. Every number is verifiable on that chain's explorer.</p>
+  <div class="chains" id="chainGrid"></div>
+  <div class="total-row">
+    <span class="tl">Total across all chains, counted once</span>
+    <span class="tv" id="totalNum">—</span>
+  </div>
+</div></section>
+
+<section id="excluded"><div class="wrap">
+  <h2>What we exclude, and why</h2>
+  <p class="sec-lede">These balances sit in Realio-controlled wallets, so they are treated as non-circulating and subtracted from the figures above. Addresses are listed so anyone can check.</p>
+  <div class="excl" id="exclGrid"></div>
+  <p class="cap">Base is also excluded from the sum: its ~2M is lock-and-minted against RIO held in the Base bridge on Ethereum, so it is already counted inside the Ethereum figure. The native bridge module holds 0 RIO, which is what confirms balances add up rather than double-count.</p>
+</div></section>
+
+<section id="chart"><div class="wrap">
+  <h2>How circulating supply has evolved</h2>
+  <p class="sec-lede">From the 30 October 2024 migration, when the Ethereum and BNB tokens were re-issued and the bridge switched from a reserve/lock model to burn-and-mint. Each colour is one chain's circulating float; stacked together they make up the multichain total. Values in millions of RIO.</p>
+  <div class="chartcard">
+    <div class="chartwrap"><canvas id="evo"></canvas></div>
+    <p class="cap">Bands stack to the total circulating supply. Solid points are live daily readings from this project; earlier points are reconstructed from on-chain archival data (<a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">rio_supply_history.csv</a>). Stellar and Algorand public float is held flat before the live period, as the history of their Realio-controlled wallets was not reconstructed. The dashed 175M line is the network's long-term emission cap, shown only as a reference for scale.</p>
+  </div>
+</div></section>
+
+<section id="method"><div class="wrap">
+  <h2>How the numbers are calculated</h2>
+  <p class="sec-lede">One conventional approach, applied consistently. The full methodology and the code that produces these numbers are open source and update daily in public.</p>
+  <div class="rules">
+    <div class="rule"><h3>Counted unless shown otherwise</h3><p>Any RIO in a public wallet on-chain is treated as circulating float, unless we can identify it as a Realio-controlled reserve, treasury or bridge balance.</p></div>
+    <div class="rule"><h3>Staked RIO is included</h3><p>Tokens bonded to validators are owned by the public and can be unbonded within seven days and sold, so they count, consistent with standard tracker methodology.</p></div>
+    <div class="rule"><h3>Each token counted once</h3><p>Lock-and-mint wrappers (Base) are counted only on the origin chain; the burn-and-mint chains hold no locked collateral, verified on-chain, so their balances are additive rather than double-counted.</p></div>
+    <div class="rule"><h3>Team-controlled wallets removed</h3><p>RIO in Realio reserve, treasury or idle bridge wallets is not public float and is subtracted. Every excluded address is published above and links to its explorer.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="disclaimer">
+    <b>Independent &amp; good-faith.</b> realiostats is a community-led project and is <b>not affiliated with, endorsed by, or operated by the Realio team</b>. Circulating supply can be measured in more than one legitimate way; this is one transparent, reproducible approach, with its assumptions stated above. Every figure is drawn from public on-chain data and can be checked. Only the Realio team holds the complete bridge records and can publish a definitive number — an invitation we extend openly. <b>Nothing here is financial advice.</b>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="support">
+    <h3>Support this project</h3>
+    <p>realiostats is run and maintained by the operator of the <b>Realio Pro Max USA</b> validator. If you find it useful, you can support its upkeep by delegating, or send a tip. Entirely optional, and it never changes the numbers.</p>
+    <div class="btns">
+      <a class="btn" href="https://app.realio.network/validator/realiovaloper1namfyxy3s4ty7f4vwyc7plmmcqxayam89qkwym" target="_blank" rel="noopener">Stake with Realio Pro Max USA</a>
+      <div class="wallet"><span id="donAddr">realio1aewslaqkqh8yjwevefdpvtv746l5g7ah4z568g</span>
+        <button class="copy" onclick="copyAddr()" id="copyBtn">Copy</button></div>
+    </div>
+  </div>
+  <div class="foot-links">
+    <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">GitHub &amp; methodology</a>
+    <a href="#chart">Evolution chart</a>
+    <a href="#method">How it's calculated</a>
+  </div>
+  <p class="foot-note">Data is drawn from public blockchain endpoints and updated daily. Figures are one on-chain measurement, not the Realio team's official numbers, and should be read as a transparent starting point pending an official reconciliation. Not affiliated with the Realio team. Not financial advice.</p>
+</div></footer>
+
+<script>
+/* ---- reconstructed per-chain circulating history (millions of RIO) ----
+   From rio_supply_history.csv + the project's evolution analysis. Each field is
+   that chain's public float. Stellar & Algorand float held flat pre-live (the
+   history of their Realio-controlled wallets was not reconstructed). Base = 0
+   (counted on Ethereum). Bands sum to the multichain total.                     */
+const HISTORY = [
+  {label:"2024 Q4",  bnb:118.76, native:77.05, ethereum:56.76, algorand:7.76, stellar:5.86, solana:0},
+  {label:"2025 Q1",  bnb:144.79, native:81.60, ethereum:59.68, algorand:7.76, stellar:5.86, solana:0.5},
+  {label:"2025 Q2",  bnb:163.25, native:86.20, ethereum:65.90, algorand:7.76, stellar:5.86, solana:1.0},
+  {label:"2025 Q3",  bnb:161.72, native:90.85, ethereum:66.10, algorand:7.76, stellar:5.86, solana:1.0},
+  {label:"2025 Q4",  bnb:143.81, native:95.50, ethereum:64.56, algorand:7.76, stellar:5.86, solana:1.0},
+  {label:"2026 Q1",  bnb:143.81, native:92.47, ethereum:66.86, algorand:7.76, stellar:5.86, solana:1.04},
+  {label:"2026 Q2",  bnb:156.63, native:84.27, ethereum:69.80, algorand:7.76, stellar:5.86, solana:1.07},
+  {label:"Jul 5 '26",bnb:156.61, native:84.97, ethereum:70.16, algorand:7.76, stellar:5.86, solana:1.08}
+];
+const STACK = [
+  {key:"native",   name:"Realio Native", color:"#10b981"},
+  {key:"bnb",      name:"BNB Chain",     color:"#f59e0b"},
+  {key:"ethereum", name:"Ethereum",      color:"#4f46e5"},
+  {key:"algorand", name:"Algorand",      color:"#0ea5e9"},
+  {key:"stellar",  name:"Stellar",       color:"#64748b"},
+  {key:"solana",   name:"Solana",        color:"#a855f7"}
+];
+
+/* fallback snapshot so the page renders even if the live fetch is blocked (e.g. file://) */
+const FALLBACK = {"ts":"2026-07-11T12:32:23Z","native_cap":175000000,"tradable_total":326580245.0,
+  "price_usd":0.03094567,"price_source":"coingecko","market_cap_usd":10106245,
+  "mint":{"inflation_rate":0.08,"blocks_per_year":6311520},
+  "global_total_rio":487941868,"expected_annual_emission_rio":6802412,"expected_daily_emission_rio":18636.74,
+  "chains":{
+    "realio_native":{"circulating":85110830.84},
+    "bnb":{"circulating":155976321.31},
+    "ethereum":{"circulating":70771577.26},
+    "algorand":{"circulating":7779530.89,"reserve":43796048.93,"bridge_wallet":48424420.17},
+    "stellar":{"circulating":5860051.30,"treasury":69139801.30},
+    "solana":{"circulating":1081933.32},
+    "base":{"circulating":0}
+  }};
+
+const M = n => (n/1e6);
+const fmtM = n => (n>=1 ? n.toFixed(n<10?2:1) : n.toFixed(2)) + "M";
+const fmtFull = n => Math.round(n).toLocaleString("en-US");
+
+const CHAINS = [
+  {key:"bnb",       name:"BNB Chain",       color:"#f59e0b", verify:"https://bscscan.com/token/0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0#balances"},
+  {key:"realio_native",name:"Realio Native",color:"#10b981", verify:"https://explorer.nodestake.org/realio"},
+  {key:"ethereum",  name:"Ethereum",        color:"#4f46e5", verify:"https://etherscan.io/token/0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0"},
+  {key:"algorand",  name:"Algorand",        color:"#0ea5e9", verify:"https://allo.info/asset/2751733"},
+  {key:"stellar",   name:"Stellar",         color:"#64748b", verify:"https://stellar.expert/explorer/public/asset/RIO-GBNLJIYH34UWO5YZFA3A3HD3N76R6DOI33N4JONUOHEEYZYCAYTEJ5AK"},
+  {key:"solana",    name:"Solana",          color:"#a855f7", verify:"https://solscan.io/token/HELn8rSM1rp8vAjNH4NYXzX6FvCbwWMGqLfaMgiBnZFV"},
+  {key:"base",      name:"Base",            color:"#3b82f6", verify:"https://basescan.org/token/0x5e64c9049455b3bb6e9fbdc33565fa313bae9b53", note:"counted on Ethereum"}
+];
+
+const fmtUsd = n => n>=1e6 ? "$"+(n/1e6).toFixed(2)+"M" : "$"+Math.round(n).toLocaleString("en-US");
+const fmtInt = n => Math.round(n).toLocaleString("en-US");
+function computeObserved(arr){
+  const pts = (arr||[]).filter(s=>s.global_total_rio);
+  if(pts.length<2) return null;
+  const a=pts[0], b=pts[pts.length-1];
+  const days=(new Date(b.ts)-new Date(a.ts))/864e5;
+  if(days<0.5) return null;
+  const d=b.global_total_rio-a.global_total_rio;
+  return {days, netNew:d, perDay:d/days};
+}
+function render(latest, liveSeries, fullArr){
+  const multi = latest.tradable_total;
+  document.getElementById("multiNum").textContent = fmtM(M(multi));
+  document.getElementById("totalNum").textContent = fmtM(M(multi)) + " RIO";
+  // price + circulating market cap
+  const price = latest.price_usd, mcap = latest.market_cap_usd ?? (price ? multi*price : null);
+  document.getElementById("priceNum").textContent = price ? "$"+price.toFixed(4) : "n/a";
+  document.getElementById("priceSrc").textContent = latest.price_source ? "via "+latest.price_source+" · at refresh" : "at time of refresh";
+  document.getElementById("mcapNum").textContent = mcap ? fmtUsd(mcap) : "n/a";
+  const d = new Date(latest.ts);
+  document.getElementById("updated").textContent = d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+
+  // emissions & supply integrity
+  const mint = latest.mint || {};
+  const infl = mint.inflation_rate;
+  document.getElementById("emRate").textContent = infl ? (infl*100).toFixed(1)+"% / yr" : "n/a";
+  const ed = latest.expected_daily_emission_rio, ea = latest.expected_annual_emission_rio;
+  document.getElementById("emDaily").textContent = ed ? "~"+fmtInt(ed) : "n/a";
+  document.getElementById("emAnnual").textContent = ea ? "per day · ~"+fmtM(M(ea))+" / yr" : "per day";
+  const obs = computeObserved(fullArr);
+  const dot = document.getElementById("iDot"), it = document.getElementById("iText");
+  if(obs){
+    document.getElementById("emObserved").textContent = (obs.perDay>=0?"+":"")+fmtInt(obs.perDay)+" / day";
+    document.getElementById("emObservedNote").textContent = "measured over "+obs.days.toFixed(0)+" days";
+    const pct = infl ? (infl*100).toFixed(0) : "8";
+    if(ed && obs.perDay <= ed*1.25){
+      dot.className="idot ok";
+      it.textContent="Global RIO supply is growing within the scheduled ~"+pct+"% emission. No unexplained minting detected over the measured window.";
+    } else if(ed){
+      dot.className="idot warn";
+      it.textContent="Global RIO supply grew faster than the ~"+pct+"% schedule over the measured window — worth a closer look.";
+    }
+  }
+
+  const grid = document.getElementById("chainGrid");
+  grid.innerHTML = CHAINS.map(c=>{
+    const v = latest.chains[c.key]?.circulating ?? 0;
+    const val = c.key==="base" ? "0" : fmtM(M(v));
+    const sub = c.key==="base" ? "backing locked on Ethereum" : fmtFull(v)+" RIO";
+    return `<div class="chip">
+      <div class="cn"><span class="cdot" style="background:${c.color}"></span>${c.name}</div>
+      <div class="cv">${val}</div>
+      <div class="cx">${sub}</div>
+      <div style="margin-top:8px"><a href="${c.verify}" target="_blank" rel="noopener">Verify ↗</a></div>
+    </div>`;
+  }).join("");
+
+  const a = latest.chains.algorand, s = latest.chains.stellar;
+  document.getElementById("exclGrid").innerHTML = `
+    <div class="ex"><div class="exk">Algorand — reserve</div><div class="exv">${fmtM(M(a.reserve))}</div>
+      <div class="exa">GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA</div>
+      <div style="margin-top:8px"><a href="https://allo.info/account/GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA" target="_blank" rel="noopener">Verify ↗</a></div></div>
+    <div class="ex"><div class="exk">Algorand — bridge wallet</div><div class="exv">${fmtM(M(a.bridge_wallet))}</div>
+      <div class="exa">M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM</div>
+      <div style="margin-top:8px"><a href="https://allo.info/account/M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM" target="_blank" rel="noopener">Verify ↗</a></div></div>
+    <div class="ex"><div class="exk">Stellar — treasury (realio.fund)</div><div class="exv">${fmtM(M(s.treasury))}</div>
+      <div class="exa">GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L</div>
+      <div style="margin-top:8px"><a href="https://stellar.expert/explorer/public/account/GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L" target="_blank" rel="noopener">Verify ↗</a></div></div>`;
+
+  drawChart(liveSeries);
+}
+
+function drawChart(liveSeries){
+  const rows = HISTORY.concat(liveSeries);
+  const labels = rows.map(r=>r.label);
+  const nHist = HISTORY.length;
+  const liveRadius = labels.map((_,i)=> i>=nHist ? 3 : 0);
+  const datasets = STACK.map((s,i)=>({
+    label:s.name, data:rows.map(r=> r[s.key] ?? 0),
+    borderColor:s.color, backgroundColor:s.color+"cc",
+    fill: i===0 ? "origin" : "-1", stack:"s", borderWidth:1, tension:.2,
+    pointRadius:liveRadius, pointBackgroundColor:s.color, pointBorderColor:"#fff", pointBorderWidth:1
+  }));
+  datasets.push({label:"175M emission cap (reference)", data:labels.map(()=>175),
+    borderColor:"#9aa7b2", borderWidth:1.4, borderDash:[6,5], pointRadius:0, fill:false, stack:"ref"});
+  new Chart(document.getElementById("evo"),{
+    type:"line",
+    data:{labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      scales:{
+        y:{stacked:true,beginAtZero:true,suggestedMax:360,grid:{color:"#eef1f4"},
+           ticks:{callback:v=>v+"M",color:"#69747f",font:{family:"Inter"}}},
+        x:{grid:{display:false},ticks:{color:"#69747f",font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
+      },
+      plugins:{
+        legend:{labels:{color:"#0b1015",font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}},
+        tooltip:{callbacks:{
+          label:c=>` ${c.dataset.label}: ${(+c.parsed.y).toFixed(1)}M`,
+          footer:items=>{const t=items.filter(i=>i.dataset.stack==="s").reduce((a,i)=>a+(+i.parsed.y||0),0);
+                         return "Total circulating: "+t.toFixed(1)+"M";}
+        }}
+      }
+    }
+  });
+}
+
+function copyAddr(){
+  const a=document.getElementById("donAddr").textContent.trim();
+  navigator.clipboard?.writeText(a).then(()=>{const b=document.getElementById("copyBtn");b.textContent="Copied";setTimeout(()=>b.textContent="Copy",1500);});
+}
+
+const perChain = s => ({
+  label:new Date(s.ts).toLocaleDateString("en-GB",{day:"numeric",month:"short"}),
+  bnb:+M(s.chains.bnb.circulating).toFixed(2),
+  native:+M(s.chains.realio_native.circulating).toFixed(2),
+  ethereum:+M(s.chains.ethereum.circulating).toFixed(2),
+  algorand:+M(s.chains.algorand.circulating).toFixed(2),
+  stellar:+M(s.chains.stellar.circulating).toFixed(2),
+  solana:+M(s.chains.solana.circulating).toFixed(2)
+});
+fetch("./supply-history.json",{cache:"no-store"}).then(r=>r.json()).then(arr=>{
+  render(arr[arr.length-1], arr.map(perChain), arr);
+}).catch(()=>{
+  render(FALLBACK, [perChain(FALLBACK)], [FALLBACK]);
+});
+</script>
+</body>
+</html>

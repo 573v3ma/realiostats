@@ -1,17 +1,17 @@
 [
   {
-    "ts": "2026-07-11T11:17:45Z",
+    "ts": "2026-07-11T14:24:40Z",
     "chains": {
       "realio_native": {
-        "total": 85109933.0197,
+        "total": 85030144.9942,
         "bridge_escrow": 0.0,
-        "circulating": 85109933.0197,
+        "circulating": 85030144.9942,
         "_source": "https://realio-api.noders.services"
       },
       "bnb": {
-        "total_supply": 155976321.3149,
+        "total_supply": 156058359.8317,
         "_source": "https://bsc-rpc.publicnode.com",
-        "circulating": 155976321.3149
+        "circulating": 156058359.8317
       },
       "ethereum": {
         "total_supply": 70771577.2636,
@@ -43,8 +43,18 @@
         "circulating": 0
       }
     },
-    "tradable_total": 326579347.12,
+    "tradable_total": 326581597.61,
     "native_cap": 175000000,
+    "price_usd": 0.03046548,
+    "price_source": "coingecko",
+    "market_cap_usd": 9949465.13,
+    "mint": {
+      "inflation_rate": 0.08,
+      "blocks_per_year": 6311520
+    },
+    "global_total_rio": 487941868.02,
+    "expected_annual_emission_rio": 6802411.6,
+    "expected_daily_emission_rio": 18636.74,
     "flags": []
   }
 ]

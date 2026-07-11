@@ -130,6 +130,19 @@ def fetch_native(url):
         if c["denom"] == NATIVE_DENOM: escrow = int(c["amount"]) / 10**18
     return {"total": round(total, 4), "bridge_escrow": round(escrow, 4), "circulating": round(total, 4)}
 
+# ---- Realio emission (custom mint module; soft-fail, never blocks the snapshot) --
+def fetch_mint_params(flags):
+    for url in ENDPOINTS["native"]:
+        try:
+            d = _get(f"{url}/realionetwork/mint/v1/params")["params"]
+            return {"mint_denom": d.get("mint_denom"),
+                    "inflation_rate": float(d["inflation_rate"]),
+                    "blocks_per_year": int(d["blocks_per_year"])}
+        except Exception:
+            continue
+    flags.append("mint_params_unavailable")
+    return {}
+
 # ---- failover wrapper: try each endpoint until one returns valid data --------
 def with_fallback(chain, fn, flags):
     errs = []
@@ -144,6 +157,31 @@ def with_fallback(chain, fn, flags):
             errs.append(f"{url}:{type(e).__name__}")
     flags.append(f"fetch_failed:{chain}:{'|'.join(errs)}")
     return {"error": "; ".join(errs)}
+
+
+# ---- price sources (keyless, verified live 2026-07-11; first valid wins) -----
+def _p_coingecko(): 
+    d=_get("https://api.coingecko.com/api/v3/simple/price?ids=realio-network&vs_currencies=usd")
+    return float(d["realio-network"]["usd"])
+def _p_mexc():
+    return float(_get("https://api.mexc.com/api/v3/ticker/price?symbol=RIOUSDT")["price"])
+def _p_kucoin():
+    return float(_get("https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=RIO-USDT")["data"]["price"])
+def _p_paprika():
+    return float(_get("https://api.coinpaprika.com/v1/tickers/rio-realio-network")["quotes"]["USD"]["price"])
+
+PRICE_SOURCES = [("coingecko",_p_coingecko),("mexc",_p_mexc),("kucoin",_p_kucoin),("coinpaprika",_p_paprika)]
+
+def fetch_price(flags):
+    errs=[]
+    for name,fn in PRICE_SOURCES:
+        try:
+            p=fn()
+            if p and p>0: return {"price_usd":p,"price_source":name}
+        except Exception as e:
+            errs.append(f"{name}:{type(e).__name__}")
+    flags.append("price_failed:"+"|".join(errs))
+    return {"price_usd":None,"price_source":None}
 
 def build_snapshot():
     flags = []
@@ -183,8 +221,28 @@ def build_snapshot():
     if any(f.startswith("fetch_failed") for f in flags):
         flags.append("TOTAL_INCOMPLETE")
 
+    # emission integrity: global RIO total (all chains incl. team wallets) grows
+    # only by block-reward emission minus burns; bridging is net-zero globally.
+    mint = fetch_mint_params(flags)
+    infl = mint.get("inflation_rate")
+    native_supply = nat.get("total", 0) if isinstance(nat, dict) else 0
+    excluded = 0.0
+    if isinstance(algo, dict): excluded += algo.get("reserve", 0) + algo.get("bridge_wallet", 0)
+    if isinstance(xlm, dict):  excluded += xlm.get("treasury", 0)
+    global_total = round(tradable + excluded, 2)
+    exp_annual = round(infl * native_supply, 2) if infl else None
+    exp_daily = round(exp_annual / 365, 2) if exp_annual else None
+    price = fetch_price(flags)
+    mcap = round(tradable * price["price_usd"], 2) if price["price_usd"] else None
     return {"ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "chains": chains, "tradable_total": tradable, "native_cap": NATIVE_CAP, "flags": flags}
+            "chains": chains, "tradable_total": tradable, "native_cap": NATIVE_CAP,
+            "price_usd": price["price_usd"], "price_source": price["price_source"],
+            "market_cap_usd": mcap,
+            "mint": {"inflation_rate": infl, "blocks_per_year": mint.get("blocks_per_year")},
+            "global_total_rio": global_total,
+            "expected_annual_emission_rio": exp_annual,
+            "expected_daily_emission_rio": exp_daily,
+            "flags": flags}
 
 def print_summary(s):
     print("=" * 66)
@@ -197,7 +255,15 @@ def print_summary(s):
     print("-" * 66)
     print(f"  TRADABLE TOTAL   {s['tradable_total']:>18,.0f}   (headline)")
     print(f"  native cap       {s['native_cap']:>18,.0f}   (context)")
-    print(f"  aggregator ~     {'100,000,000':>18}   (context)")
+    p = s.get("price_usd"); mc = s.get("market_cap_usd")
+    print("-" * 66)
+    print(f"  price (USD)      {('$'+format(p,'.5f')) if p else 'n/a':>18}   via {s.get('price_source')}")
+    print(f"  market cap (USD) {('$'+format(mc,',.0f')) if mc else 'n/a':>18}   (circulating x price)")
+    print("-" * 66)
+    infl = (s.get("mint") or {}).get("inflation_rate")
+    print(f"  emission rate    {(format(infl*100,'.1f')+'%/yr') if infl else 'n/a':>18}   (RIO block rewards)")
+    print(f"  expected new RIO {(format(s.get('expected_daily_emission_rio') or 0,',.0f')+'/day') if s.get('expected_daily_emission_rio') else 'n/a':>18}")
+    print(f"  global RIO total {format(s.get('global_total_rio') or 0,',.0f'):>18}   (all chains incl. team)")
     print("-" * 66)
     print(f"  flags: {s['flags'] if s['flags'] else 'none - all checks passed'}")
     print("=" * 66)
