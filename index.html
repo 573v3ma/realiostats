@@ -196,7 +196,7 @@
   <p class="sec-lede">From the 30 October 2024 migration, when the Ethereum and BNB tokens were re-issued and the bridge switched from a reserve/lock model to burn-and-mint. Each colour is one chain's circulating float; stacked together they make up the multichain total. Values in millions of RIO.</p>
   <div class="chartcard">
     <div class="chartwrap"><canvas id="evo"></canvas></div>
-    <p class="cap">Bands stack to the total circulating supply. Solid points are live daily readings from this project; earlier points are reconstructed from on-chain archival data (<a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">rio_supply_history.csv</a>). Stellar and Algorand public float is held flat before the live period, as the history of their Realio-controlled wallets was not reconstructed. The dashed 175M line is the network's long-term emission cap, shown only as a reference for scale.</p>
+    <p class="cap">The shaded period marks the one-time post-migration bridge ramp: as the burn-and-mint system was populated, supply expanded across chains (BSC alone went ~119M to ~163M, verified on-chain via archival reads). Supply has been roughly flat since. Bands stack to the total circulating supply. Solid points are live daily readings from this project; earlier points are reconstructed from on-chain archival data (<a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">rio_supply_history.csv</a>). Stellar and Algorand public float is held flat before the live period, as the history of their Realio-controlled wallets was not reconstructed. The dashed 175M line is the network's long-term emission cap, shown only as a reference for scale.</p>
   </div>
 </div></section>
 
@@ -375,9 +375,33 @@ function drawChart(liveSeries){
   }));
   datasets.push({label:"175M emission cap (reference)", data:labels.map(()=>175),
     borderColor:"#9aa7b2", borderWidth:1.4, borderDash:[6,5], pointRadius:0, fill:false, stack:"ref"});
+  const rampEnd = 2; // index of 2025 Q2 (end of migration ramp)
+  const rampPlugin = {
+    id:"ramp",
+    beforeDatasetsDraw(chart){
+      const {ctx,chartArea,scales}=chart;
+      const x2=scales.x.getPixelForValue(rampEnd);
+      ctx.save();
+      ctx.fillStyle="rgba(100,116,139,0.07)";
+      ctx.fillRect(chartArea.left,chartArea.top,x2-chartArea.left,chartArea.bottom-chartArea.top);
+      ctx.restore();
+    },
+    afterDatasetsDraw(chart){
+      const {ctx,chartArea,scales}=chart;
+      const x2=scales.x.getPixelForValue(rampEnd);
+      ctx.save();
+      ctx.strokeStyle="rgba(100,116,139,0.45)";ctx.setLineDash([4,4]);ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x2,chartArea.top);ctx.lineTo(x2,chartArea.bottom);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle="#64748b";ctx.font="600 11px Inter,system-ui,sans-serif";ctx.textAlign="left";
+      ctx.fillText("Migration & bridge ramp (Oct 2024 – mid 2025)", chartArea.left+8, chartArea.top+13);
+      ctx.restore();
+    }
+  };
   new Chart(document.getElementById("evo"),{
     type:"line",
     data:{labels,datasets},
+    plugins:[rampPlugin],
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
       scales:{
         y:{stacked:true,beginAtZero:true,suggestedMax:360,grid:{color:"#eef1f4"},
