@@ -1,0 +1,50 @@
+[
+  {
+    "ts": "2026-07-11T11:00:35Z",
+    "chains": {
+      "realio_native": {
+        "total": 85109726.792,
+        "bridge_escrow": 0.0,
+        "circulating": 85109726.792,
+        "_source": "https://realio-api.noders.services"
+      },
+      "bnb": {
+        "total_supply": 155976321.3149,
+        "_source": "https://bsc-rpc.publicnode.com",
+        "circulating": 155976321.3149
+      },
+      "ethereum": {
+        "total_supply": 70771577.2636,
+        "base_bridge_lock": 2004956.0786,
+        "_source": "https://ethereum-rpc.publicnode.com",
+        "circulating": 70771577.2636
+      },
+      "algorand": {
+        "total_supply": 100000000.0,
+        "reserve": 43796048.9323,
+        "bridge_wallet": 48424420.1749,
+        "circulating": 7779530.8928,
+        "_source": "https://mainnet-api.algonode.cloud"
+      },
+      "stellar": {
+        "total_supply": 74999852.6076,
+        "treasury": 69139801.303,
+        "circulating": 5860051.3046,
+        "_source": "https://horizon.stellar.org"
+      },
+      "solana": {
+        "total_supply": 1081933.3223,
+        "_source": "https://api.mainnet-beta.solana.com",
+        "circulating": 1081933.3223
+      },
+      "base": {
+        "total_supply": 2003955.0786,
+        "_source": "https://base-rpc.publicnode.com",
+        "circulating": 0
+      }
+    },
+    "tradable_total": 326579140.89,
+    "native_cap": 175000000,
+    "flags": []
+  }
+]
