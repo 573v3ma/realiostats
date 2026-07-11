@@ -1,11 +1,11 @@
 [
   {
-    "ts": "2026-07-11T11:00:35Z",
+    "ts": "2026-07-11T11:17:45Z",
     "chains": {
       "realio_native": {
-        "total": 85109726.792,
+        "total": 85109933.0197,
         "bridge_escrow": 0.0,
-        "circulating": 85109726.792,
+        "circulating": 85109933.0197,
         "_source": "https://realio-api.noders.services"
       },
       "bnb": {
@@ -43,7 +43,7 @@
         "circulating": 0
       }
     },
-    "tradable_total": 326579140.89,
+    "tradable_total": 326579347.12,
     "native_cap": 175000000,
     "flags": []
   }
