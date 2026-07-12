@@ -135,9 +135,17 @@ def fetch_mint_params(flags):
     for url in ENDPOINTS["native"]:
         try:
             d = _get(f"{url}/realionetwork/mint/v1/params")["params"]
-            return {"mint_denom": d.get("mint_denom"),
-                    "inflation_rate": float(d["inflation_rate"]),
-                    "blocks_per_year": int(d["blocks_per_year"])}
+            out = {"mint_denom": d.get("mint_denom"),
+                   "inflation_rate": float(d["inflation_rate"]),
+                   "blocks_per_year": int(d["blocks_per_year"])}
+            # annual_provisions = inflation_rate x UNMINTED native supply (cap - supply),
+            # the authoritative issuance figure; declines as native approaches the cap.
+            try:
+                ap = _get(f"{url}/realionetwork/mint/v1/annual_provisions")["annual_provisions"]
+                out["annual_provisions_rio"] = float(ap) / 1e18
+            except Exception:
+                pass
+            return out
         except Exception:
             continue
     flags.append("mint_params_unavailable")
@@ -230,7 +238,15 @@ def build_snapshot():
     if isinstance(algo, dict): excluded += algo.get("reserve", 0) + algo.get("bridge_wallet", 0)
     if isinstance(xlm, dict):  excluded += xlm.get("treasury", 0)
     global_total = round(tradable + excluded, 2)
-    exp_annual = round(infl * native_supply, 2) if infl else None
+    # 8% is charged on the UNMINTED native supply (gap to the cap). Prefer the
+    # chain's own annual_provisions; fall back to infl x (cap - native supply).
+    ap_rio = mint.get("annual_provisions_rio")
+    if ap_rio:
+        exp_annual = round(ap_rio, 2)
+    elif infl and native_supply:
+        exp_annual = round(infl * max(NATIVE_CAP - native_supply, 0), 2)
+    else:
+        exp_annual = None
     exp_daily = round(exp_annual / 365, 2) if exp_annual else None
     price = fetch_price(flags)
     mcap = round(tradable * price["price_usd"], 2) if price["price_usd"] else None
@@ -261,7 +277,7 @@ def print_summary(s):
     print(f"  market cap (USD) {('$'+format(mc,',.0f')) if mc else 'n/a':>18}   (circulating x price)")
     print("-" * 66)
     infl = (s.get("mint") or {}).get("inflation_rate")
-    print(f"  emission rate    {(format(infl*100,'.1f')+'%/yr') if infl else 'n/a':>18}   (RIO block rewards)")
+    print(f"  emission rate    {(format(infl*100,'.1f')+'%/yr') if infl else 'n/a':>18}   (8% of unminted native)")
     print(f"  expected new RIO {(format(s.get('expected_daily_emission_rio') or 0,',.0f')+'/day') if s.get('expected_daily_emission_rio') else 'n/a':>18}")
     print(f"  global RIO total {format(s.get('global_total_rio') or 0,',.0f'):>18}   (all chains incl. team)")
     print("-" * 66)
