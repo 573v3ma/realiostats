@@ -495,7 +495,7 @@ function drawChart(liveSeries){
       const {ctx,chartArea,scales}=chart;
       const x2=scales.x.getPixelForValue(rampEnd);
       ctx.save();
-      ctx.fillStyle="rgba(100,116,139,0.07)";
+      ctx.fillStyle="rgba(100,116,139,0.14)";
       ctx.fillRect(chartArea.left,chartArea.top,x2-chartArea.left,chartArea.bottom-chartArea.top);
       ctx.restore();
     },
