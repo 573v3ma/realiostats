@@ -435,7 +435,8 @@ function render(latest, liveSeries, fullArr){
   const dot = document.getElementById("iDot"), it = document.getElementById("iText");
   if(obs){
     document.getElementById("emObserved").textContent = (obs.perDay>=0?"+":"")+fmtInt(obs.perDay)+" / day";
-    document.getElementById("emObservedNote").textContent = "measured over "+obs.days.toFixed(0)+" days";
+    const obsDays = Math.round(obs.days);
+    document.getElementById("emObservedNote").textContent = obsDays<=1 ? "measured over the last 24h" : "measured over "+obsDays+" days";
     const pct = infl ? (infl*100).toFixed(0) : "8";
     if(ed && obs.perDay <= ed*1.25){
       dot.className="idot ok";
