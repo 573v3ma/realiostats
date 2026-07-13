@@ -126,6 +126,19 @@
     background:var(--bg);box-shadow:var(--shadow-md)}
   .chartwrap{position:relative;height:400px}
   .cap{font-size:12.5px;color:var(--muted);line-height:1.65;margin-top:16px}
+  /* provenance table */
+  .ptbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-sm);box-shadow:var(--shadow-sm);background:var(--bg)}
+  .ptbl{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
+  .ptbl th,.ptbl td{padding:13px 16px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+  .ptbl th:first-child,.ptbl td:first-child{text-align:left}
+  .ptbl thead th{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--alt)}
+  .ptbl tbody td{font-family:"Space Grotesk",Inter,sans-serif;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .ptbl tbody td:first-child{font-family:Inter,sans-serif;font-weight:600}
+  .ptbl tbody tr:last-child td{border-bottom:none}
+  .ptbl tr.tot td{border-top:2px solid var(--ink);font-weight:700}
+  .ptbl .burn{color:#b45309}
+  .ptbl .ok{color:var(--green-ink)}
+  @media(max-width:720px){.ptbl th,.ptbl td{padding:10px 11px;font-size:12.5px}}
   /* methodology */
   .rules{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   .rule{border:1px solid var(--line);border-radius:var(--radius-sm);padding:24px;background:var(--bg);
@@ -209,6 +222,7 @@
     <a href="#emissions">Emissions</a>
     <a href="#chains">Per chain</a>
     <a href="#chart">Evolution</a>
+    <a href="#provenance">Provenance</a>
     <a href="#method">Methodology</a>
     <a href="#faq">FAQ</a>
     <a href="#contribute">Contribute</a>
@@ -282,6 +296,28 @@
     <div class="chartwrap"><canvas id="evo"></canvas></div>
     <p class="cap">The shaded period marks the one-time post-migration bridge ramp: as the burn-and-mint system was populated, supply expanded across chains (BSC alone went ~119M to ~163M, verified on-chain via archival reads). Supply has been roughly flat since. Bands stack to the total circulating supply. Solid points are live daily readings from this project; earlier points are reconstructed from on-chain archival data (<a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">rio_supply_history.csv</a>). Stellar and Algorand public float is held flat before the live period, as the history of their Realio-controlled wallets was not reconstructed. The dashed 175M line is the network's long-term emission cap, shown only as a reference for scale.</p>
   </div>
+</div></section>
+
+<section id="provenance"><div class="wrap">
+  <h2>Where today's supply came from</h2>
+  <p class="sec-lede">The post-migration bridge really is burn-and-mint, and it can be checked. Below is the full mint and burn ledger of the two main EVM contracts, pulled event by event since the October 2024 migration and reconciled against their live on-chain supply. It also shows why the multichain total sits so far above the native figure.</p>
+  <div class="ptbl-wrap">
+    <table class="ptbl">
+      <thead><tr><th>New contract (since Oct 2024)</th><th>Minted</th><th>Burned</th><th>Net</th><th>Live supply</th></tr></thead>
+      <tbody>
+        <tr><td>BNB Chain</td><td>275.4M</td><td class="burn">119.5M</td><td>156.0M</td><td class="ok">155.9M &#10003;</td></tr>
+        <tr><td>Ethereum</td><td>134.7M</td><td class="burn">63.8M</td><td>70.9M</td><td class="ok">70.9M &#10003;</td></tr>
+        <tr class="tot"><td>Both contracts</td><td>410.1M</td><td class="burn">183.3M</td><td>226.8M</td><td class="ok">reconciles</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="assume" style="margin-top:22px">
+    <div class="ah">What this shows</div>
+    <p>Two things. First, the bridge genuinely burns as well as mints: about <b>183M RIO</b> has been burned across the two contracts, roughly <b>45%</b> of everything ever minted on them. RIO moves off these chains as well as onto them, so this is not one-way issuance. Every net figure above matches the contract's live <code>totalSupply</code> to within a rounding margin, so the capture is complete.</p>
+    <p>Second, the two live EVM contracts alone hold about <b>227M RIO</b>. That is more than the Realio native chain has ever held (around 85M today) and more than its entire 175M long-term cap. Most RIO on these chains therefore cannot have come from native emission bridged out, because native has never been large enough to be the source. It traces instead to direct token mints on Ethereum in 2020 and on BNB Chain in 2023, which predate the burn-and-mint bridge, plus the October 2024 migration that re-issued balances onto new contracts while the old contracts (about 149M combined) were left in place rather than burned.</p>
+    <p>So the ongoing bridge is consistent and two-way, but the size of the cross-chain supply is a legacy of historical direct issuance, not of the native emission schedule. We present this as measurement, not accusation, and we invite the team to publish the full cross-chain reconciliation.</p>
+  </div>
+  <p class="cap">Method: every ERC-20 <code>Transfer</code> from the zero address (a mint) and to the zero address (a burn) on each contract since block of the 30 October 2024 migration, summed and checked against <code>totalSupply</code>. Both chains use the RIO contract at <code>0x94a8&#8230;1aa0</code>. Native lifetime issuance is bounded by the 8% schedule and the 175M cap, so it cannot exceed roughly 90M over the chain's life to date, far below the multichain total. The audit is fully reproducible from public data.</p>
 </div></section>
 
 <section id="method"><div class="wrap">
