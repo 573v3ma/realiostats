@@ -321,7 +321,7 @@
     <table class="ptbl">
       <thead><tr><th>Chain</th><th>On chain</th><th>Public float</th><th>How it was created</th></tr></thead>
       <tbody>
-        <tr><td>Realio native</td><td>85M</td><td>85M</td><td class="orig">Block-reward emission since the 2023 genesis, capped at 175M</td></tr>
+        <tr><td>Realio native</td><td>85M</td><td>85M</td><td class="orig">Block-reward emission (capped at 175M) since 2023, plus burn-and-mint bridging to and from the other chains</td></tr>
         <tr><td>BNB Chain</td><td>156M</td><td>156M</td><td class="orig">Direct mint in 2023, re-issued and expanded in the 2024 migration</td></tr>
         <tr><td>Ethereum</td><td>71M</td><td>71M</td><td class="orig">Direct mint in 2020, re-issued on a new contract in the 2024 migration</td></tr>
         <tr><td>Algorand</td><td>100M</td><td>7.8M</td><td class="orig">Direct mint in 2020, fixed supply, most still held in Realio wallets</td></tr>
@@ -334,10 +334,10 @@
   <div class="assume" style="margin-top:22px">
     <div class="ah">What this shows</div>
     <p>First, the bridge genuinely burns as well as mints: about <b>183M RIO</b> has been burned across the two EVM contracts, roughly <b>45%</b> of everything minted on them, so RIO moves off these chains as well as onto them. Every net figure reconciles with the live <code>totalSupply</code>, so the capture is complete.</p>
-    <p>Second, almost none of this supply originates from the native chain. Back in 2020, before the native chain existed and before any bridge, RIO was minted directly and at the same time on three separate chains, Ethereum, Algorand and Stellar, at 100M each. Ethereum and Stellar were later partly burned, and Algorand's 100M is fixed. BNB Chain added a further 75M direct mint in 2023. Most of the Algorand and Stellar supply still sits in Realio-controlled wallets and is excluded from the circulating figure, but it exists on-chain. Native, by contrast, has only ever produced around 85M and is capped at 175M, so it cannot be the source of the multichain total.</p>
+    <p>Second, almost none of this supply originates from the native chain. Back in 2020, before the native chain existed and before any bridge, RIO was minted directly and at the same time on three separate chains, Ethereum, Algorand and Stellar, at 100M each. Ethereum and Stellar were later partly burned, and Algorand's 100M is fixed. BNB Chain added a further 75M direct mint in 2023. Most of the Algorand and Stellar supply still sits in Realio-controlled wallets and is excluded from the circulating figure, but it exists on-chain. Native creates new RIO through its emission schedule, which is bounded by the 8% rate and the 175M cap, and holds around 85M today. RIO does bridge between native and the other chains in both directions, but bridging only moves existing tokens, it does not create them, so native emission cannot be the source of the multichain total.</p>
     <p>So the ongoing bridge is consistent and two-way, but the size of the cross-chain supply is a legacy of historical direct issuance across several chains, not of the native emission schedule. We present this as measurement, not accusation, and we invite the team to publish the full cross-chain reconciliation.</p>
   </div>
-  <p class="cap">Method: for the burn-and-mint contracts, every ERC-20 <code>Transfer</code> from the zero address (a mint) and to the zero address (a burn) since the 30 October 2024 migration, summed and reconciled against <code>totalSupply</code>; both use the RIO contract at <code>0x94a8&#8230;1aa0</code>. Per-chain totals are read live from each chain's public endpoint. Native lifetime issuance is bounded by the 8% schedule and the 175M cap, so it cannot exceed roughly 90M over the chain's life to date. Fully reproducible from public data (see <a href="https://github.com/573v3ma/realiostats/blob/main/rio_mint_burn_audit.py" target="_blank" rel="noopener">rio_mint_burn_audit.py</a>).</p>
+  <p class="cap">Method: for the burn-and-mint contracts, every ERC-20 <code>Transfer</code> from the zero address (a mint) and to the zero address (a burn) since the 30 October 2024 migration, summed and reconciled against <code>totalSupply</code>; both use the RIO contract at <code>0x94a8&#8230;1aa0</code>. Per-chain totals are read live from each chain's public endpoint. Native emission is bounded by the 8% schedule and the 175M cap, so it cannot have created more than roughly 90M over the chain's life to date; bridging moves RIO in and out of native but does not create it. Fully reproducible from public data (see <a href="https://github.com/573v3ma/realiostats/blob/main/rio_mint_burn_audit.py" target="_blank" rel="noopener">rio_mint_burn_audit.py</a>).</p>
 </div></section>
 
 <section id="method"><div class="wrap">
@@ -512,7 +512,7 @@ function render(latest, liveSeries, fullArr){
       <div class="cn"><span class="cdot" style="background:${c.color}"></span>${c.name}</div>
       <div class="cv">${val}</div>
       <div class="cx">${sub}</div>
-      <div style="margin-top:8px"><a href="${c.verify}" target="_blank" rel="noopener">Verify ↗</a></div>
+      <div style="margin-top:8px"><a href="${c.verify}" target="_blank" rel="noopener">Verify ?</a></div>
     </div>`;
   }).join("");
 
@@ -520,13 +520,13 @@ function render(latest, liveSeries, fullArr){
   document.getElementById("exclGrid").innerHTML = `
     <div class="ex"><div class="exk">Algorand · reserve</div><div class="exv">${fmtM(M(a.reserve))}</div>
       <div class="exa">GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA</div>
-      <div style="margin-top:8px"><a href="https://allo.info/account/GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA" target="_blank" rel="noopener">Verify ↗</a></div></div>
+      <div style="margin-top:8px"><a href="https://allo.info/account/GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA" target="_blank" rel="noopener">Verify ?</a></div></div>
     <div class="ex"><div class="exk">Algorand · bridge wallet</div><div class="exv">${fmtM(M(a.bridge_wallet))}</div>
       <div class="exa">M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM</div>
-      <div style="margin-top:8px"><a href="https://allo.info/account/M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM" target="_blank" rel="noopener">Verify ↗</a></div></div>
+      <div style="margin-top:8px"><a href="https://allo.info/account/M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM" target="_blank" rel="noopener">Verify ?</a></div></div>
     <div class="ex"><div class="exk">Stellar · treasury (realio.fund)</div><div class="exv">${fmtM(M(s.treasury))}</div>
       <div class="exa">GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L</div>
-      <div style="margin-top:8px"><a href="https://stellar.expert/explorer/public/account/GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L" target="_blank" rel="noopener">Verify ↗</a></div></div>`;
+      <div style="margin-top:8px"><a href="https://stellar.expert/explorer/public/account/GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L" target="_blank" rel="noopener">Verify ?</a></div></div>`;
 
   drawChart(liveSeries);
 }
