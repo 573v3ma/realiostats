@@ -266,6 +266,7 @@
     <div class="chip"><div class="cn">Expected new RIO</div><div class="cv" id="emDaily">—</div><div class="cx" id="emAnnual">per day</div></div>
     <div class="chip"><div class="cn">Long-term cap</div><div class="cv">175M</div><div class="cx">~38-year emission schedule</div></div>
     <div class="chip"><div class="cn">Observed net-new</div><div class="cv" id="emObserved">—</div><div class="cx" id="emObservedNote">accruing daily</div></div>
+    <div class="chip"><div class="cn">Observed last 24h</div><div class="cv" id="emObs24">—</div><div class="cx" id="emObs24Note">awaiting a second reading</div></div>
   </div>
   <div class="integrity">
     <span class="idot" id="iDot"></span>
@@ -469,6 +470,21 @@ function computeObserved(arr){
   const d=b.global_total_rio-a.global_total_rio;
   return {days, netNew:d, perDay:d/days};
 }
+// Most recent consecutive pair of snapshots = the freshest reading available.
+// Unlike computeObserved (which averages across the whole series and so smooths
+// harder the longer the series gets), this stays at daily resolution: it shows
+// whether net-new is easing off, and can legitimately go negative on a day when
+// burns exceed emission. One sample, so it is noisier - cross-chain bridge
+// transfers are not atomic, and a snapshot landing mid-transfer skews the day.
+function computeLast24h(arr){
+  const pts = (arr||[]).filter(s=>s.global_total_rio);
+  if(pts.length<2) return null;
+  const a=pts[pts.length-2], b=pts[pts.length-1];
+  const days=(new Date(b.ts)-new Date(a.ts))/864e5;
+  if(!(days>0)) return null;
+  const d=b.global_total_rio-a.global_total_rio;
+  return {days, netNew:d, perDay:d/days};
+}
 function render(latest, liveSeries, fullArr){
   const multi = latest.tradable_total;
   document.getElementById("multiNum").textContent = fmtM(M(multi));
@@ -488,6 +504,14 @@ function render(latest, liveSeries, fullArr){
   const ed = latest.expected_daily_emission_rio, ea = latest.expected_annual_emission_rio;
   document.getElementById("emDaily").textContent = ed ? "~"+fmtInt(ed) : "n/a";
   document.getElementById("emAnnual").textContent = ea ? "per day · ~"+fmtM(M(ea))+" / yr" : "per day";
+  const l24 = computeLast24h(fullArr);
+  if(l24){
+    const sign = l24.perDay>=0 ? "+" : "−";
+    document.getElementById("emObs24").textContent = sign+fmtInt(Math.abs(l24.perDay))+" / day";
+    document.getElementById("emObs24Note").textContent = Math.abs(l24.days-1)<0.15
+      ? "latest snapshot vs previous"
+      : "latest pair, "+l24.days.toFixed(1)+" days apart, as a daily rate";
+  }
   const obs = computeObserved(fullArr);
   const dot = document.getElementById("iDot"), it = document.getElementById("iText");
   if(obs){
