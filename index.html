@@ -272,7 +272,7 @@
     <span class="idot" id="iDot"></span>
     <span id="iText">Building the daily baseline. As readings accrue, this confirms whether circulating RIO supply is growing within the scheduled emission and flags anything above it.</span>
   </div>
-  <p class="cap">Emission parameters are read live from Realio's on-chain mint module (<code>/realionetwork/mint/v1/params</code>). The 8% is charged on the unminted native supply, the gap between native supply and the 175M cap, so the amount of new RIO declines as the cap is approached. Measured against circulating supply across all seven chains. RIO bridges in two different ways: burn-and-mint between native and the EVM chains, and lock-and-mint on the Stellar and Base legs, where the token is held in escrow rather than destroyed. Both are counted once here, so bridging nets to zero either way, and only block-reward emission, minus burns, moves this figure.</p>
+  <p class="cap">Emission parameters are read live from Realio's on-chain mint module (<code>/realionetwork/mint/v1/params</code>). The 8% is charged on the unminted native supply, the gap between native supply and the 175M cap, so the amount of new RIO declines as the cap is approached. The observed figures measure RIO that came into existence across all seven chains: circulating supply, plus whatever is still held in Realio's Algorand wallets, so that pre-existing RIO being released into public float is never mistaken for new issuance. RIO also bridges in two different ways: burn-and-mint between native and the EVM chains, and lock-and-mint on the Stellar and Base legs, where the token is escrowed rather than destroyed. Either way the token is counted once, so bridging nets to zero, and only block-reward emission, minus burns, moves this figure. Observed running slightly below expected is normal: burns, including Districts land claims, net out of it.</p>
 </div></section>
 
 <section id="chains"><div class="wrap">
@@ -461,21 +461,46 @@ const CHAINS = [
 
 const fmtUsd = n => n>=1e6 ? "$"+(n/1e6).toFixed(2)+"M" : "$"+Math.round(n).toLocaleString("en-US");
 const fmtInt = n => Math.round(n).toLocaleString("en-US");
-// Measured on tradable_total, NOT global_total_rio. global_total = tradable +
-// team-held balances, which double-counts a lock-and-mint bridge: RIO locked in
-// the Stellar escrow is still counted under "excluded" while the RIO minted
-// against it is counted on the destination chain. Verified 17 Jul 2026, when a
-// Stellar->BSC bridge (707,924.83 locked 19:41:55, minted 19:42:10) pushed
-// global_total +726,539/day, a 37x false positive. tradable_total nets both
-// bridge styles correctly, because the locked side leaves circulating as the
-// minted side enters it, so the token is only ever counted once.
+// What this measures: RIO that came into existence, so it can be compared like
+// for like against scheduled emission.
+//
+// NOT global_total_rio (= tradable + all excluded balances). That double-counts
+// a lock-and-mint bridge: RIO locked in the Stellar escrow stays counted under
+// "excluded" while the RIO minted against it is counted on the destination
+// chain. Verified 17 Jul 2026, when a Stellar->BSC bridge (707,924.83 locked
+// 19:41:55, minted 19:42:10, 15s apart) pushed global_total to +726,539/day, a
+// 37x false positive.
+//
+// NOT tradable_total alone either. Float also grows when Realio releases
+// pre-existing RIO from a team wallet, which is not new supply. Over 11-17 Jul
+// the Algorand wallets released 33,991 RIO, pushing tradable ~9% above schedule
+// with nothing minted.
+//
+// So: tradable_total + Algorand team-held. Adding those back cancels the
+// release, leaving emission minus burns. The Stellar treasury is deliberately
+// NOT added back: it is proven bridge escrow, and its flows already net to zero
+// inside tradable_total, so adding it would reintroduce the bug inverted.
+//
+// Caveat: assumes the Algorand "bridge wallet" is a team wallet rather than
+// escrow. Evidence supports it (uniform 3,999 drips to one fixed address, not
+// user-shaped bridge withdrawals) but it is unconfirmed. If it is escrow, an
+// Algorand->EVM bridge would read as a false positive here.
+function teamHeld(s){
+  const a = (s.chains && s.chains.algorand) || {};
+  if(typeof a.reserve !== "number" || typeof a.bridge_wallet !== "number") return null;
+  return a.reserve + a.bridge_wallet;
+}
+function netNewSupply(s){
+  const t = teamHeld(s);
+  return (typeof s.tradable_total === "number" && t !== null) ? s.tradable_total + t : null;
+}
 function computeObserved(arr){
-  const pts = (arr||[]).filter(s=>s.tradable_total);
+  const pts = (arr||[]).filter(s=>netNewSupply(s)!==null);
   if(pts.length<2) return null;
   const a=pts[0], b=pts[pts.length-1];
   const days=(new Date(b.ts)-new Date(a.ts))/864e5;
   if(days<0.5) return null;
-  const d=b.tradable_total-a.tradable_total;
+  const d=netNewSupply(b)-netNewSupply(a);
   return {days, netNew:d, perDay:d/days};
 }
 // Most recent consecutive pair of snapshots = the freshest reading available.
@@ -485,12 +510,12 @@ function computeObserved(arr){
 // burns exceed emission. One sample, so it is noisier - cross-chain bridge
 // transfers are not atomic, and a snapshot landing mid-transfer skews the day.
 function computeLast24h(arr){
-  const pts = (arr||[]).filter(s=>s.tradable_total);
+  const pts = (arr||[]).filter(s=>netNewSupply(s)!==null);
   if(pts.length<2) return null;
   const a=pts[pts.length-2], b=pts[pts.length-1];
   const days=(new Date(b.ts)-new Date(a.ts))/864e5;
   if(!(days>0)) return null;
-  const d=b.tradable_total-a.tradable_total;
+  const d=netNewSupply(b)-netNewSupply(a);
   return {days, netNew:d, perDay:d/days};
 }
 function render(latest, liveSeries, fullArr){
