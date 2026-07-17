@@ -260,7 +260,7 @@
 
 <section id="emissions"><div class="wrap">
   <h2>Emissions &amp; supply integrity</h2>
-  <p class="sec-lede">New RIO is created only through scheduled block-reward emissions, paid in RIO to stakers, and capped at 175M. Bridging moves RIO between chains but never changes the global total, so the global supply should grow only at the scheduled rate. We check that every day.</p>
+  <p class="sec-lede">New RIO is created only through scheduled block-reward emissions, paid in RIO to stakers, and capped at 175M. Bridging moves RIO between chains without changing how much of it exists, so circulating supply should grow only at the scheduled rate. We check that every day.</p>
   <div class="emit">
     <div class="chip"><div class="cn">Emission rate</div><div class="cv" id="emRate">—</div><div class="cx">of unminted native supply, per year</div></div>
     <div class="chip"><div class="cn">Expected new RIO</div><div class="cv" id="emDaily">—</div><div class="cx" id="emAnnual">per day</div></div>
@@ -270,9 +270,9 @@
   </div>
   <div class="integrity">
     <span class="idot" id="iDot"></span>
-    <span id="iText">Building the daily baseline. As readings accrue, this confirms whether global RIO supply is growing within the scheduled emission and flags anything above it.</span>
+    <span id="iText">Building the daily baseline. As readings accrue, this confirms whether circulating RIO supply is growing within the scheduled emission and flags anything above it.</span>
   </div>
-  <p class="cap">Emission parameters are read live from Realio's on-chain mint module (<code>/realionetwork/mint/v1/params</code>). The 8% is charged on the unminted native supply, the gap between native supply and the 175M cap, so the amount of new RIO declines as the cap is approached. Bridging is burn-and-mint, so it nets to zero across chains; only block-reward emission, minus burns, changes the global total.</p>
+  <p class="cap">Emission parameters are read live from Realio's on-chain mint module (<code>/realionetwork/mint/v1/params</code>). The 8% is charged on the unminted native supply, the gap between native supply and the 175M cap, so the amount of new RIO declines as the cap is approached. Measured against circulating supply across all seven chains. RIO bridges in two different ways: burn-and-mint between native and the EVM chains, and lock-and-mint on the Stellar and Base legs, where the token is held in escrow rather than destroyed. Both are counted once here, so bridging nets to zero either way, and only block-reward emission, minus burns, moves this figure.</p>
 </div></section>
 
 <section id="chains"><div class="wrap">
@@ -362,7 +362,7 @@
     <details><summary>If emission is 8%, why is the staking APR lower (around 5.5%) and always changing?</summary><div class="a">Because the two numbers measure different things. The 8% is charged on the unminted native supply, the gap between what is on the native chain today (about 85M) and the 175M cap, which is roughly 7.2M new RIO a year. Because that gap shrinks as the cap fills, the amount minted falls a little every year, which is why the 175M is reached only gradually, over roughly 38 years. Your staking yield is what is left after that new RIO is shared out, and three things reduce it. First, and biggest: Realio uses multi-staking, so validators are secured by RIO, RST and DSTRX together. The total bonded base is around 130M, larger than RIO's entire supply, and the freshly minted RIO is split across all of it, not just across staked RIO. Second, a 2% community tax is taken off the top before rewards are distributed. Third, if you delegate, your validator's commission comes off your share. The arithmetic works out: roughly 7.2M new RIO, less 2%, over a roughly 130M bonded base lands near 5.5%. It keeps moving because both sides move every block: supply grows with each mint, and the bonded base shifts as people stake and unstake the three assets. This is a yield figure, not part of the supply count, and RIO staking rewards are always paid in RIO.</div></details>
     <details><summary>Can the team mint unlimited RIO?</summary><div class="a">No. New issuance is governed by the on-chain mint module (the ~8% schedule) and the 175M governance cap. The burn-and-mint bridge also carries a disclosed daily mint limit, set at 1.75M RIO per day in the reissued contract code, which throttles how fast tokens can be minted through it and rules out any sudden surge. We still flag one thing honestly: that is a rate limit, not a second hard cap, and it is adjustable by the bridge's multi-signature controllers, so it is not fully clear from public data whether bridging RIO to the native chain could, over time, mint native supply beyond the 175M cap. Only the team's complete bridge records can settle it, which is one of the open questions we invite them to answer.</div></details>
     <details><summary>Why did supply jump so much in 2024 and 2025?</summary><div class="a">That rise (the shaded band on the chart) was a one-time event: the October 2024 migration to a burn-and-mint bridge, during which the new contracts were populated and supply expanded across chains as the system came online. BSC alone went from ~119M to ~163M over that window, which we verified directly against archival on-chain reads. Since about mid-2025 the total has been roughly flat, consistent with the low, scheduled emission described above.</div></details>
-    <details><summary>Does bridging create new RIO?</summary><div class="a">No. RIO moves between chains through a burn-and-mint bridge: it is burned on the origin chain and minted on the destination, so the same coin never exists in two places, and the global total across all chains is unchanged by bridging. Only block-reward emission, minus burns, changes the global supply. That is why we sum across chains and count each token once.</div></details>
+    <details><summary>Does bridging create new RIO?</summary><div class="a">No, but it works in two different ways, and the distinction matters. Between the Realio native chain and the EVM chains it is burn-and-mint: the token is destroyed on the origin chain and minted on the destination. On the Stellar and Base legs it is lock-and-mint: the token is not destroyed, it is held in an escrow wallet while a matching token is minted elsewhere. Either way the same coin never exists in two tradable places at once, which is why we can sum across chains and count each token once. For lock-and-mint we exclude the escrowed balance, so it is not counted twice. Only block-reward emission, minus burns, changes how much RIO is circulating.</div></details>
     <details><summary>Can I verify these numbers myself?</summary><div class="a">Yes, that is the whole point. Every figure comes from public blockchain endpoints, with no private data. Each chain has a "Verify" link to its explorer, the excluded wallets are listed with their addresses, and the full code that produces these numbers is <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">open-source</a> and re-runs daily in public, with the data history stored in git as an audit trail.</div></details>
     <details><summary>Why do you exclude some wallets, and does staked RIO count?</summary><div class="a">We exclude balances held in Realio-controlled reserve, treasury, and bridge wallets, because those are not public float, and we list every excluded address so anyone can check. Staked RIO is included, because a holder can unbond it within the seven-day unbonding period and sell it, so it is genuinely part of tradable supply, consistent with standard tracker methodology.</div></details>
     <details><summary>Does the Districts Land Bank, or its RIO burn, change these numbers?</summary><div class="a">Both are already reflected. Districts is built on the Realio Network, and claiming a Land Pixel deposits 5,000 native RIO: 20% (1,000 RIO) is permanently burned, and 80% (4,000 RIO) is locked in the Land Bank, redeemable by returning the land after a 7-day unbonding period. Because both happen in native RIO, they already sit inside the native supply we read live every day. Burned RIO has left that figure, and Land Bank RIO is still in it. We count the Land Bank as circulating for the same reason we count staked RIO: the owner can redeem it within seven days and sell it, and it is not a Realio-controlled treasury, so it does not meet our exclusion test. Districts reports roughly 5.8M RIO burned to date and about 8.1M held in the Land Bank. We quote those two figures from the Districts dashboard rather than measure them, because the Land Bank and burn contract addresses are not published, and we would rather read them from the chain. If you prefer a stricter definition of circulating supply, you can subtract the Land Bank balance yourself.</div></details>
@@ -461,13 +461,21 @@ const CHAINS = [
 
 const fmtUsd = n => n>=1e6 ? "$"+(n/1e6).toFixed(2)+"M" : "$"+Math.round(n).toLocaleString("en-US");
 const fmtInt = n => Math.round(n).toLocaleString("en-US");
+// Measured on tradable_total, NOT global_total_rio. global_total = tradable +
+// team-held balances, which double-counts a lock-and-mint bridge: RIO locked in
+// the Stellar escrow is still counted under "excluded" while the RIO minted
+// against it is counted on the destination chain. Verified 17 Jul 2026, when a
+// Stellar->BSC bridge (707,924.83 locked 19:41:55, minted 19:42:10) pushed
+// global_total +726,539/day, a 37x false positive. tradable_total nets both
+// bridge styles correctly, because the locked side leaves circulating as the
+// minted side enters it, so the token is only ever counted once.
 function computeObserved(arr){
-  const pts = (arr||[]).filter(s=>s.global_total_rio);
+  const pts = (arr||[]).filter(s=>s.tradable_total);
   if(pts.length<2) return null;
   const a=pts[0], b=pts[pts.length-1];
   const days=(new Date(b.ts)-new Date(a.ts))/864e5;
   if(days<0.5) return null;
-  const d=b.global_total_rio-a.global_total_rio;
+  const d=b.tradable_total-a.tradable_total;
   return {days, netNew:d, perDay:d/days};
 }
 // Most recent consecutive pair of snapshots = the freshest reading available.
@@ -477,12 +485,12 @@ function computeObserved(arr){
 // burns exceed emission. One sample, so it is noisier - cross-chain bridge
 // transfers are not atomic, and a snapshot landing mid-transfer skews the day.
 function computeLast24h(arr){
-  const pts = (arr||[]).filter(s=>s.global_total_rio);
+  const pts = (arr||[]).filter(s=>s.tradable_total);
   if(pts.length<2) return null;
   const a=pts[pts.length-2], b=pts[pts.length-1];
   const days=(new Date(b.ts)-new Date(a.ts))/864e5;
   if(!(days>0)) return null;
-  const d=b.global_total_rio-a.global_total_rio;
+  const d=b.tradable_total-a.tradable_total;
   return {days, netNew:d, perDay:d/days};
 }
 function render(latest, liveSeries, fullArr){
@@ -521,10 +529,10 @@ function render(latest, liveSeries, fullArr){
     const pct = infl ? (infl*100).toFixed(0) : "8";
     if(ed && obs.perDay <= ed*1.25){
       dot.className="idot ok";
-      it.textContent="Global RIO supply is growing within the scheduled ~"+pct+"% emission. No unexplained minting detected over the measured window.";
+      it.textContent="Circulating RIO supply is growing within the scheduled ~"+pct+"% emission. No unexplained minting detected over the measured window.";
     } else if(ed){
       dot.className="idot warn";
-      it.textContent="Global RIO supply grew faster than the ~"+pct+"% schedule over the measured window, worth a closer look.";
+      it.textContent="Circulating RIO supply grew faster than the ~"+pct+"% schedule over the measured window, worth a closer look.";
     }
   }
 
