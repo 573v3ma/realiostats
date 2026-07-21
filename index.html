@@ -260,11 +260,11 @@
 
 <section id="emissions"><div class="wrap">
   <h2>Emissions &amp; supply integrity</h2>
-  <p class="sec-lede">New RIO is created only through scheduled block-reward emissions, paid in RIO to stakers, and capped at 175M. Bridging moves RIO between chains without changing how much of it exists, so circulating supply should grow only at the scheduled rate. We check that every day.</p>
+  <p class="sec-lede">New RIO is issued on the Realio native chain only, through scheduled block-reward emissions paid to stakers, and native supply is capped at 175M. The token contracts on the other six chains can mint as well, but only against RIO burned or escrowed elsewhere, so bridging moves RIO between chains without changing how much of it exists. Circulating supply should therefore grow only at the scheduled rate. We check that every day.</p>
   <div class="emit">
     <div class="chip"><div class="cn">Emission rate</div><div class="cv" id="emRate">—</div><div class="cx">of unminted native supply, per year</div></div>
     <div class="chip"><div class="cn">Expected new RIO</div><div class="cv" id="emDaily">—</div><div class="cx" id="emAnnual">per day</div></div>
-    <div class="chip"><div class="cn">Long-term cap</div><div class="cv">175M</div><div class="cx">~38-year emission schedule</div></div>
+    <div class="chip"><div class="cn">Native emission cap</div><div class="cv">175M</div><div class="cx">native chain only, ~38-year schedule</div></div>
     <div class="chip"><div class="cn">Observed last 24h</div><div class="cv" id="emObs24">—</div><div class="cx" id="emObs24Note">awaiting a second reading</div></div>
     <div class="chip"><div class="cn">Observed net-new</div><div class="cv" id="emObserved">—</div><div class="cx" id="emObservedNote">accruing daily</div></div>
   </div>
@@ -600,7 +600,7 @@ function drawChart(liveSeries){
     fill: i===0 ? "origin" : "-1", stack:"s", borderWidth:1, tension:.2,
     pointRadius:liveRadius, pointBackgroundColor:s.color, pointBorderColor:"#fff", pointBorderWidth:1
   }));
-  datasets.push({label:"175M emission cap (reference)", data:labels.map(()=>175),
+  datasets.push({label:"175M native emission cap (reference)", data:labels.map(()=>175),
     borderColor:"#9aa7b2", borderWidth:1.4, borderDash:[6,5], pointRadius:0, fill:false, stack:"ref"});
   const rampEnd = 2; // index of 2025 Q2 (end of migration ramp)
   const rampPlugin = {
