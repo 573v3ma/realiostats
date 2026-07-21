@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
 """
-realiostats.com - 24h trading volume history (informational, third-party)
+realiostats.com - market history (informational, third-party)
 
-Writes volume-history.json: a rolling 30-day daily series of RIO's reported
-24h trading volume, plus a like-for-like 24h change.
+Writes volume-history.json: a rolling 30-day daily series of RIO's reported 24h
+trading volume AND its price, each with a like-for-like 24h change.
+
+NAMING NOTE: the file and script are still called "volume" for historical
+reasons; they now carry price as well. Renaming would mean editing the workflow
+that lists both artefacts by name, so the name is left alone deliberately.
 
 WHY THIS IS A SEPARATE FILE FROM supply-history.json
 ----------------------------------------------------
 supply-history.json is our own measurement: every row was read from chain by us
-at that moment, and its git history is the audit trail. Volume is EXCHANGE-
-REPORTED data fetched from an aggregator, and this file is REGENERATED each run
-rather than appended. Mixing backfilled third-party numbers into the append-only
-supply record would corrupt the one property that makes it trustworthy. Keep
-them separate.
+at that moment, and its git history is the audit trail. Volume and price are
+EXCHANGE-REPORTED data fetched from an aggregator, and this file is REGENERATED
+each run rather than appended. Mixing backfilled third-party numbers into the
+append-only supply record would corrupt the one property that makes it
+trustworthy. Keep them separate.
 
-Volume never feeds the supply-integrity checks. It is on the site for
-convenience, so nobody has to open CoinGecko to see it.
+Neither volume nor price feeds the supply-integrity checks.
 
-THE ROLLING-WINDOW TRAP
------------------------
+THE ROLLING-WINDOW TRAP (volume only)
+-------------------------------------
 CoinGecko's total_volumes is a TRAILING 24h figure sampled hourly, not a set of
 daily buckets. It climbs and falls through the day as the window slides (21 Jul
 2026 ran $198K at 04:01 to $243K at 14:26, +23% in ten hours). So:
@@ -29,7 +32,8 @@ daily buckets. It climbs and falls through the day as the window slides (21 Jul
     exactly 24h earlier, so both sides cover the same window length.
 
 Sampling at inconsistent times of day would invent trends that are really just
-the window sliding.
+the window sliding. Price is a spot value so it does not have this problem, but
+it is resampled the same way for consistency.
 
 NO CORS
 -------
@@ -39,7 +43,7 @@ call it. This must run server-side (it does, in the daily Action).
 Run:  python3 fetch_volume.py
 """
 import json, os, sys, urllib.request
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 COIN = "realio-network"
 DAYS = 30
@@ -53,27 +57,28 @@ def _get(url):
         return json.load(r)
 
 
-def fetch_series():
+def fetch_chart():
     url = (f"https://api.coingecko.com/api/v3/coins/{COIN}/market_chart"
            f"?vs_currency=usd&days={DAYS}")
-    pts = _get(url).get("total_volumes", [])
-    return [(int(ts), float(v)) for ts, v in pts if v is not None]
+    d = _get(url)
+    clean = lambda k: [(int(ts), float(v)) for ts, v in d.get(k, []) if v is not None]
+    return clean("total_volumes"), clean("prices")
 
 
-def to_daily(pts):
+def to_daily(pts, key):
     """Last sample of each UTC day -> one consistent reading per day."""
     by_day = {}
     for ts, v in pts:
-        d = datetime.fromtimestamp(ts / 1000, timezone.utc).strftime("%Y-%m-%d")
-        if d not in by_day or ts > by_day[d][0]:
-            by_day[d] = (ts, v)
-    return [{"date": d, "volume_usd": round(by_day[d][1], 2)} for d in sorted(by_day)]
+        day = datetime.fromtimestamp(ts / 1000, timezone.utc).strftime("%Y-%m-%d")
+        if day not in by_day or ts > by_day[day][0]:
+            by_day[day] = (ts, v)
+    return [{"date": d, key: round(by_day[d][1], 8)} for d in sorted(by_day)]
 
 
 def change_24h(pts):
     """Newest sample vs the sample closest to exactly 24h earlier."""
     if len(pts) < 2:
-        return None, None
+        return (pts[-1][1] if pts else None), None
     ts_new, v_new = pts[-1]
     target = ts_new - 86_400_000
     ts_old, v_old = min(pts[:-1], key=lambda p: abs(p[0] - target))
@@ -85,28 +90,35 @@ def change_24h(pts):
 
 def main():
     try:
-        pts = fetch_series()
+        vol_pts, price_pts = fetch_chart()
     except Exception as e:
-        print(f"volume fetch failed: {type(e).__name__}: {e}", file=sys.stderr)
+        print(f"market fetch failed: {type(e).__name__}: {e}", file=sys.stderr)
         sys.exit(1)
-    if len(pts) < 2:
-        print("volume fetch returned too few points", file=sys.stderr)
+    if len(vol_pts) < 2:
+        print("market fetch returned too few points", file=sys.stderr)
         sys.exit(1)
 
-    daily = to_daily(pts)
-    latest, pct = change_24h(pts)
+    vol_latest, vol_pct = change_24h(vol_pts)
+    px_latest, px_pct = change_24h(price_pts)
+
     out = {
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "source": "coingecko",
-        "note": "Exchange-reported 24h volume. Informational only; not used by the supply-integrity checks.",
-        "latest_usd": round(latest, 2) if latest else None,
-        "change_24h_pct": pct,
-        "daily": daily[-DAYS:],
+        "note": ("Exchange-reported 24h volume and price. Informational only; "
+                 "not used by the supply-integrity checks."),
+        "latest_usd": round(vol_latest, 2) if vol_latest else None,
+        "change_24h_pct": vol_pct,
+        "daily": to_daily(vol_pts, "volume_usd")[-DAYS:],
+        "price_latest_usd": round(px_latest, 8) if px_latest else None,
+        "price_change_24h_pct": px_pct,
+        "price_daily": to_daily(price_pts, "price_usd")[-DAYS:],
     }
     json.dump(out, open(OUT, "w"), indent=2)
-    arrow = "n/a" if pct is None else f"{pct:+.2f}%"
-    print(f"volume-history.json: {len(out['daily'])} days, "
-          f"latest ${out['latest_usd']:,.0f}, 24h change {arrow}")
+    fv = "n/a" if vol_pct is None else f"{vol_pct:+.2f}%"
+    fp = "n/a" if px_pct is None else f"{px_pct:+.2f}%"
+    print(f"volume-history.json: {len(out['daily'])} days | "
+          f"volume ${out['latest_usd']:,.0f} ({fv}) | "
+          f"price ${out['price_latest_usd']:.5f} ({fp})")
 
 
 if __name__ == "__main__":

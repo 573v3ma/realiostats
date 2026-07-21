@@ -78,6 +78,12 @@
   .hm .chg{font-family:"Space Grotesk";font-size:13px;font-weight:600;margin-left:8px;letter-spacing:-.01em;white-space:nowrap}
   .hm .chg.up{color:var(--mint)} .hm .chg.down{color:#fb7185} .hm .chg.flat{color:var(--card-muted)}
   .hm .spark{margin-top:9px;height:26px;display:block;overflow:visible}
+  .supply-trend{display:flex;align-items:center;gap:12px;margin-top:16px;flex-wrap:wrap}
+  .supply-trend .spark{height:26px;display:block;overflow:visible}
+  .supply-trend .chg{font-family:"Space Grotesk";font-size:13px;font-weight:600;letter-spacing:-.01em}
+  .supply-trend .chg.up{color:var(--mint)} .supply-trend .chg.down{color:#fb7185}
+  .supply-trend .chg.flat{color:var(--card-muted)}
+  .supply-trend .st-note{font-size:11.5px;color:var(--card-muted)}
   /* assumptions callout */
   .assume{border:1px solid var(--line);border-left:3px solid var(--green);border-radius:var(--radius-sm);
     padding:26px 28px;background:linear-gradient(180deg,var(--alt),#fbfcfc)}
@@ -246,8 +252,9 @@
     <div class="k">Multichain circulating supply</div>
     <div class="num" id="multiNum">326M</div>
     <div class="sub" id="multiSub">RIO · across 7 chains, counted once</div>
+    <div class="supply-trend"><svg class="spark" id="supplySpark" width="150" height="26" viewBox="0 0 150 26" preserveAspectRatio="none" aria-hidden="true"></svg><span class="chg" id="supplyChg"></span><span class="st-note" id="supplyNote"></span></div>
     <div class="hero-metrics">
-      <div class="hm"><div class="hmk">RIO price</div><div class="hmv" id="priceNum">—</div><div class="hmx" id="priceSrc">at time of refresh</div></div>
+      <div class="hm"><div class="hmk">RIO price</div><div class="hmv"><span id="priceNum">—</span><span class="chg" id="priceChg"></span></div><svg class="spark" id="priceSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="priceSrc">at time of refresh</div></div>
       <div class="hm"><div class="hmk">Circulating market cap</div><div class="hmv" id="mcapNum">—</div><div class="hmx">circulating supply × price</div></div>
       <div class="hm"><div class="hmk">24h trading volume</div><div class="hmv"><span id="volNum">—</span><span class="chg" id="volChg"></span></div><svg class="spark" id="volSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="volSrc">exchange-reported</div></div>
     </div>
@@ -524,10 +531,50 @@ function computeLast24h(arr){
   const d=netNewSupply(b)-netNewSupply(a);
   return {days, netNew:d, perDay:d/days};
 }
-// Volume trend, from volume-history.json (third-party, regenerated daily).
-// Separate from render() because it is a separate file with its own failure
-// mode: if it is missing or stale, the headline volume from the snapshot still
-// shows, just without the change and sparkline. Never touches the integrity checks.
+// Sparkline. minRangePct is the honesty control: a plain min/max scale stretches
+// ANY series to fill the box, so a 0.06% drift renders as a mountain range. If
+// the real spread is smaller than minRangePct of the midpoint, the scale is
+// widened so the line renders flat, which is what actually happened. Circulating
+// supply moves ~0.06% in ten days and MUST look flat; price and volume swing
+// tens of percent and are unaffected.
+function drawSpark(id, pts, label, minRangePct){
+  const svg = document.getElementById(id);
+  if(!svg) return;
+  if(!pts || pts.length < 2){ svg.style.display = "none"; return; }
+  const W = +svg.getAttribute("width") || 132, H = 26, PAD = 3;
+  let min = Math.min(...pts), max = Math.max(...pts);
+  const mid = (min + max) / 2 || 1;
+  const floor = Math.abs(mid) * (minRangePct || 0) / 100;
+  if((max - min) < floor){ min = mid - floor/2; max = mid + floor/2; }
+  const span = (max - min) || 1;
+  const x = i => i * (W / (pts.length - 1));
+  const y = n => H - PAD - ((n - min) / span) * (H - PAD*2);
+  const line = pts.map((n,i)=>`${i?"L":"M"}${x(i).toFixed(1)},${y(n).toFixed(1)}`).join(" ");
+  svg.innerHTML =
+    `<path d="${line} L${W},${H} L0,${H} Z" fill="rgba(52,211,153,.14)"/>`+
+    `<path d="${line}" fill="none" stroke="#34d399" stroke-width="1.5" `+
+    `stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`+
+    `<circle cx="${x(pts.length-1).toFixed(1)}" cy="${y(pts[pts.length-1]).toFixed(1)}" r="2.2" fill="#34d399"/>`;
+  svg.setAttribute("role","img");
+  svg.setAttribute("aria-label", label);
+}
+
+// Shared change chip. deadband suppresses direction for moves too small to mean
+// anything, so it reads "flat" rather than implying a trend from noise.
+function setChg(id, pct, deadband, tip){
+  const el = document.getElementById(id);
+  if(!el || typeof pct !== "number") return;
+  const dir = pct > deadband ? "up" : (pct < -deadband ? "down" : "flat");
+  el.className = "chg " + dir;
+  el.textContent = (dir==="up"?"▲ ":dir==="down"?"▼ ":"") + (pct>=0?"+":"") + pct.toFixed(pct===0?0:2).replace(/\.?0+$/,"") + "%";
+  el.title = tip;
+}
+
+// Volume + price trend, from volume-history.json (third-party, regenerated
+// daily). Separate from render() because it is a separate file with its own
+// failure mode: if it is missing or stale, the headline figures from the
+// snapshot still show, just without the change and sparkline. Never touches the
+// integrity checks.
 function renderVolumeTrend(v){
   if(!v) return;
   if(typeof v.latest_usd === "number"){
@@ -535,31 +582,30 @@ function renderVolumeTrend(v){
     document.getElementById("volSrc").innerHTML =
       'exchange-reported · <a href="https://www.coingecko.com/en/coins/realio-network" target="_blank" rel="noopener">see markets</a>';
   }
-  const chg = document.getElementById("volChg");
-  if(typeof v.change_24h_pct === "number"){
-    const p = v.change_24h_pct;
-    // 0.5% deadband: tiny moves on a ~$200K market are noise, not direction.
-    const dir = p > 0.5 ? "up" : (p < -0.5 ? "down" : "flat");
-    chg.className = "chg " + dir;
-    chg.textContent = (dir==="up"?"▲ ":dir==="down"?"▼ ":"") + (p>=0?"+":"") + p.toFixed(1) + "%";
-    chg.title = "versus the same 24h window one day earlier";
-  }
-  const pts = (v.daily||[]).map(d=>d.volume_usd).filter(n=>typeof n === "number");
-  const svg = document.getElementById("volSpark");
-  if(!svg) return;
-  if(pts.length < 2){ svg.style.display = "none"; return; }
-  const W=132, H=26, PAD=3;
-  const min=Math.min(...pts), max=Math.max(...pts), span=(max-min)||1;
-  const x=i=>i*(W/(pts.length-1));
-  const y=n=>H-PAD-((n-min)/span)*(H-PAD*2);
-  const line=pts.map((n,i)=>`${i?"L":"M"}${x(i).toFixed(1)},${y(n).toFixed(1)}`).join(" ");
-  svg.innerHTML =
-    `<path d="${line} L${W},${H} L0,${H} Z" fill="rgba(52,211,153,.14)"/>`+
-    `<path d="${line}" fill="none" stroke="#34d399" stroke-width="1.5" `+
-    `stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`+
-    `<circle cx="${x(pts.length-1).toFixed(1)}" cy="${y(pts[pts.length-1]).toFixed(1)}" r="2.2" fill="#34d399"/>`;
-  svg.setAttribute("role","img");
-  svg.setAttribute("aria-label",`Reported 24h trading volume over the last ${pts.length} days`);
+  setChg("volChg", v.change_24h_pct, 0.5, "versus the same 24h window one day earlier");
+  const vp = (v.daily||[]).map(d=>d.volume_usd).filter(n=>typeof n === "number");
+  drawSpark("volSpark", vp, `Reported 24h trading volume over the last ${vp.length} days`, 0);
+
+  setChg("priceChg", v.price_change_24h_pct, 0.5, "versus 24 hours earlier");
+  const pp = (v.price_daily||[]).map(d=>d.price_usd).filter(n=>typeof n === "number");
+  drawSpark("priceSpark", pp, `RIO price over the last ${pp.length} days`, 0);
+}
+
+// Circulating supply trend. Unlike volume and price this is OUR OWN measurement,
+// read from supply-history.json, so it only goes back to the day the pipeline
+// started rather than being backfilled from a third party.
+function renderSupplyTrend(arr){
+  const pts = (arr||[]).map(s=>s.tradable_total).filter(n=>typeof n === "number");
+  if(pts.length < 2) return;
+  const first = pts[0], last = pts[pts.length-1];
+  const pct = (last - first) / first * 100;
+  // 0.02% deadband: supply moves ~0.006%/day, so anything smaller is one day's noise.
+  setChg("supplyChg", pct, 0.02, "change since the first snapshot we recorded");
+  drawSpark("supplySpark", pts, `Circulating supply over the last ${pts.length} days`, 4);
+  const days = Math.max(1, Math.round(
+    (new Date(arr[arr.length-1].ts) - new Date(arr[0].ts)) / 864e5));
+  document.getElementById("supplyNote").textContent =
+    `over ${days} days measured · ~${Math.round((last-first)/days).toLocaleString("en-US")} RIO/day`;
 }
 
 function render(latest, liveSeries, fullArr){
@@ -598,6 +644,7 @@ function render(latest, liveSeries, fullArr){
       ? "latest snapshot vs previous"
       : "latest pair, "+l24.days.toFixed(1)+" days apart, as a daily rate";
   }
+  renderSupplyTrend(fullArr);
   const obs = computeObserved(fullArr);
   const dot = document.getElementById("iDot"), it = document.getElementById("iText");
   if(obs){

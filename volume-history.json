@@ -1,129 +1,253 @@
 {
-  "generated_at": "2026-07-21T14:27:11Z",
+  "generated_at": "2026-07-21T14:43:06Z",
   "source": "coingecko",
-  "note": "Exchange-reported 24h volume. Informational only; not used by the supply-integrity checks.",
-  "latest_usd": 243305.57,
-  "change_24h_pct": 49.83,
+  "note": "Exchange-reported 24h volume and price. Informational only; not used by the supply-integrity checks.",
+  "latest_usd": 252398.46,
+  "change_24h_pct": 64.63,
   "daily": [
     {
       "date": "2026-06-22",
-      "volume_usd": 335169.99
+      "volume_usd": 335169.98699312
     },
     {
       "date": "2026-06-23",
-      "volume_usd": 310328.72
+      "volume_usd": 310328.72027565
     },
     {
       "date": "2026-06-24",
-      "volume_usd": 330262.84
+      "volume_usd": 330262.84460609
     },
     {
       "date": "2026-06-25",
-      "volume_usd": 290293.0
+      "volume_usd": 290293.00246407
     },
     {
       "date": "2026-06-26",
-      "volume_usd": 210696.74
+      "volume_usd": 210696.73678609
     },
     {
       "date": "2026-06-27",
-      "volume_usd": 259024.84
+      "volume_usd": 259024.84004872
     },
     {
       "date": "2026-06-28",
-      "volume_usd": 255113.43
+      "volume_usd": 255113.42507939
     },
     {
       "date": "2026-06-29",
-      "volume_usd": 308040.22
+      "volume_usd": 308040.22456644
     },
     {
       "date": "2026-06-30",
-      "volume_usd": 464337.67
+      "volume_usd": 464337.66563904
     },
     {
       "date": "2026-07-01",
-      "volume_usd": 291884.48
+      "volume_usd": 291884.48467248
     },
     {
       "date": "2026-07-02",
-      "volume_usd": 374884.06
+      "volume_usd": 374884.05723969
     },
     {
       "date": "2026-07-03",
-      "volume_usd": 404044.79
+      "volume_usd": 404044.78520818
     },
     {
       "date": "2026-07-04",
-      "volume_usd": 303381.82
+      "volume_usd": 303381.82484943
     },
     {
       "date": "2026-07-05",
-      "volume_usd": 268475.54
+      "volume_usd": 268475.54286449
     },
     {
       "date": "2026-07-06",
-      "volume_usd": 298152.38
+      "volume_usd": 298152.38472671
     },
     {
       "date": "2026-07-07",
-      "volume_usd": 315202.46
+      "volume_usd": 315202.46030074
     },
     {
       "date": "2026-07-08",
-      "volume_usd": 317326.46
+      "volume_usd": 317326.45591059
     },
     {
       "date": "2026-07-09",
-      "volume_usd": 206775.25
+      "volume_usd": 206775.24703192
     },
     {
       "date": "2026-07-10",
-      "volume_usd": 199383.98
+      "volume_usd": 199383.97551913
     },
     {
       "date": "2026-07-11",
-      "volume_usd": 199777.08
+      "volume_usd": 199777.07541861
     },
     {
       "date": "2026-07-12",
-      "volume_usd": 219226.33
+      "volume_usd": 219226.32686752
     },
     {
       "date": "2026-07-13",
-      "volume_usd": 237264.51
+      "volume_usd": 237264.51275923
     },
     {
       "date": "2026-07-14",
-      "volume_usd": 255161.33
+      "volume_usd": 255161.32615509
     },
     {
       "date": "2026-07-15",
-      "volume_usd": 227903.69
+      "volume_usd": 227903.6896973
     },
     {
       "date": "2026-07-16",
-      "volume_usd": 196574.3
+      "volume_usd": 196574.29981279
     },
     {
       "date": "2026-07-17",
-      "volume_usd": 141322.32
+      "volume_usd": 141322.32052982
     },
     {
       "date": "2026-07-18",
-      "volume_usd": 141211.04
+      "volume_usd": 141211.04367472
     },
     {
       "date": "2026-07-19",
-      "volume_usd": 169324.08
+      "volume_usd": 169324.0766839
     },
     {
       "date": "2026-07-20",
-      "volume_usd": 185766.17
+      "volume_usd": 185766.16704358
     },
     {
       "date": "2026-07-21",
-      "volume_usd": 243305.57
+      "volume_usd": 252398.46306903
+    }
+  ],
+  "price_latest_usd": 0.03613548,
+  "price_change_24h_pct": 15.91,
+  "price_daily": [
+    {
+      "date": "2026-06-22",
+      "price_usd": 0.03247205
+    },
+    {
+      "date": "2026-06-23",
+      "price_usd": 0.03019768
+    },
+    {
+      "date": "2026-06-24",
+      "price_usd": 0.03134266
+    },
+    {
+      "date": "2026-06-25",
+      "price_usd": 0.03093493
+    },
+    {
+      "date": "2026-06-26",
+      "price_usd": 0.03153321
+    },
+    {
+      "date": "2026-06-27",
+      "price_usd": 0.03092545
+    },
+    {
+      "date": "2026-06-28",
+      "price_usd": 0.0299392
+    },
+    {
+      "date": "2026-06-29",
+      "price_usd": 0.0295589
+    },
+    {
+      "date": "2026-06-30",
+      "price_usd": 0.0279873
+    },
+    {
+      "date": "2026-07-01",
+      "price_usd": 0.02995956
+    },
+    {
+      "date": "2026-07-02",
+      "price_usd": 0.03479578
+    },
+    {
+      "date": "2026-07-03",
+      "price_usd": 0.03727225
+    },
+    {
+      "date": "2026-07-04",
+      "price_usd": 0.03559495
+    },
+    {
+      "date": "2026-07-05",
+      "price_usd": 0.03907918
+    },
+    {
+      "date": "2026-07-06",
+      "price_usd": 0.03716839
+    },
+    {
+      "date": "2026-07-07",
+      "price_usd": 0.0346115
+    },
+    {
+      "date": "2026-07-08",
+      "price_usd": 0.03255652
+    },
+    {
+      "date": "2026-07-09",
+      "price_usd": 0.03155485
+    },
+    {
+      "date": "2026-07-10",
+      "price_usd": 0.03207168
+    },
+    {
+      "date": "2026-07-11",
+      "price_usd": 0.03153894
+    },
+    {
+      "date": "2026-07-12",
+      "price_usd": 0.030336
+    },
+    {
+      "date": "2026-07-13",
+      "price_usd": 0.02883207
+    },
+    {
+      "date": "2026-07-14",
+      "price_usd": 0.03210766
+    },
+    {
+      "date": "2026-07-15",
+      "price_usd": 0.03226289
+    },
+    {
+      "date": "2026-07-16",
+      "price_usd": 0.03136275
+    },
+    {
+      "date": "2026-07-17",
+      "price_usd": 0.0317306
+    },
+    {
+      "date": "2026-07-18",
+      "price_usd": 0.03139085
+    },
+    {
+      "date": "2026-07-19",
+      "price_usd": 0.03193035
+    },
+    {
+      "date": "2026-07-20",
+      "price_usd": 0.03538624
+    },
+    {
+      "date": "2026-07-21",
+      "price_usd": 0.03613548
     }
   ]
 }
