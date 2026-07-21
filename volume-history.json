@@ -1,0 +1,129 @@
+{
+  "generated_at": "2026-07-21T14:27:11Z",
+  "source": "coingecko",
+  "note": "Exchange-reported 24h volume. Informational only; not used by the supply-integrity checks.",
+  "latest_usd": 243305.57,
+  "change_24h_pct": 49.83,
+  "daily": [
+    {
+      "date": "2026-06-22",
+      "volume_usd": 335169.99
+    },
+    {
+      "date": "2026-06-23",
+      "volume_usd": 310328.72
+    },
+    {
+      "date": "2026-06-24",
+      "volume_usd": 330262.84
+    },
+    {
+      "date": "2026-06-25",
+      "volume_usd": 290293.0
+    },
+    {
+      "date": "2026-06-26",
+      "volume_usd": 210696.74
+    },
+    {
+      "date": "2026-06-27",
+      "volume_usd": 259024.84
+    },
+    {
+      "date": "2026-06-28",
+      "volume_usd": 255113.43
+    },
+    {
+      "date": "2026-06-29",
+      "volume_usd": 308040.22
+    },
+    {
+      "date": "2026-06-30",
+      "volume_usd": 464337.67
+    },
+    {
+      "date": "2026-07-01",
+      "volume_usd": 291884.48
+    },
+    {
+      "date": "2026-07-02",
+      "volume_usd": 374884.06
+    },
+    {
+      "date": "2026-07-03",
+      "volume_usd": 404044.79
+    },
+    {
+      "date": "2026-07-04",
+      "volume_usd": 303381.82
+    },
+    {
+      "date": "2026-07-05",
+      "volume_usd": 268475.54
+    },
+    {
+      "date": "2026-07-06",
+      "volume_usd": 298152.38
+    },
+    {
+      "date": "2026-07-07",
+      "volume_usd": 315202.46
+    },
+    {
+      "date": "2026-07-08",
+      "volume_usd": 317326.46
+    },
+    {
+      "date": "2026-07-09",
+      "volume_usd": 206775.25
+    },
+    {
+      "date": "2026-07-10",
+      "volume_usd": 199383.98
+    },
+    {
+      "date": "2026-07-11",
+      "volume_usd": 199777.08
+    },
+    {
+      "date": "2026-07-12",
+      "volume_usd": 219226.33
+    },
+    {
+      "date": "2026-07-13",
+      "volume_usd": 237264.51
+    },
+    {
+      "date": "2026-07-14",
+      "volume_usd": 255161.33
+    },
+    {
+      "date": "2026-07-15",
+      "volume_usd": 227903.69
+    },
+    {
+      "date": "2026-07-16",
+      "volume_usd": 196574.3
+    },
+    {
+      "date": "2026-07-17",
+      "volume_usd": 141322.32
+    },
+    {
+      "date": "2026-07-18",
+      "volume_usd": 141211.04
+    },
+    {
+      "date": "2026-07-19",
+      "volume_usd": 169324.08
+    },
+    {
+      "date": "2026-07-20",
+      "volume_usd": 185766.17
+    },
+    {
+      "date": "2026-07-21",
+      "volume_usd": 243305.57
+    }
+  ]
+}

@@ -75,6 +75,9 @@
   .hm .hmx{font-size:11.5px;color:var(--card-muted);margin-top:7px}
   .hm .hmx a{color:var(--mint);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.22)}
   .hm .hmx a:hover{border-bottom-color:var(--mint)}
+  .hm .chg{font-family:"Space Grotesk";font-size:13px;font-weight:600;margin-left:8px;letter-spacing:-.01em;white-space:nowrap}
+  .hm .chg.up{color:var(--mint)} .hm .chg.down{color:#fb7185} .hm .chg.flat{color:var(--card-muted)}
+  .hm .spark{margin-top:9px;height:26px;display:block;overflow:visible}
   /* assumptions callout */
   .assume{border:1px solid var(--line);border-left:3px solid var(--green);border-radius:var(--radius-sm);
     padding:26px 28px;background:linear-gradient(180deg,var(--alt),#fbfcfc)}
@@ -246,7 +249,7 @@
     <div class="hero-metrics">
       <div class="hm"><div class="hmk">RIO price</div><div class="hmv" id="priceNum">—</div><div class="hmx" id="priceSrc">at time of refresh</div></div>
       <div class="hm"><div class="hmk">Circulating market cap</div><div class="hmv" id="mcapNum">—</div><div class="hmx">circulating supply × price</div></div>
-      <div class="hm"><div class="hmk">24h trading volume</div><div class="hmv" id="volNum">—</div><div class="hmx" id="volSrc">exchange-reported</div></div>
+      <div class="hm"><div class="hmk">24h trading volume</div><div class="hmv"><span id="volNum">—</span><span class="chg" id="volChg"></span></div><svg class="spark" id="volSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="volSrc">exchange-reported</div></div>
     </div>
     <div class="updated">Last updated <b id="updated">—</b> · refreshes daily from a public, open-source pipeline.</div>
   </div>
@@ -521,6 +524,44 @@ function computeLast24h(arr){
   const d=netNewSupply(b)-netNewSupply(a);
   return {days, netNew:d, perDay:d/days};
 }
+// Volume trend, from volume-history.json (third-party, regenerated daily).
+// Separate from render() because it is a separate file with its own failure
+// mode: if it is missing or stale, the headline volume from the snapshot still
+// shows, just without the change and sparkline. Never touches the integrity checks.
+function renderVolumeTrend(v){
+  if(!v) return;
+  if(typeof v.latest_usd === "number"){
+    document.getElementById("volNum").textContent = fmtUsd(v.latest_usd);
+    document.getElementById("volSrc").innerHTML =
+      'exchange-reported · <a href="https://www.coingecko.com/en/coins/realio-network" target="_blank" rel="noopener">see markets</a>';
+  }
+  const chg = document.getElementById("volChg");
+  if(typeof v.change_24h_pct === "number"){
+    const p = v.change_24h_pct;
+    // 0.5% deadband: tiny moves on a ~$200K market are noise, not direction.
+    const dir = p > 0.5 ? "up" : (p < -0.5 ? "down" : "flat");
+    chg.className = "chg " + dir;
+    chg.textContent = (dir==="up"?"▲ ":dir==="down"?"▼ ":"") + (p>=0?"+":"") + p.toFixed(1) + "%";
+    chg.title = "versus the same 24h window one day earlier";
+  }
+  const pts = (v.daily||[]).map(d=>d.volume_usd).filter(n=>typeof n === "number");
+  const svg = document.getElementById("volSpark");
+  if(!svg) return;
+  if(pts.length < 2){ svg.style.display = "none"; return; }
+  const W=132, H=26, PAD=3;
+  const min=Math.min(...pts), max=Math.max(...pts), span=(max-min)||1;
+  const x=i=>i*(W/(pts.length-1));
+  const y=n=>H-PAD-((n-min)/span)*(H-PAD*2);
+  const line=pts.map((n,i)=>`${i?"L":"M"}${x(i).toFixed(1)},${y(n).toFixed(1)}`).join(" ");
+  svg.innerHTML =
+    `<path d="${line} L${W},${H} L0,${H} Z" fill="rgba(52,211,153,.14)"/>`+
+    `<path d="${line}" fill="none" stroke="#34d399" stroke-width="1.5" `+
+    `stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`+
+    `<circle cx="${x(pts.length-1).toFixed(1)}" cy="${y(pts[pts.length-1]).toFixed(1)}" r="2.2" fill="#34d399"/>`;
+  svg.setAttribute("role","img");
+  svg.setAttribute("aria-label",`Reported 24h trading volume over the last ${pts.length} days`);
+}
+
 function render(latest, liveSeries, fullArr){
   const multi = latest.tradable_total;
   document.getElementById("multiNum").textContent = fmtM(M(multi));
@@ -678,6 +719,10 @@ fetch("./supply-history.json",{cache:"no-store"}).then(r=>r.json()).then(arr=>{
 }).catch(()=>{
   render(FALLBACK, [perChain(FALLBACK)], [FALLBACK]);
 });
+
+// Independent of the supply render: a volume failure must never blank the page.
+fetch("./volume-history.json",{cache:"no-store"})
+  .then(r=>r.ok?r.json():null).then(renderVolumeTrend).catch(()=>{});
 </script>
 </body>
 </html>
