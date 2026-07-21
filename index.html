@@ -255,7 +255,7 @@
     <div class="supply-trend"><svg class="spark" id="supplySpark" width="150" height="26" viewBox="0 0 150 26" preserveAspectRatio="none" aria-hidden="true"></svg><span class="chg" id="supplyChg"></span><span class="st-note" id="supplyNote"></span></div>
     <div class="hero-metrics">
       <div class="hm"><div class="hmk">RIO price</div><div class="hmv"><span id="priceNum">—</span><span class="chg" id="priceChg"></span></div><svg class="spark" id="priceSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="priceSrc">at time of refresh</div></div>
-      <div class="hm"><div class="hmk">Circulating market cap</div><div class="hmv" id="mcapNum">—</div><div class="hmx">circulating supply × price</div></div>
+      <div class="hm"><div class="hmk">Circulating market cap</div><div class="hmv"><span id="mcapNum">—</span><span class="chg" id="mcapChg"></span></div><svg class="spark" id="mcapSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx">circulating supply × price</div></div>
       <div class="hm"><div class="hmk">24h trading volume</div><div class="hmv"><span id="volNum">—</span><span class="chg" id="volChg"></span></div><svg class="spark" id="volSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="volSrc">exchange-reported</div></div>
     </div>
     <div class="updated">Last updated <b id="updated">—</b> · refreshes daily from a public, open-source pipeline.</div>
@@ -591,6 +591,19 @@ function renderVolumeTrend(v){
   drawSpark("priceSpark", pp, `RIO price over the last ${pp.length} days`, 0);
 }
 
+// Circulating market cap trend. Deliberately NOT CoinGecko's market cap, which
+// is computed from their hard-coded 100M circulating supply, the very figure
+// this site disputes. This series is our own: tradable_total x price, as
+// recorded in each snapshot, so it is internally consistent with the headline.
+// That also means it only reaches back to the first snapshot, not 30 days.
+function renderMcapTrend(arr){
+  const pts = (arr||[]).map(s=>s.market_cap_usd).filter(n=>typeof n === "number");
+  if(pts.length < 2) return;
+  const prev = pts[pts.length-2], last = pts[pts.length-1];
+  setChg("mcapChg", (last-prev)/prev*100, 0.5, "versus the previous daily snapshot");
+  drawSpark("mcapSpark", pts, `Circulating market cap over the last ${pts.length} days`, 2);
+}
+
 // Circulating supply trend. Unlike volume and price this is OUR OWN measurement,
 // read from supply-history.json, so it only goes back to the day the pipeline
 // started rather than being backfilled from a third party.
@@ -645,6 +658,7 @@ function render(latest, liveSeries, fullArr){
       : "latest pair, "+l24.days.toFixed(1)+" days apart, as a daily rate";
   }
   renderSupplyTrend(fullArr);
+  renderMcapTrend(fullArr);
   const obs = computeObserved(fullArr);
   const dot = document.getElementById("iDot"), it = document.getElementById("iText");
   if(obs){
