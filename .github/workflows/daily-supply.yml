@@ -28,6 +28,54 @@ jobs:
         # If any chain fails on ALL its endpoints, append_snapshot.py exits 1,
         # this step goes red, nothing is committed, and GitHub notifies you.
 
+      # Informational only. Volume is exchange-reported, never feeds the
+      # integrity checks, so a failure here must NOT fail the run or block the
+      # supply snapshot from being committed.
+      - name: Refresh 24h volume history
+        continue-on-error: true
+        run: python fetch_volume.py
+
+      - name: Commit snapshot if changed
+        run: |
+          git config user.name  "realiostats-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if ! git diff --quiet -- supply-history.json volume-history.json; then
+            git add supply-history.json volume-history.json
+            git commit -m "supply snapshot $(date -u +%Y-%m-%d)"
+            git push
+          else
+            echo "No change to supply-history.json / volume-history.json - nothing to commit."
+          fi
+name: Daily RIO supply snapshot
+
+on:
+  schedule:
+    - cron: "0 6 * * *"        # 06:00 UTC every day
+  workflow_dispatch: {}          # manual "Run workflow" button
+
+permissions:
+  contents: write                # allow the job to commit the new snapshot
+
+concurrency:
+  group: supply-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # No dependencies to install - fetch_supply.py uses only the stdlib.
+      - name: Fetch + append snapshot
+        run: python append_snapshot.py
+        # If any chain fails on ALL its endpoints, append_snapshot.py exits 1,
+        # this step goes red, nothing is committed, and GitHub notifies you.
+
       - name: Commit snapshot if changed
         run: |
           git config user.name  "realiostats-bot"
