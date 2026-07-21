@@ -78,12 +78,6 @@
   .hm .chg{font-family:"Space Grotesk";font-size:13px;font-weight:600;margin-left:8px;letter-spacing:-.01em;white-space:nowrap}
   .hm .chg.up{color:var(--mint)} .hm .chg.down{color:#fb7185} .hm .chg.flat{color:var(--card-muted)}
   .hm .spark{margin-top:9px;height:26px;display:block;overflow:visible}
-  .supply-trend{display:flex;align-items:center;gap:12px;margin-top:16px;flex-wrap:wrap}
-  .supply-trend .spark{height:26px;display:block;overflow:visible}
-  .supply-trend .chg{font-family:"Space Grotesk";font-size:13px;font-weight:600;letter-spacing:-.01em}
-  .supply-trend .chg.up{color:var(--mint)} .supply-trend .chg.down{color:#fb7185}
-  .supply-trend .chg.flat{color:var(--card-muted)}
-  .supply-trend .st-note{font-size:11.5px;color:var(--card-muted)}
   /* assumptions callout */
   .assume{border:1px solid var(--line);border-left:3px solid var(--green);border-radius:var(--radius-sm);
     padding:26px 28px;background:linear-gradient(180deg,var(--alt),#fbfcfc)}
@@ -252,7 +246,6 @@
     <div class="k">Multichain circulating supply</div>
     <div class="num" id="multiNum">326M</div>
     <div class="sub" id="multiSub">RIO · across 7 chains, counted once</div>
-    <div class="supply-trend"><svg class="spark" id="supplySpark" width="150" height="26" viewBox="0 0 150 26" preserveAspectRatio="none" aria-hidden="true"></svg><span class="chg" id="supplyChg"></span><span class="st-note" id="supplyNote"></span></div>
     <div class="hero-metrics">
       <div class="hm"><div class="hmk">RIO price</div><div class="hmv"><span id="priceNum">—</span><span class="chg" id="priceChg"></span></div><svg class="spark" id="priceSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="priceSrc">at time of refresh</div></div>
       <div class="hm"><div class="hmk">Circulating market cap</div><div class="hmv"><span id="mcapNum">—</span><span class="chg" id="mcapChg"></span></div><svg class="spark" id="mcapSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx">circulating supply × price</div></div>
@@ -604,29 +597,13 @@ function renderMcapTrend(arr){
   drawSpark("mcapSpark", pts, `Circulating market cap over the last ${pts.length} days`, 2);
 }
 
-// Circulating supply trend. Unlike volume and price this is OUR OWN measurement,
-// read from supply-history.json, so it only goes back to the day the pipeline
-// started rather than being backfilled from a third party.
-function renderSupplyTrend(arr){
-  const pts = (arr||[]).map(s=>s.tradable_total).filter(n=>typeof n === "number");
-  if(pts.length < 2) return;
-  const first = pts[0], last = pts[pts.length-1];
-  const pct = (last - first) / first * 100;
-  // 0.02% deadband: supply moves ~0.006%/day, so anything smaller is one day's noise.
-  setChg("supplyChg", pct, 0.02, "change since the first snapshot we recorded");
-  drawSpark("supplySpark", pts, `Circulating supply over the last ${pts.length} days`, 4);
-  const days = Math.max(1, Math.round(
-    (new Date(arr[arr.length-1].ts) - new Date(arr[0].ts)) / 864e5));
-  // Deliberately NO per-day rate here. This series is tradable_total, so its
-  // daily rate is FLOAT growth (emission + pre-existing RIO released from team
-  // wallets). The Emissions panel shows NEW SUPPLY (emission minus burns), which
-  // adds team-held balances back. Over 11-21 Jul those differed by ~2,074/day
-  // because the Algorand wallets released 20,730 RIO into float. Publishing both
-  // as "RIO/day" invited exactly the confusion this note now avoids: per-day
-  // rates live in the Emissions panel, where they are defined.
-  document.getElementById("supplyNote").textContent =
-    `over ${days} days measured · see Emissions for the rate`;
-}
+// NOTE: there is deliberately no circulating-supply trend in the hero. A raw
+// tradable_total series grows through BOTH emission and pre-existing RIO being
+// released from team wallets, so its per-day rate (19,655 over 11-21 Jul) does
+// not match the Emissions panel's new-supply rate (17,589), which adds team-held
+// balances back. Two "RIO/day" figures with different definitions on one page
+// caused real confusion. Supply-over-time lives in the Evolution chart, and
+// per-day rates live in the Emissions panel, each defined once.
 
 function render(latest, liveSeries, fullArr){
   const multi = latest.tradable_total;
@@ -664,7 +641,6 @@ function render(latest, liveSeries, fullArr){
       ? "latest snapshot vs previous"
       : "latest pair, "+l24.days.toFixed(1)+" days apart, as a daily rate";
   }
-  renderSupplyTrend(fullArr);
   renderMcapTrend(fullArr);
   const obs = computeObserved(fullArr);
   const dot = document.getElementById("iDot"), it = document.getElementById("iText");
