@@ -578,5 +578,63 @@
     "expected_annual_emission_rio": 7172732.4,
     "expected_daily_emission_rio": 19651.32,
     "flags": []
+  },
+  {
+    "ts": "2026-07-21T08:06:02Z",
+    "chains": {
+      "realio_native": {
+        "total": 85356332.0817,
+        "bridge_escrow": 0.0,
+        "circulating": 85356332.0817,
+        "_source": "https://realio-api.noders.services"
+      },
+      "bnb": {
+        "total_supply": 156430219.0704,
+        "_source": "https://bsc-rpc.publicnode.com",
+        "circulating": 156430219.0704
+      },
+      "ethereum": {
+        "total_supply": 70955076.2636,
+        "base_bridge_lock": 2008451.5108,
+        "_source": "https://ethereum-rpc.publicnode.com",
+        "circulating": 70955076.2636
+      },
+      "algorand": {
+        "total_supply": 100000000.0,
+        "reserve": 43799313.1823,
+        "bridge_wallet": 48400426.1749,
+        "circulating": 7800260.6428,
+        "_source": "https://mainnet-api.algonode.cloud"
+      },
+      "stellar": {
+        "total_supply": 74999848.3883,
+        "treasury": 69847726.1354,
+        "circulating": 5152122.2528,
+        "_source": "https://horizon.stellar.org"
+      },
+      "solana": {
+        "total_supply": 1079651.8218,
+        "_source": "https://api.mainnet-beta.solana.com",
+        "circulating": 1079651.8218
+      },
+      "base": {
+        "total_supply": 2007450.5108,
+        "_source": "https://base-rpc.publicnode.com",
+        "circulating": 0
+      }
+    },
+    "tradable_total": 326773662.13,
+    "native_cap": 175000000,
+    "price_usd": 0.03606336,
+    "price_source": "coingecko",
+    "market_cap_usd": 11784556.22,
+    "mint": {
+      "inflation_rate": 0.08,
+      "blocks_per_year": 6311520
+    },
+    "global_total_rio": 488821127.62,
+    "expected_annual_emission_rio": 7171493.52,
+    "expected_daily_emission_rio": 19647.93,
+    "flags": []
   }
 ]
