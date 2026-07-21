@@ -617,8 +617,15 @@ function renderSupplyTrend(arr){
   drawSpark("supplySpark", pts, `Circulating supply over the last ${pts.length} days`, 4);
   const days = Math.max(1, Math.round(
     (new Date(arr[arr.length-1].ts) - new Date(arr[0].ts)) / 864e5));
+  // Deliberately NO per-day rate here. This series is tradable_total, so its
+  // daily rate is FLOAT growth (emission + pre-existing RIO released from team
+  // wallets). The Emissions panel shows NEW SUPPLY (emission minus burns), which
+  // adds team-held balances back. Over 11-21 Jul those differed by ~2,074/day
+  // because the Algorand wallets released 20,730 RIO into float. Publishing both
+  // as "RIO/day" invited exactly the confusion this note now avoids: per-day
+  // rates live in the Emissions panel, where they are defined.
   document.getElementById("supplyNote").textContent =
-    `over ${days} days measured · ~${Math.round((last-first)/days).toLocaleString("en-US")} RIO/day`;
+    `over ${days} days measured · see Emissions for the rate`;
 }
 
 function render(latest, liveSeries, fullArr){
