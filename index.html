@@ -73,6 +73,8 @@
   .hm .hmk{font-size:11.5px;color:var(--card-muted);font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
   .hm .hmv{font-family:"Space Grotesk";font-size:29px;font-weight:600;color:var(--card-ink);line-height:1;letter-spacing:-.02em}
   .hm .hmx{font-size:11.5px;color:var(--card-muted);margin-top:7px}
+  .hm .hmx a{color:var(--mint);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.22)}
+  .hm .hmx a:hover{border-bottom-color:var(--mint)}
   /* assumptions callout */
   .assume{border:1px solid var(--line);border-left:3px solid var(--green);border-radius:var(--radius-sm);
     padding:26px 28px;background:linear-gradient(180deg,var(--alt),#fbfcfc)}
@@ -244,6 +246,7 @@
     <div class="hero-metrics">
       <div class="hm"><div class="hmk">RIO price</div><div class="hmv" id="priceNum">—</div><div class="hmx" id="priceSrc">at time of refresh</div></div>
       <div class="hm"><div class="hmk">Circulating market cap</div><div class="hmv" id="mcapNum">—</div><div class="hmx">circulating supply × price</div></div>
+      <div class="hm"><div class="hmk">24h trading volume</div><div class="hmv" id="volNum">—</div><div class="hmx" id="volSrc">exchange-reported</div></div>
     </div>
     <div class="updated">Last updated <b id="updated">—</b> · refreshes daily from a public, open-source pipeline.</div>
   </div>
@@ -527,6 +530,15 @@ function render(latest, liveSeries, fullArr){
   document.getElementById("priceNum").textContent = price ? "$"+price.toFixed(4) : "n/a";
   document.getElementById("priceSrc").textContent = latest.price_source ? "via "+latest.price_source+" · at refresh" : "at time of refresh";
   document.getElementById("mcapNum").textContent = mcap ? fmtUsd(mcap) : "n/a";
+  // Exchange-reported, not measured on chain. Informational only: it is never
+  // used by the supply-integrity checks. Null on days the CoinGecko call failed
+  // and a price-only fallback served instead, shown as "unavailable" rather
+  // than carrying the previous day forward.
+  const vol = latest.volume_24h_usd;
+  document.getElementById("volNum").textContent = vol ? fmtUsd(vol) : "n/a";
+  document.getElementById("volSrc").innerHTML = vol
+    ? 'exchange-reported · <a href="https://www.coingecko.com/en/coins/realio-network" target="_blank" rel="noopener">see markets</a>'
+    : 'unavailable at last refresh';
   const d = new Date(latest.ts);
   document.getElementById("updated").textContent = d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
 

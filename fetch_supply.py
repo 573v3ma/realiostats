@@ -168,15 +168,31 @@ def with_fallback(chain, fn, flags):
 
 
 # ---- price sources (keyless, verified live 2026-07-11; first valid wins) -----
-def _p_coingecko(): 
-    d=_get("https://api.coingecko.com/api/v3/simple/price?ids=realio-network&vs_currencies=usd")
-    return float(d["realio-network"]["usd"])
+# Each source returns (price_usd, volume_24h_usd_or_None). Volume is reported by
+# exchanges, not measured on chain, so it is informational only and never feeds
+# the supply-integrity checks.
+#
+# Only aggregators that report MARKET-WIDE 24h volume set the volume field.
+# MEXC and KuCoin expose volume for a single pair, which is NOT the aggregate,
+# so they return None rather than a number that would understate the real total.
+#
+# Note on CoinGecko: use the /simple/price headline volume, do NOT sum
+# /coins/{id}/tickers. The ticker list includes pairs flagged is_stale (as of
+# Jul 2026 a delisted MEXC RIO/EUR pair worth ~64K that CoinGecko has not yet
+# removed). CoinGecko excludes stale pairs from the headline; summing the
+# tickers ourselves would republish a dead market and overstate volume by ~27%.
+def _p_coingecko():
+    d=_get("https://api.coingecko.com/api/v3/simple/price?ids=realio-network&vs_currencies=usd&include_24hr_vol=true")["realio-network"]
+    v=d.get("usd_24h_vol")
+    return float(d["usd"]), (float(v) if v is not None else None)
 def _p_mexc():
-    return float(_get("https://api.mexc.com/api/v3/ticker/price?symbol=RIOUSDT")["price"])
+    return float(_get("https://api.mexc.com/api/v3/ticker/price?symbol=RIOUSDT")["price"]), None
 def _p_kucoin():
-    return float(_get("https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=RIO-USDT")["data"]["price"])
+    return float(_get("https://api.kucoin.com/api/v1/market/orderbook/level1?symbol=RIO-USDT")["data"]["price"]), None
 def _p_paprika():
-    return float(_get("https://api.coinpaprika.com/v1/tickers/rio-realio-network")["quotes"]["USD"]["price"])
+    q=_get("https://api.coinpaprika.com/v1/tickers/rio-realio-network")["quotes"]["USD"]
+    v=q.get("volume_24h")
+    return float(q["price"]), (float(v) if v is not None else None)
 
 PRICE_SOURCES = [("coingecko",_p_coingecko),("mexc",_p_mexc),("kucoin",_p_kucoin),("coinpaprika",_p_paprika)]
 
@@ -184,12 +200,17 @@ def fetch_price(flags):
     errs=[]
     for name,fn in PRICE_SOURCES:
         try:
-            p=fn()
-            if p and p>0: return {"price_usd":p,"price_source":name}
+            p,vol=fn()
+            if p and p>0:
+                if vol is None:
+                    flags.append(f"volume_unavailable:{name}")
+                return {"price_usd":p,"price_source":name,
+                        "volume_24h_usd":(round(vol,2) if vol else None),
+                        "volume_source":(name if vol else None)}
         except Exception as e:
             errs.append(f"{name}:{type(e).__name__}")
     flags.append("price_failed:"+"|".join(errs))
-    return {"price_usd":None,"price_source":None}
+    return {"price_usd":None,"price_source":None,"volume_24h_usd":None,"volume_source":None}
 
 def build_snapshot():
     flags = []
@@ -254,6 +275,7 @@ def build_snapshot():
             "chains": chains, "tradable_total": tradable, "native_cap": NATIVE_CAP,
             "price_usd": price["price_usd"], "price_source": price["price_source"],
             "market_cap_usd": mcap,
+            "volume_24h_usd": price["volume_24h_usd"], "volume_source": price["volume_source"],
             "mint": {"inflation_rate": infl, "blocks_per_year": mint.get("blocks_per_year")},
             "global_total_rio": global_total,
             "expected_annual_emission_rio": exp_annual,
@@ -275,6 +297,8 @@ def print_summary(s):
     print("-" * 66)
     print(f"  price (USD)      {('$'+format(p,'.5f')) if p else 'n/a':>18}   via {s.get('price_source')}")
     print(f"  market cap (USD) {('$'+format(mc,',.0f')) if mc else 'n/a':>18}   (circulating x price)")
+    vol = s.get("volume_24h_usd")
+    print(f"  24h volume (USD) {('$'+format(vol,',.0f')) if vol else 'n/a':>18}   (exchange-reported, via {s.get('volume_source') or 'n/a'})")
     print("-" * 66)
     infl = (s.get("mint") or {}).get("inflation_rate")
     print(f"  emission rate    {(format(infl*100,'.1f')+'%/yr') if infl else 'n/a':>18}   (8% of unminted native)")
