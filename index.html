@@ -563,6 +563,56 @@ function setChg(id, pct, deadband, tip){
   el.title = tip;
 }
 
+// Last committed volume history, kept so the live refresh can compute a
+// day-over-day change against yesterday's reading.
+let VOLHIST = null;
+
+// Progressive enhancement: the page renders instantly from the committed daily
+// snapshot, then upgrades price, market cap and volume to live values if the
+// browser can reach CoinGecko. Rationale: SUPPLY is our own measurement and its
+// git history is the audit trail, so it stays on the daily snapshot. Price and
+// volume are third-party conveniences where staleness is just wrong: a snapshot
+// taken 16h earlier showed +15.91% while the real 24h move was -1.52%, the wrong
+// number AND the wrong direction.
+//
+// CoinGecko does send Access-Control-Allow-Origin when the request carries an
+// Origin header, so this works from the browser. (A server-side curl without an
+// Origin shows no CORS header, which is misleading.) If the call fails or is
+// rate-limited, the snapshot values simply remain, timestamped.
+function applyLiveMarket(latest){
+  fetch("https://api.coingecko.com/api/v3/simple/price?ids=realio-network"
+       +"&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true",{cache:"no-store"})
+    .then(r=>r.ok?r.json():null)
+    .then(j=>{
+      const d = j && j["realio-network"];
+      if(!d) return;
+      const p = d.usd;
+      if(typeof p === "number" && p > 0){
+        document.getElementById("priceNum").textContent = "$"+p.toFixed(4);
+        document.getElementById("priceSrc").textContent = "via coingecko · live";
+        setChg("priceChg", d.usd_24h_change, 0.5, "CoinGecko 24h change, live");
+        const supply = latest && latest.tradable_total;
+        if(supply){
+          document.getElementById("mcapNum").textContent = fmtUsd(supply * p);
+          // Market cap tracks price almost exactly: supply moves ~0.006%/day.
+          setChg("mcapChg", d.usd_24h_change, 0.5, "tracks price; supply moves ~0.006% per day");
+        }
+      }
+      const v = d.usd_24h_vol;
+      if(typeof v === "number" && v > 0){
+        document.getElementById("volNum").textContent = fmtUsd(v);
+        // Change vs yesterday's committed end-of-day reading, so both sides are
+        // trailing-24h figures roughly a day apart.
+        const daily = VOLHIST && VOLHIST.daily;
+        if(daily && daily.length){
+          const prev = daily[daily.length-1].volume_usd;
+          if(prev) setChg("volChg", (v-prev)/prev*100, 0.5, "versus yesterday's reading");
+        }
+      }
+    })
+    .catch(()=>{});
+}
+
 // Volume + price trend, from volume-history.json (third-party, regenerated
 // daily). Separate from render() because it is a separate file with its own
 // failure mode: if it is missing or stale, the headline figures from the
@@ -612,7 +662,14 @@ function render(latest, liveSeries, fullArr){
   // price + circulating market cap
   const price = latest.price_usd, mcap = latest.market_cap_usd ?? (price ? multi*price : null);
   document.getElementById("priceNum").textContent = price ? "$"+price.toFixed(4) : "n/a";
-  document.getElementById("priceSrc").textContent = latest.price_source ? "via "+latest.price_source+" · at refresh" : "at time of refresh";
+  // Snapshot price is up to 24h old. Show WHEN it was taken rather than the
+  // vague "at refresh"; applyLiveMarket() replaces this with "live" if the
+  // browser can reach CoinGecko.
+  const pts_ = new Date(latest.ts);
+  const stamp = pts_.toLocaleDateString("en-GB",{day:"numeric",month:"short"})+" "+
+                String(pts_.getUTCHours()).padStart(2,"0")+":"+String(pts_.getUTCMinutes()).padStart(2,"0")+" UTC";
+  document.getElementById("priceSrc").textContent =
+    (latest.price_source ? "via "+latest.price_source+" · " : "") + stamp;
   document.getElementById("mcapNum").textContent = mcap ? fmtUsd(mcap) : "n/a";
   // Exchange-reported, not measured on chain. Informational only: it is never
   // used by the supply-integrity checks. Null on days the CoinGecko call failed
@@ -760,13 +817,21 @@ const perChain = s => ({
 });
 fetch("./supply-history.json",{cache:"no-store"}).then(r=>r.json()).then(arr=>{
   render(arr[arr.length-1], arr.map(perChain), arr);
+  return arr[arr.length-1];
 }).catch(()=>{
   render(FALLBACK, [perChain(FALLBACK)], [FALLBACK]);
+  return FALLBACK;
+}).then(latest=>{
+  // Committed volume history first: it draws the sparklines and gives
+  // applyLiveMarket a baseline for the day-over-day volume change. Then the live
+  // upgrade on top. Every stage is independently catch-guarded, so a failure at
+  // any point leaves the page showing the last good values rather than blanking.
+  return fetch("./volume-history.json",{cache:"no-store"})
+    .then(r=>r.ok?r.json():null)
+    .then(v=>{ VOLHIST = v; renderVolumeTrend(v); })
+    .catch(()=>{})
+    .then(()=>applyLiveMarket(latest));
 });
-
-// Independent of the supply render: a volume failure must never blank the page.
-fetch("./volume-history.json",{cache:"no-store"})
-  .then(r=>r.ok?r.json():null).then(renderVolumeTrend).catch(()=>{});
 </script>
 </body>
 </html>
