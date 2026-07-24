@@ -514,14 +514,29 @@ function netNewSupply(s){
   const t = teamHeld(s);
   return (typeof s.tradable_total === "number" && t !== null) ? s.tradable_total + t : null;
 }
+// Multi-day net-new = the MEDIAN of the per-day deltas, not first-vs-last.
+// Endpoint-to-endpoint is fragile: if the first or last snapshot happens to
+// catch a cross-chain bridge mid-settlement (one leg burned, the matching mint
+// not yet landed), that single dip skews the whole multi-day figure. On 24 Jul
+// the endpoint method read 16,748 (below expected) purely because that day's
+// snapshot caught a bridge in flight; ending one day earlier it read 17,547.
+// The median ignores such one-off spikes (7,677 / 30,226 / 8,366 in this window
+// are all bridge-timing days) and tracks the true issuance rate.
 function computeObserved(arr){
   const pts = (arr||[]).filter(s=>netNewSupply(s)!==null);
   if(pts.length<2) return null;
-  const a=pts[0], b=pts[pts.length-1];
-  const days=(new Date(b.ts)-new Date(a.ts))/864e5;
+  const rates=[];
+  for(let i=1;i<pts.length;i++){
+    const d=(new Date(pts[i].ts)-new Date(pts[i-1].ts))/864e5;
+    if(d>0) rates.push((netNewSupply(pts[i])-netNewSupply(pts[i-1]))/d);
+  }
+  if(!rates.length) return null;
+  const sorted=rates.slice().sort((x,y)=>x-y);
+  const mid=Math.floor(sorted.length/2);
+  const median = sorted.length%2 ? sorted[mid] : (sorted[mid-1]+sorted[mid])/2;
+  const days=(new Date(pts[pts.length-1].ts)-new Date(pts[0].ts))/864e5;
   if(days<0.5) return null;
-  const d=netNewSupply(b)-netNewSupply(a);
-  return {days, netNew:d, perDay:d/days};
+  return {days, perDay:median, samples:rates.length};
 }
 // Most recent consecutive pair of snapshots = the freshest reading available.
 // Unlike computeObserved (which averages across the whole series and so smooths
@@ -818,7 +833,7 @@ function render(latest, liveSeries, fullArr){
   if(obs){
     document.getElementById("emObserved").textContent = (obs.perDay>=0?"+":"")+fmtInt(obs.perDay)+" / day";
     const obsDays = Math.round(obs.days);
-    document.getElementById("emObservedNote").textContent = obsDays<=1 ? "measured over the last 24h" : "measured over "+obsDays+" days";
+    document.getElementById("emObservedNote").textContent = obsDays<=1 ? "measured over the last 24h" : "median day, last "+obsDays+" days";
     const pct = infl ? (infl*100).toFixed(0) : "8";
     if(ed && obs.perDay <= ed*1.25){
       dot.className="idot ok";
