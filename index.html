@@ -278,7 +278,7 @@
   <h2>Emissions &amp; supply integrity</h2>
   <p class="sec-lede">New RIO is issued on the Realio native chain only, through scheduled block-reward emissions paid to stakers, and native supply is capped at 175M. The token contracts on the other six chains can mint as well, but only against RIO burned or escrowed elsewhere, so bridging moves RIO between chains without changing how much of it exists. Circulating supply should therefore grow only at the scheduled rate. We check that every day.</p>
   <div class="emit">
-    <div class="chip"><div class="cn">Emission rate</div><div class="cv" id="emRate">—</div><div class="cx">of unminted native supply, per year</div></div>
+    <div class="chip"><div class="cn">Emission rate</div><div class="cv" id="emRate">—</div><div class="cx" id="emRateNote">of unminted native supply, per year</div></div>
     <div class="chip"><div class="cn">Expected new RIO</div><div class="cv" id="emDaily">—</div><div class="cx" id="emAnnual">per day</div></div>
     <div class="chip"><div class="cn">Native emission cap</div><div class="cv">175M</div><div class="cx">native chain only, ~38-year schedule</div></div>
     <div class="chip"><div class="cn">Observed last 24h</div><div class="cv" id="emObs24">—</div><div class="cx" id="emObs24Note">awaiting a second reading</div></div>
@@ -787,6 +787,19 @@ function render(latest, liveSeries, fullArr){
   const infl = mint.inflation_rate;
   document.getElementById("emRate").textContent = infl ? (infl*100).toFixed(1)+"% / yr" : "n/a";
   const ed = latest.expected_daily_emission_rio, ea = latest.expected_annual_emission_rio;
+  // 8% is the configured mint parameter. The chain pays a fixed reward per block
+  // and produces blocks slower than the 5s that parameter assumes, so the rate
+  // actually realised on supply is lower. Show it, computed from the block-
+  // adjusted annual issuance over the unminted base, so it reconciles with the
+  // "Expected new RIO" figure beside it instead of contradicting it.
+  const nativeSupply = latest.chains && latest.chains.realio_native
+    ? (latest.chains.realio_native.total ?? latest.chains.realio_native.circulating) : null;
+  const unminted = (typeof nativeSupply === "number" && latest.native_cap)
+    ? (latest.native_cap - nativeSupply) : null;
+  document.getElementById("emRateNote").textContent =
+    (latest.emission_block_adjusted && ea && unminted && unminted > 0)
+      ? "configured rate · ~"+((ea/unminted)*100).toFixed(1)+"% effective at the chain's real block speed"
+      : "of unminted native supply, per year";
   document.getElementById("emDaily").textContent = ed ? "~"+fmtInt(ed) : "n/a";
   document.getElementById("emAnnual").textContent = ea
     ? "per day · ~"+fmtM(M(ea))+" / yr" + (latest.emission_block_adjusted ? " · block-rate adjusted" : "")
