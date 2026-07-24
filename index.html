@@ -130,6 +130,16 @@
   .chartcard{border:1px solid var(--line);border-radius:var(--radius);padding:clamp(18px,3vw,30px);
     background:var(--bg);box-shadow:var(--shadow-md)}
   .chartwrap{position:relative;height:400px}
+  .whatmoved{margin-top:14px}
+  .wm-read{font-size:13.5px;color:var(--body);line-height:1.6}
+  .wm-read b{color:var(--ink);font-weight:600}
+  .wm-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .wm-chip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;
+    border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:var(--bg)}
+  .wm-chip .cdot{width:7px;height:7px;border-radius:50%;flex:none}
+  .wm-chip .wm-name{color:var(--muted)}
+  .wm-chip .wm-val{font-family:"Space Grotesk";font-weight:600;letter-spacing:-.01em}
+  .wm-chip .wm-val.up{color:var(--green-ink)} .wm-chip .wm-val.down{color:#e11d48}
   .cap{font-size:12.5px;color:var(--muted);line-height:1.65;margin-top:16px}
   /* provenance table */
   .ptbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-sm);box-shadow:var(--shadow-sm);background:var(--bg)}
@@ -277,6 +287,10 @@
   <div class="integrity">
     <span class="idot" id="iDot"></span>
     <span id="iText">Building the daily baseline. As readings accrue, this confirms whether circulating RIO supply is growing within the scheduled emission and flags anything above it.</span>
+  </div>
+  <div class="whatmoved" id="whatMoved" hidden>
+    <div class="wm-read" id="wmRead"></div>
+    <div class="wm-chips" id="wmChips"></div>
   </div>
   <p class="cap">Emission parameters are read live from Realio's on-chain mint module (<code>/realionetwork/mint/v1/params</code>). The 8% is charged on the unminted native supply, the gap between native supply and the 175M cap, so the amount of new RIO declines as the cap is approached. The observed figures measure RIO that came into existence across all seven chains: circulating supply, plus whatever is still held in Realio's Algorand wallets, so that pre-existing RIO being released into public float is never mistaken for new issuance. RIO also bridges in two different ways: burn-and-mint between native and the EVM chains, and lock-and-mint on the Stellar and Base legs, where the token is escrowed rather than destroyed. Either way the token is counted once, so bridging nets to zero, and only block-reward emission, minus burns, moves this figure. Observed running slightly below expected is normal: burns, including Districts land claims, net out of it.</p>
 </div></section>
@@ -524,6 +538,57 @@ function computeLast24h(arr){
   const d=netNewSupply(b)-netNewSupply(a);
   return {days, netNew:d, perDay:d/days};
 }
+
+// "What moved" — decompose the latest 24h into per-chain deltas (Tier 1) and a
+// plain-language read of observed vs expected (Tier 2). Everything here comes
+// from data already committed in supply-history.json; nothing new is fetched.
+function circOf(s, key){
+  const c = s.chains && s.chains[key];
+  if(!c) return 0;
+  const v = (c.circulating != null ? c.circulating
+           : c.total != null ? c.total
+           : c.total_supply);
+  return typeof v === "number" ? v : 0;
+}
+function computeWhatMoved(arr, expectedDaily){
+  const pts = (arr||[]).filter(s=>netNewSupply(s)!==null);
+  if(pts.length < 2) return null;
+  const a = pts[pts.length-2], b = pts[pts.length-1];
+  const days = (new Date(b.ts) - new Date(a.ts)) / 864e5;
+  if(!(days > 0)) return null;
+
+  // Per-chain deltas as daily rates. Algorand is shown on the team-adjusted
+  // basis (reserve+bridge added back) so releasing pre-existing RIO into float
+  // does not masquerade as new supply, matching the net-new figure.
+  const perChain = CHAINS.map(c=>{
+    let d;
+    if(c.key === "algorand"){
+      const teamA = (a.chains.algorand.reserve||0)+(a.chains.algorand.bridge_wallet||0);
+      const teamB = (b.chains.algorand.reserve||0)+(b.chains.algorand.bridge_wallet||0);
+      d = (circOf(b,"algorand")+teamB) - (circOf(a,"algorand")+teamA);
+    } else if(c.key === "base"){
+      d = 0; // backing locked on Ethereum, always counts 0
+    } else {
+      d = circOf(b,c.key) - circOf(a,c.key);
+    }
+    return {key:c.key, name:c.name, color:c.color, perDay:d/days};
+  }).filter(x=>Math.abs(x.perDay) >= 1)
+    .sort((x,y)=>Math.abs(y.perDay)-Math.abs(x.perDay));
+
+  const net = netNewSupply(b)-netNewSupply(a);
+  const perDay = net/days;
+  const exp = expectedDaily || 0;
+  const gap = exp - perDay;  // positive gap = observed below emission
+
+  // The two chains moving hardest in opposite directions: the signature of a
+  // cross-chain bridge whose two legs straddle the snapshot boundary.
+  const ups = perChain.filter(x=>x.perDay>0), downs = perChain.filter(x=>x.perDay<0);
+  const biggestUp = ups[0], biggestDown = downs[0];
+  const offsetting = biggestUp && biggestDown &&
+    Math.min(biggestUp.perDay, -biggestDown.perDay) > Math.max(2*exp, 40000);
+
+  return {days, perChain, perDay, exp, gap, offsetting};
+}
 // Sparkline. minRangePct is the honesty control: a plain min/max scale stretches
 // ANY series to fill the box, so a 0.06% drift renders as a mountain range. If
 // the real spread is smaller than minRangePct of the midpoint, the scale is
@@ -655,6 +720,40 @@ function renderMcapTrend(arr){
 // caused real confusion. Supply-over-time lives in the Evolution chart, and
 // per-day rates live in the Emissions panel, each defined once.
 
+// Renders the "what moved today" block under the integrity line: per-chain
+// deltas (Tier 1) and a plain-language observed-vs-expected read (Tier 2).
+function renderWhatMoved(arr, expectedDaily){
+  const box = document.getElementById("whatMoved");
+  const wm = computeWhatMoved(arr, expectedDaily);
+  if(!wm || !wm.perChain.length){ if(box) box.hidden = true; return; }
+  box.hidden = false;
+
+  document.getElementById("wmChips").innerHTML = wm.perChain.map(x=>{
+    const dir = x.perDay >= 0 ? "up" : "down";
+    const s = x.perDay >= 0 ? "+" : "−";
+    return `<span class="wm-chip"><span class="cdot" style="background:${x.color}"></span>`+
+           `<span class="wm-name">${x.name}</span>`+
+           `<span class="wm-val ${dir}">${s}${fmtInt(Math.abs(x.perDay))}</span></span>`;
+  }).join("");
+
+  const win = Math.abs(wm.days-1) < 0.15 ? "In the last 24h" : `Over the last ${wm.days.toFixed(1)} days`;
+  let read;
+  if(wm.exp && wm.gap > wm.exp*0.25){
+    // Observed materially BELOW scheduled emission.
+    read = `${win}, new supply ran <b>${fmtInt(wm.perDay)}/day</b>, below the scheduled <b>~${fmtInt(wm.exp)}</b>. `;
+    if(wm.offsetting){
+      read += `The bulk of the move is ${wm.perChain[0].name} and ${wm.perChain.find(x=>Math.sign(x.perDay)!==Math.sign(wm.perChain[0].perDay)).name} moving in opposite directions, the signature of a bridge transfer whose two legs straddle the snapshot. That kind of gap usually reverses on the next reading.`;
+    } else {
+      read += `Because bridging nets to zero globally, a shortfall like this reflects burns over the window (for example Districts land claims), or a bridge settling across the snapshot boundary. Both leave supply below the emission line, and only the next reading distinguishes them.`;
+    }
+  } else if(wm.exp && wm.perDay > wm.exp*1.25){
+    read = `${win}, new supply ran <b>${fmtInt(wm.perDay)}/day</b>, above the scheduled <b>~${fmtInt(wm.exp)}</b>. The chains below show where it came from; a sustained excess with no matching burn elsewhere is what would warrant a closer look.`;
+  } else {
+    read = `${win}, new supply ran <b>${fmtInt(wm.perDay)}/day</b>, in line with the scheduled <b>~${fmtInt(wm.exp)}</b>. The chains below show where the movement was; cross-chain shifts net out, leaving emission minus burns.`;
+  }
+  document.getElementById("wmRead").innerHTML = read;
+}
+
 function render(latest, liveSeries, fullArr){
   const multi = latest.tradable_total;
   document.getElementById("multiNum").textContent = fmtM(M(multi));
@@ -714,6 +813,7 @@ function render(latest, liveSeries, fullArr){
       it.textContent="Circulating RIO supply grew faster than the ~"+pct+"% schedule over the measured window, worth a closer look.";
     }
   }
+  renderWhatMoved(fullArr, ed);
 
   const grid = document.getElementById("chainGrid");
   grid.innerHTML = CHAINS.map(c=>{
