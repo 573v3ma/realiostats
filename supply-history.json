@@ -760,18 +760,18 @@
     "flags": []
   },
   {
-    "ts": "2026-07-24T08:11:50Z",
+    "ts": "2026-07-24T11:08:36Z",
     "chains": {
       "realio_native": {
-        "total": 85439883.1556,
+        "total": 85441632.9466,
         "bridge_escrow": 0.0,
-        "circulating": 85439883.1556,
+        "circulating": 85441632.9466,
         "_source": "https://realio-api.noders.services"
       },
       "bnb": {
-        "total_supply": 156309725.6815,
+        "total_supply": 156310098.6815,
         "_source": "https://bsc-rpc.publicnode.com",
-        "circulating": 156309725.6815
+        "circulating": 156310098.6815
       },
       "ethereum": {
         "total_supply": 71033999.4887,
@@ -803,20 +803,23 @@
         "circulating": 0
       }
     },
-    "tradable_total": 326822368.29,
+    "tradable_total": 326824491.08,
     "native_cap": 175000000,
-    "price_usd": 0.03512127,
+    "price_usd": 0.03232767,
     "price_source": "coingecko",
-    "market_cap_usd": 11478416.64,
-    "volume_24h_usd": 179760.42,
+    "market_cap_usd": 10565474.3,
+    "volume_24h_usd": 185578.47,
     "volume_source": "coingecko",
     "mint": {
       "inflation_rate": 0.08,
       "blocks_per_year": 6311520
     },
-    "global_total_rio": 488863108.53,
-    "expected_annual_emission_rio": 7164809.44,
-    "expected_daily_emission_rio": 19629.61,
+    "global_total_rio": 488865231.32,
+    "expected_annual_emission_rio": 6311612.85,
+    "expected_daily_emission_rio": 17292.09,
+    "expected_daily_emission_nominal_rio": 19629.23,
+    "block_time_s": 5.6719,
+    "emission_block_adjusted": true,
     "flags": []
   }
 ]

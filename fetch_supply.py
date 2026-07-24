@@ -14,11 +14,35 @@ silently zeroed. Which endpoint served each chain is recorded in the snapshot.
 Run:  python3 fetch_supply.py           # summary + JSON
       python3 fetch_supply.py --json    # JSON only (daily append job)
 """
-import json, sys, urllib.request
+import json, re, sys, urllib.request
 from datetime import datetime, timezone
 
 TIMEOUT = 20
 NATIVE_CAP = 175_000_000
+BLOCK_SPAN = 20_000   # blocks to average block-time over (~31h; within pruning windows)
+
+def _parse_cosmos_ts(t):
+    """Cosmos block times can carry nanoseconds, which the stdlib parser rejects.
+    Trim the fractional part to microseconds and return epoch seconds."""
+    t = t.strip().replace("Z", "+00:00")
+    m = re.match(r"(.*T\d\d:\d\d:\d\d)(\.\d+)?(.*)$", t)
+    if m:
+        t = m.group(1) + (m.group(2) or "")[:7] + (m.group(3) or "")
+    return datetime.fromisoformat(t).timestamp()
+
+def measure_block_time(url):
+    """Average seconds/block over the last BLOCK_SPAN blocks, or None.
+    The mint module issues annual_provisions/blocks_per_year PER BLOCK, so the
+    real daily issuance depends on how fast blocks are actually produced, not on
+    the nominal block time baked into the blocks_per_year parameter."""
+    hdr = _get(f"{url}/cosmos/base/tendermint/v1beta1/blocks/latest")["block"]["header"]
+    hN = int(hdr["height"]); tN = _parse_cosmos_ts(hdr["time"])
+    hE = hN - BLOCK_SPAN
+    if hE < 1:
+        return None
+    old = _get(f"{url}/cosmos/base/tendermint/v1beta1/blocks/{hE}")["block"]["header"]
+    dt = tN - _parse_cosmos_ts(old["time"])
+    return dt / BLOCK_SPAN if dt > 0 else None
 
 # ---- endpoint fallback lists (order = priority; all verified live) ----------
 ENDPOINTS = {
@@ -145,6 +169,14 @@ def fetch_mint_params(flags):
                 out["annual_provisions_rio"] = float(ap) / 1e18
             except Exception:
                 pass
+            # Measure real block production so expected issuance reflects the
+            # chain's actual pace, not the 5s the blocks_per_year param assumes.
+            try:
+                bt = measure_block_time(url)
+                if bt and bt > 0:
+                    out["block_time_s"] = round(bt, 4)
+            except Exception:
+                pass
             return out
         except Exception:
             continue
@@ -263,12 +295,31 @@ def build_snapshot():
     # chain's own annual_provisions; fall back to infl x (cap - native supply).
     ap_rio = mint.get("annual_provisions_rio")
     if ap_rio:
-        exp_annual = round(ap_rio, 2)
+        ap_annual = round(ap_rio, 2)
     elif infl and native_supply:
-        exp_annual = round(infl * max(NATIVE_CAP - native_supply, 0), 2)
+        ap_annual = round(infl * max(NATIVE_CAP - native_supply, 0), 2)
     else:
-        exp_annual = None
-    exp_daily = round(exp_annual / 365, 2) if exp_annual else None
+        ap_annual = None
+
+    # NOMINAL expected = annual_provisions / 365, which assumes the chain hits the
+    # block time baked into blocks_per_year (5s). Realio actually runs slower, so
+    # this OVERSTATES real issuance by ~12% and made observed net-new look like a
+    # permanent shortfall (verified Jul 2026: 5.68s/block vs 5s assumed).
+    exp_daily_nominal = round(ap_annual / 365, 2) if ap_annual else None
+
+    # BLOCK-ADJUSTED expected = actual per-block issuance x actual blocks/day.
+    # per-block = annual_provisions / blocks_per_year; blocks/day = 86400 / block_time.
+    bpy = mint.get("blocks_per_year"); bt = mint.get("block_time_s")
+    if ap_annual and bpy and bt and bt > 0:
+        exp_daily = round(ap_annual * 86400 / (bpy * bt), 2)
+        exp_annual = round(exp_daily * 365, 2)
+        block_adjusted = True
+    else:
+        exp_daily = exp_daily_nominal
+        exp_annual = ap_annual
+        block_adjusted = False
+        if ap_annual:  # had provisions but couldn't measure block time
+            flags.append("emission_block_time_unavailable")
     price = fetch_price(flags)
     mcap = round(tradable * price["price_usd"], 2) if price["price_usd"] else None
     return {"ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -280,6 +331,9 @@ def build_snapshot():
             "global_total_rio": global_total,
             "expected_annual_emission_rio": exp_annual,
             "expected_daily_emission_rio": exp_daily,
+            "expected_daily_emission_nominal_rio": exp_daily_nominal,
+            "block_time_s": bt,
+            "emission_block_adjusted": block_adjusted,
             "flags": flags}
 
 def print_summary(s):
@@ -303,6 +357,9 @@ def print_summary(s):
     infl = (s.get("mint") or {}).get("inflation_rate")
     print(f"  emission rate    {(format(infl*100,'.1f')+'%/yr') if infl else 'n/a':>18}   (8% of unminted native)")
     print(f"  expected new RIO {(format(s.get('expected_daily_emission_rio') or 0,',.0f')+'/day') if s.get('expected_daily_emission_rio') else 'n/a':>18}")
+    bt = s.get("block_time_s")
+    if bt:
+        print(f"  block time       {format(bt,'.3f')+'s':>18}   (adj: nominal {format(s.get('expected_daily_emission_nominal_rio') or 0,',.0f')}/day -> real {format(s.get('expected_daily_emission_rio') or 0,',.0f')}/day)")
     print(f"  global RIO total {format(s.get('global_total_rio') or 0,',.0f'):>18}   (all chains incl. team)")
     print("-" * 66)
     print(f"  flags: {s['flags'] if s['flags'] else 'none - all checks passed'}")
