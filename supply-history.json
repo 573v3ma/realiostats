@@ -947,5 +947,68 @@
     "block_time_s": 5.6706,
     "emission_block_adjusted": true,
     "flags": []
+  },
+  {
+    "ts": "2026-07-27T09:36:07Z",
+    "chains": {
+      "realio_native": {
+        "total": 85701276.605,
+        "bridge_escrow": 0.0,
+        "circulating": 85701276.605,
+        "_source": "https://realio-api.noders.services"
+      },
+      "bnb": {
+        "total_supply": 155934051.3515,
+        "_source": "https://bsc-rpc.publicnode.com",
+        "circulating": 155934051.3515
+      },
+      "ethereum": {
+        "total_supply": 71211631.4887,
+        "base_bridge_lock": 2012622.7082,
+        "_source": "https://ethereum-rpc.publicnode.com",
+        "circulating": 71211631.4887
+      },
+      "algorand": {
+        "total_supply": 100000000.0,
+        "reserve": 43809832.0634,
+        "bridge_wallet": 48393700.9249,
+        "circulating": 7796467.0117,
+        "_source": "https://mainnet-api.algonode.cloud"
+      },
+      "stellar": {
+        "total_supply": 74999848.3883,
+        "treasury": 69847732.1354,
+        "circulating": 5152116.2528,
+        "_source": "https://horizon.stellar.org"
+      },
+      "solana": {
+        "total_supply": 1079651.8218,
+        "_source": "https://api.mainnet-beta.solana.com",
+        "circulating": 1079651.8218
+      },
+      "base": {
+        "total_supply": 2011536.0582,
+        "_source": "https://base-rpc.publicnode.com",
+        "circulating": 0
+      }
+    },
+    "tradable_total": 326875194.53,
+    "native_cap": 175000000,
+    "price_usd": 0.0349624,
+    "price_source": "coingecko",
+    "market_cap_usd": 11428341.3,
+    "volume_24h_usd": 171775.82,
+    "volume_source": "coingecko",
+    "mint": {
+      "inflation_rate": 0.08,
+      "blocks_per_year": 6311520
+    },
+    "global_total_rio": 488926459.65,
+    "expected_annual_emission_rio": 6293979.7,
+    "expected_daily_emission_rio": 17243.78,
+    "expected_daily_emission_nominal_rio": 19572.32,
+    "block_time_s": 5.6713,
+    "emission_block_adjusted": true,
+    "flags": []
   }
 ]
