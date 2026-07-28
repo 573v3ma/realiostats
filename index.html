@@ -159,6 +159,12 @@
   .proj-preset:hover{border-color:var(--mint);color:var(--ink)}
   .proj-note{font-size:12.5px;color:var(--body);line-height:1.6;margin-top:16px;background:var(--alt);border-radius:var(--radius-sm);padding:12px 14px}
   .proj-note b{color:var(--ink);font-weight:600}
+  .proj-hold{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+  .proj-holdlab{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+  .proj-holdin{padding:7px 12px;flex:0 1 190px}
+  .proj-holdin input{font-size:17px}
+  .proj-holdout{font-size:13.5px;color:var(--body);line-height:1.5}
+  .proj-holdout b{color:var(--ink);font-weight:600}
   .proj-cap{font-size:12px;color:var(--faint);margin-top:12px}
   .cap{font-size:12.5px;color:var(--muted);line-height:1.65;margin-top:16px}
   /* provenance table */
@@ -301,7 +307,12 @@
     <div class="proj-mult" id="projMult"></div>
     <div class="proj-presets" id="projPresets"></div>
     <p class="proj-note" id="projNote"></p>
-    <p class="proj-cap">Arithmetic, price times supply, not a forecast. Uses realiostats' full multichain circulating supply.</p>
+    <div class="proj-hold">
+      <span class="proj-holdlab">Your RIO</span>
+      <div class="proj-inwrap proj-holdin"><input id="projHold" type="text" inputmode="decimal" placeholder="amount you hold" aria-label="Your RIO holdings"></div>
+      <span class="proj-holdout" id="projHoldOut"></span>
+    </div>
+    <p class="proj-cap">Arithmetic, price times supply, not a forecast. Uses realiostats' full multichain circulating supply. Anything you enter stays in your browser.</p>
   </div>
 
   <div class="assume">
@@ -830,9 +841,21 @@ const projPriceToSlider = p => Math.round(1000*Math.log(Math.min(PROJ_MAX,Math.m
 function renderProjector(price, from){
   if(!PROJ_SUPPLY || !(price>0)) return;
   const mcap = price*PROJ_SUPPLY;
-  if(from!=="price")  document.getElementById("projPrice").value = projFmtPrice(price);
-  if(from!=="mcap")   document.getElementById("projMcap").value  = Math.round(mcap).toLocaleString("en-US");
-  if(from!=="slider") document.getElementById("projSlider").value = projPriceToSlider(price);
+  // "hold" edits must not reformat the price/mcap/slider the user set.
+  if(from!=="price"  && from!=="hold") document.getElementById("projPrice").value = projFmtPrice(price);
+  if(from!=="mcap"   && from!=="hold") document.getElementById("projMcap").value  = Math.round(mcap).toLocaleString("en-US");
+  if(from!=="slider" && from!=="hold") document.getElementById("projSlider").value = projPriceToSlider(price);
+  // Optional personal readout: value of the holdings the user entered.
+  const holdEl = document.getElementById("projHold");
+  const hv = holdEl ? projParse(holdEl.value) : NaN;
+  const holdOut = document.getElementById("projHoldOut");
+  if(hv > 0){
+    let t = "would be worth <b>"+fmtBig(hv*price)+"</b> at $"+projFmtPrice(price);
+    if(CURRENT_PRICE>0) t += " · "+fmtBig(hv*CURRENT_PRICE)+" today";
+    holdOut.innerHTML = t;
+  } else {
+    holdOut.innerHTML = "";
+  }
   const mult = document.getElementById("projMult");
   if(CURRENT_PRICE>0){
     const x = price/CURRENT_PRICE;
@@ -859,6 +882,7 @@ function initProjector(supply){
   pIn.addEventListener("input",()=>{ const v=projParse(pIn.value); if(v>0) renderProjector(v,"price"); });
   mIn.addEventListener("input",()=>{ const v=projParse(mIn.value); if(v>0) renderProjector(v/PROJ_SUPPLY,"mcap"); });
   sl.addEventListener("input",()=>renderProjector(projSliderToPrice(+sl.value),"slider"));
+  document.getElementById("projHold").addEventListener("input",()=>renderProjector(projParse(pIn.value)||1,"hold"));
   renderProjector(1.00,"init");
 }
 
