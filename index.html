@@ -157,8 +157,6 @@
   .proj-presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
   .proj-preset{font-size:12.5px;font-family:"Space Grotesk";font-weight:600;border:1px solid var(--line);border-radius:999px;padding:6px 13px;background:var(--bg);cursor:pointer;color:var(--body);transition:border-color .15s,color .15s}
   .proj-preset:hover{border-color:var(--mint);color:var(--ink)}
-  .proj-note{font-size:12.5px;color:var(--body);line-height:1.6;margin-top:16px;background:var(--alt);border-radius:var(--radius-sm);padding:12px 14px}
-  .proj-note b{color:var(--ink);font-weight:600}
   .proj-hold{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
   .proj-holdlab{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
   .proj-holdin{padding:7px 12px;flex:0 1 190px}
@@ -306,7 +304,6 @@
     <input id="projSlider" class="proj-slider" type="range" min="0" max="1000" value="0" aria-label="RIO price slider">
     <div class="proj-mult" id="projMult"></div>
     <div class="proj-presets" id="projPresets"></div>
-    <p class="proj-note" id="projNote"></p>
     <div class="proj-hold">
       <span class="proj-holdlab">Your RIO</span>
       <div class="proj-inwrap proj-holdin"><input id="projHold" type="text" inputmode="decimal" placeholder="amount you hold" aria-label="Your RIO holdings"></div>
@@ -863,11 +860,6 @@ function renderProjector(price, from){
   } else {
     mult.innerHTML = "<b>"+fmtBig(mcap)+"</b> circulating market cap";
   }
-  const aggMcap = price*PROJ_AGG_SUPPLY;
-  document.getElementById("projNote").innerHTML =
-    "At $"+projFmtPrice(price)+", RIO's full multichain supply of "+fmtM(M(PROJ_SUPPLY))+" makes it a <b>"+fmtBig(mcap)+
-    "</b> project. A calculator using the ~"+fmtM(M(PROJ_AGG_SUPPLY))+" supply that aggregators report would show only "+
-    fmtBig(aggMcap)+" at the same price, about "+(PROJ_SUPPLY/PROJ_AGG_SUPPLY).toFixed(1)+"x smaller. Same price, very different picture.";
 }
 function initProjector(supply){
   if(!(supply>0)) return;
