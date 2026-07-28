@@ -140,6 +140,26 @@
   .wm-chip .wm-name{color:var(--muted)}
   .wm-chip .wm-val{font-family:"Space Grotesk";font-weight:600;letter-spacing:-.01em}
   .wm-chip .wm-val.up{color:var(--green-ink)} .wm-chip .wm-val.down{color:#e11d48}
+  .proj{border:1px solid var(--line);border-radius:var(--radius);padding:26px 26px 22px;background:var(--bg);box-shadow:var(--shadow-sm);margin-bottom:14px}
+  .proj-h{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+  .proj-lede{font-size:13.5px;color:var(--muted);margin:8px 0 18px}
+  .proj-row{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+  .proj-field{display:flex;flex-direction:column;gap:7px;flex:1;min-width:190px}
+  .proj-field>span{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+  .proj-inwrap{display:flex;align-items:center;border:1px solid var(--line-strong);border-radius:var(--radius-sm);padding:9px 14px;background:var(--bg);transition:border-color .15s}
+  .proj-inwrap:focus-within{border-color:var(--mint)}
+  .proj-pfx{font-family:"Space Grotesk";font-size:22px;color:var(--faint);margin-right:3px}
+  .proj-inwrap input{border:0;outline:0;background:transparent;font-family:"Space Grotesk";font-size:22px;font-weight:600;color:var(--ink);width:100%;letter-spacing:-.02em;min-width:0}
+  .proj-eq{font-family:"Space Grotesk";font-size:22px;color:var(--faint);padding-bottom:9px}
+  .proj-slider{width:100%;margin:18px 0 6px;accent-color:var(--mint);cursor:pointer}
+  .proj-mult{font-size:13.5px;color:var(--body);min-height:19px;line-height:1.5}
+  .proj-mult b{color:var(--ink);font-weight:600}
+  .proj-presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .proj-preset{font-size:12.5px;font-family:"Space Grotesk";font-weight:600;border:1px solid var(--line);border-radius:999px;padding:6px 13px;background:var(--bg);cursor:pointer;color:var(--body);transition:border-color .15s,color .15s}
+  .proj-preset:hover{border-color:var(--mint);color:var(--ink)}
+  .proj-note{font-size:12.5px;color:var(--body);line-height:1.6;margin-top:16px;background:var(--alt);border-radius:var(--radius-sm);padding:12px 14px}
+  .proj-note b{color:var(--ink);font-weight:600}
+  .proj-cap{font-size:12px;color:var(--faint);margin-top:12px}
   .cap{font-size:12.5px;color:var(--muted);line-height:1.65;margin-top:16px}
   /* provenance table */
   .ptbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-sm);box-shadow:var(--shadow-sm);background:var(--bg)}
@@ -218,6 +238,7 @@
     .hero h1{letter-spacing:-.02em}
     section{padding:56px 0}
     .excl,.rules{grid-template-columns:1fr}
+    .proj-eq{display:none}
     .nav nav{display:none}
     .hero-stat{padding:28px 22px}
     .hero-metrics{gap:28px;margin-top:24px;padding-top:22px}
@@ -262,6 +283,25 @@
       <div class="hm"><div class="hmk">24h trading volume</div><div class="hmv"><span id="volNum">—</span><span class="chg" id="volChg"></span></div><svg class="spark" id="volSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="volSrc">exchange-reported</div></div>
     </div>
     <div class="updated">Last updated <b id="updated">—</b> · refreshes daily from a public, open-source pipeline.</div>
+  </div>
+
+  <div class="proj" id="proj">
+    <div class="proj-h">Price to market cap</div>
+    <p class="proj-lede">Try a price. See the circulating market cap it would imply, on our real multichain supply.</p>
+    <div class="proj-row">
+      <label class="proj-field"><span>RIO price</span>
+        <div class="proj-inwrap"><span class="proj-pfx">$</span><input id="projPrice" type="text" inputmode="decimal" value="1.00" aria-label="RIO price in USD"></div>
+      </label>
+      <div class="proj-eq">=</div>
+      <label class="proj-field"><span>Circulating market cap</span>
+        <div class="proj-inwrap"><span class="proj-pfx">$</span><input id="projMcap" type="text" inputmode="decimal" aria-label="Circulating market cap in USD"></div>
+      </label>
+    </div>
+    <input id="projSlider" class="proj-slider" type="range" min="0" max="1000" value="0" aria-label="RIO price slider">
+    <div class="proj-mult" id="projMult"></div>
+    <div class="proj-presets" id="projPresets"></div>
+    <p class="proj-note" id="projNote"></p>
+    <p class="proj-cap">Arithmetic, price times supply, not a forecast. Uses realiostats' full multichain circulating supply.</p>
   </div>
 
   <div class="assume">
@@ -480,6 +520,7 @@ const CHAINS = [
 ];
 
 const fmtUsd = n => n>=1e6 ? "$"+(n/1e6).toFixed(2)+"M" : "$"+Math.round(n).toLocaleString("en-US");
+const fmtBig = n => !isFinite(n) ? "—" : n>=1e9 ? "$"+(n/1e9).toFixed(2)+"B" : n>=1e6 ? "$"+(n/1e6).toFixed(1)+"M" : "$"+Math.round(n).toLocaleString("en-US");
 const fmtInt = n => Math.round(n).toLocaleString("en-US");
 // What this measures: RIO that came into existence, so it can be compared like
 // for like against scheduled emission.
@@ -661,7 +702,7 @@ let VOLHIST = null;
 // rate-limited, the snapshot values simply remain, timestamped.
 function applyLiveMarket(latest){
   fetch("https://api.coingecko.com/api/v3/simple/price?ids=realio-network"
-       +"&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true",{cache:"no-store"})
+       +"&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_market_cap=true",{cache:"no-store"})
     .then(r=>r.ok?r.json():null)
     .then(j=>{
       const d = j && j["realio-network"];
@@ -677,6 +718,11 @@ function applyLiveMarket(latest){
           // Market cap tracks price almost exactly: supply moves ~0.006%/day.
           setChg("mcapChg", d.usd_24h_change, 0.5, "tracks price; supply moves ~0.006% per day");
         }
+        // Refresh the projector against the live price, and derive the aggregator
+        // supply from CoinGecko's own market cap (mcap / price = their ~100M).
+        CURRENT_PRICE = p;
+        if(typeof d.usd_market_cap === "number" && d.usd_market_cap > 0) PROJ_AGG_SUPPLY = d.usd_market_cap / p;
+        if(PROJ_SUPPLY){ const cur = projParse(document.getElementById("projPrice").value) || 1; renderProjector(cur, "live"); }
       }
       const v = d.usd_24h_vol;
       if(typeof v === "number" && v > 0){
@@ -767,6 +813,53 @@ function renderWhatMoved(arr, expectedDaily){
     read = `${win}, new supply ran <b>${fmtInt(wm.perDay)}/day</b>, in line with the scheduled <b>~${fmtInt(wm.exp)}</b>. The chains below show where the movement was; cross-chain shifts net out, leaving emission minus burns.`;
   }
   document.getElementById("wmRead").innerHTML = read;
+}
+
+// Price-to-market-cap projector. Pure arithmetic (mcap = price x supply) on our
+// multichain circulating supply. Two-way price <-> mcap, a log-scaled slider,
+// presets, a live multiple vs today's price, and the aggregator-supply contrast
+// that makes the point: the same price implies a ~3x larger cap on the real
+// supply than on the ~100M aggregators report. It forecasts nothing.
+let PROJ_SUPPLY = null, PROJ_AGG_SUPPLY = 100e6, CURRENT_PRICE = null;
+const PROJ_MIN = 0.01, PROJ_MAX = 10;
+const projParse = s => parseFloat(String(s).replace(/[^0-9.]/g, ""));
+const projFmtPrice = p => p>=1 ? p.toFixed(2) : p.toFixed(4);
+const projSliderToPrice = v => PROJ_MIN*Math.pow(PROJ_MAX/PROJ_MIN, v/1000);
+const projPriceToSlider = p => Math.round(1000*Math.log(Math.min(PROJ_MAX,Math.max(PROJ_MIN,p))/PROJ_MIN)/Math.log(PROJ_MAX/PROJ_MIN));
+
+function renderProjector(price, from){
+  if(!PROJ_SUPPLY || !(price>0)) return;
+  const mcap = price*PROJ_SUPPLY;
+  if(from!=="price")  document.getElementById("projPrice").value = projFmtPrice(price);
+  if(from!=="mcap")   document.getElementById("projMcap").value  = Math.round(mcap).toLocaleString("en-US");
+  if(from!=="slider") document.getElementById("projSlider").value = projPriceToSlider(price);
+  const mult = document.getElementById("projMult");
+  if(CURRENT_PRICE>0){
+    const x = price/CURRENT_PRICE;
+    mult.innerHTML = "<b>"+fmtBig(mcap)+"</b> market cap · about <b>"+(x>=1?x.toFixed(1):x.toFixed(2))+"x</b> from today's $"+projFmtPrice(CURRENT_PRICE);
+  } else {
+    mult.innerHTML = "<b>"+fmtBig(mcap)+"</b> circulating market cap";
+  }
+  const aggMcap = price*PROJ_AGG_SUPPLY;
+  document.getElementById("projNote").innerHTML =
+    "At $"+projFmtPrice(price)+", RIO's full multichain supply of "+fmtM(M(PROJ_SUPPLY))+" makes it a <b>"+fmtBig(mcap)+
+    "</b> project. A calculator using the ~"+fmtM(M(PROJ_AGG_SUPPLY))+" supply that aggregators report would show only "+
+    fmtBig(aggMcap)+" at the same price, about "+(PROJ_SUPPLY/PROJ_AGG_SUPPLY).toFixed(1)+"x smaller. Same price, very different picture.";
+}
+function initProjector(supply){
+  if(!(supply>0)) return;
+  PROJ_SUPPLY = supply;
+  const presets=[[0.10,"$0.10"],[0.50,"$0.50"],[1,"$1"],[3,"$3"],[5,"$5"],[5.12,"$5.12 · 2020 ATH"]];
+  document.getElementById("projPresets").innerHTML =
+    presets.map(p=>`<button type="button" class="proj-preset" data-p="${p[0]}">${p[1]}</button>`).join("");
+  document.getElementById("projPresets").addEventListener("click",e=>{
+    const b=e.target.closest(".proj-preset"); if(b) renderProjector(parseFloat(b.dataset.p),"preset");
+  });
+  const pIn=document.getElementById("projPrice"), mIn=document.getElementById("projMcap"), sl=document.getElementById("projSlider");
+  pIn.addEventListener("input",()=>{ const v=projParse(pIn.value); if(v>0) renderProjector(v,"price"); });
+  mIn.addEventListener("input",()=>{ const v=projParse(mIn.value); if(v>0) renderProjector(v/PROJ_SUPPLY,"mcap"); });
+  sl.addEventListener("input",()=>renderProjector(projSliderToPrice(+sl.value),"slider"));
+  renderProjector(1.00,"init");
 }
 
 function render(latest, liveSeries, fullArr){
@@ -952,6 +1045,9 @@ fetch("./supply-history.json",{cache:"no-store"}).then(r=>r.json()).then(arr=>{
   render(FALLBACK, [perChain(FALLBACK)], [FALLBACK]);
   return FALLBACK;
 }).then(latest=>{
+  // Projector uses our multichain supply and today's price as its anchor.
+  CURRENT_PRICE = latest.price_usd || null;
+  initProjector(latest.tradable_total);
   // Committed volume history first: it draws the sparklines and gives
   // applyLiveMarket a baseline for the day-over-day volume change. Then the live
   // upgrade on top. Every stage is independently catch-guarded, so a failure at
