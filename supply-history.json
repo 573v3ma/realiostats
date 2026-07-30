@@ -1136,5 +1136,68 @@
     "block_time_s": 5.6729,
     "emission_block_adjusted": true,
     "flags": []
+  },
+  {
+    "ts": "2026-07-30T08:10:47Z",
+    "chains": {
+      "realio_native": {
+        "total": 87094832.8632,
+        "bridge_escrow": 0.0,
+        "circulating": 87094832.8632,
+        "_source": "https://realio-api.noders.services"
+      },
+      "bnb": {
+        "total_supply": 154566379.8161,
+        "_source": "https://bsc-rpc.publicnode.com",
+        "circulating": 154566379.8161
+      },
+      "ethereum": {
+        "total_supply": 71231263.3116,
+        "base_bridge_lock": 2013583.0973,
+        "_source": "https://ethereum-rpc.publicnode.com",
+        "circulating": 71231263.3116
+      },
+      "algorand": {
+        "total_supply": 100000000.0,
+        "reserve": 43805832.0634,
+        "bridge_wallet": 48372917.0245,
+        "circulating": 7821250.9121,
+        "_source": "https://mainnet-api.algonode.cloud"
+      },
+      "stellar": {
+        "total_supply": 74999848.3883,
+        "treasury": 69847886.1143,
+        "circulating": 5151962.2739,
+        "_source": "https://horizon.stellar.org"
+      },
+      "solana": {
+        "total_supply": 1079651.8218,
+        "_source": "https://api.mainnet-beta.solana.com",
+        "circulating": 1079651.8218
+      },
+      "base": {
+        "total_supply": 2012496.4473,
+        "_source": "https://base-rpc.publicnode.com",
+        "circulating": 0
+      }
+    },
+    "tradable_total": 326945341.0,
+    "native_cap": 175000000,
+    "price_usd": 0.03245314,
+    "price_source": "coingecko",
+    "market_cap_usd": 10610402.92,
+    "volume_24h_usd": 159913.56,
+    "volume_source": "coingecko",
+    "mint": {
+      "inflation_rate": 0.08,
+      "blocks_per_year": 6311520
+    },
+    "global_total_rio": 488971976.2,
+    "expected_annual_emission_rio": 6200240.4,
+    "expected_daily_emission_rio": 16986.96,
+    "expected_daily_emission_nominal_rio": 19266.89,
+    "block_time_s": 5.6672,
+    "emission_block_adjusted": true,
+    "flags": []
   }
 ]
