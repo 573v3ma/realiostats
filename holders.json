@@ -5,8 +5,8 @@
   "bsc_exchanges": [
     { "entity": "KuCoin",   "wallets": 5, "rio": 34697466 },
     { "entity": "MEXC",     "wallets": 2, "rio": 12676268 },
-    { "entity": "OKX",      "wallets": 1, "rio": 8244988 },
-    { "entity": "CoinSpot", "wallets": 1, "rio": 2007694 }
+    { "entity": "OKX",      "wallets": 1, "rio": 8244988, "note": "no active market" },
+    { "entity": "CoinSpot", "wallets": 1, "rio": 2007694, "note": "no active market" }
   ],
   "eth_holders": [
     { "holder": "Uniswap (V3 + V4 pools)", "type": "DEX liquidity",     "rio": 2922857 },

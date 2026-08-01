@@ -176,6 +176,7 @@
   .lq-read{font-size:13.5px;color:var(--body);line-height:1.65;margin-top:20px;max-width:820px}
   .lq-read b{color:var(--ink);font-weight:600}
   .ptbl tbody tr.lq-total td{border-top:2px solid var(--line-strong);border-bottom:0;font-weight:600;color:var(--ink)}
+  .lq-tag{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--muted);background:var(--alt);border:1px solid var(--line);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle;white-space:nowrap}
   @media(max-width:880px){.lq-grid{grid-template-columns:1fr}}
   .ptbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-sm);box-shadow:var(--shadow-sm);background:var(--bg)}
   .ptbl{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
@@ -934,7 +935,8 @@ function renderHolders(latest, h){
       tot += x.rio; wtot += x.wallets;
       const pB = bnb ? (100*x.rio/bnb).toFixed(1)+"%" : "—";
       const pC = circ ? (100*x.rio/circ).toFixed(1)+"%" : "—";
-      return `<tr><td>${x.entity}</td><td>${x.wallets}</td><td>${fmtM(M(x.rio))}</td><td>${pB}</td><td>${pC}</td></tr>`;
+      const tag = x.note ? ` <span class="lq-tag">${x.note}</span>` : "";
+      return `<tr><td>${x.entity}${tag}</td><td>${x.wallets}</td><td>${fmtM(M(x.rio))}</td><td>${pB}</td><td>${pC}</td></tr>`;
     }).join("");
     const tB = bnb ? (100*tot/bnb).toFixed(0)+"%" : "—";
     const tC = circ ? (100*tot/circ).toFixed(1)+"%" : "—";
