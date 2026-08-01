@@ -1264,12 +1264,12 @@
     "flags": []
   },
   {
-    "ts": "2026-08-01T07:45:46Z",
+    "ts": "2026-08-01T08:07:31Z",
     "chains": {
       "realio_native": {
-        "total": 87140417.517,
+        "total": 87140674.7677,
         "bridge_escrow": 0.0,
-        "circulating": 87140417.517,
+        "circulating": 87140674.7677,
         "_source": "https://realio-api.noders.services"
       },
       "bnb": {
@@ -1307,22 +1307,22 @@
         "circulating": 0
       }
     },
-    "tradable_total": 326973568.49,
+    "tradable_total": 326973825.74,
     "native_cap": 175000000,
-    "price_usd": 0.03124114,
+    "price_usd": 0.03109029,
     "price_source": "coingecko",
-    "market_cap_usd": 10215027.03,
-    "volume_24h_usd": 150343.85,
+    "market_cap_usd": 10165711.06,
+    "volume_24h_usd": 150948.2,
     "volume_source": "coingecko",
     "mint": {
       "inflation_rate": 0.08,
       "blocks_per_year": 6311520
     },
-    "global_total_rio": 489000204.74,
-    "expected_annual_emission_rio": 6034742.1,
-    "expected_daily_emission_rio": 16533.54,
-    "expected_daily_emission_nominal_rio": 19256.9,
-    "block_time_s": 5.8196,
+    "global_total_rio": 489000461.99,
+    "expected_annual_emission_rio": 6034931.9,
+    "expected_daily_emission_rio": 16534.06,
+    "expected_daily_emission_nominal_rio": 19256.84,
+    "block_time_s": 5.8194,
     "emission_block_adjusted": true,
     "bridge_caps": {
       "evm_daily_mint_cap_bnb": 5000000.0,
