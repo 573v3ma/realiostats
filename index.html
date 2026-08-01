@@ -90,6 +90,7 @@
   /* sections */
   section{padding:76px 0;border-top:1px solid var(--line)}
   section h2{font-size:clamp(23px,2.6vw,29px);margin:0 0 10px;font-weight:700;letter-spacing:-.02em}
+  .h2-note{font-size:.5em;font-weight:600;color:var(--faint);letter-spacing:.04em;text-transform:uppercase;vertical-align:middle;margin-left:8px;border:1px solid var(--line);border-radius:999px;padding:3px 10px}
   section h2::before{content:"";display:block;width:30px;height:3px;border-radius:3px;
     background:linear-gradient(90deg,var(--green),var(--mint));margin-bottom:16px}
   section .sec-lede{color:var(--muted);font-size:15.5px;line-height:1.65;margin:0 0 34px;max-width:660px}
@@ -421,7 +422,7 @@
 </div></section>
 
 <section id="liquidity"><div class="wrap">
-  <h2>Where the liquidity sits</h2>
+  <h2>Where the liquidity sits <span class="h2-note">liquid float</span></h2>
   <p class="sec-lede">Circulating supply says how much RIO exists. It does not say how much can be sold right now. Almost all real exchange and DEX volume settles on BNB Chain and Ethereum, so that is where the tradable float actually lives. Here is who holds it.</p>
   <div class="lq-grid">
     <div class="lq-card">
