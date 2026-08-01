@@ -166,6 +166,16 @@
   .proj-cap{font-size:12px;color:var(--faint);margin-top:12px}
   .cap{font-size:12.5px;color:var(--muted);line-height:1.65;margin-top:16px}
   /* provenance table */
+  .lq-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:8px}
+  .lq-card{border:1px solid var(--line);border-radius:var(--radius-sm);padding:20px;background:var(--bg)}
+  .lq-h{font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+  .lq-sub{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.55}
+  .lq-eth .lq-big{font-family:"Space Grotesk";font-size:42px;font-weight:600;color:var(--ink);letter-spacing:-.03em;line-height:1}
+  .lq-eth .lq-cap2{font-size:13px;color:var(--body);margin-top:8px;line-height:1.5}
+  .lq-read{font-size:13.5px;color:var(--body);line-height:1.65;margin-top:20px;max-width:820px}
+  .lq-read b{color:var(--ink);font-weight:600}
+  .ptbl tbody tr.lq-total td{border-top:2px solid var(--line-strong);border-bottom:0;font-weight:600;color:var(--ink)}
+  @media(max-width:880px){.lq-grid{grid-template-columns:1fr}}
   .ptbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-sm);box-shadow:var(--shadow-sm);background:var(--bg)}
   .ptbl{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
   .ptbl th,.ptbl td{padding:13px 16px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -265,6 +275,7 @@
     <a href="#chains">Per chain</a>
     <a href="#chart">Evolution</a>
     <a href="#provenance">Provenance</a>
+    <a href="#liquidity">Liquidity</a>
     <a href="#method">Methodology</a>
     <a href="#faq">FAQ</a>
     <a href="#contribute">Contribute</a>
@@ -407,6 +418,28 @@
     <p>So the ongoing bridge is consistent and two-way, but the size of the cross-chain supply is a legacy of historical direct issuance across several chains, not of the native emission schedule. We present this as measurement, not accusation, and we invite the team to publish the full cross-chain reconciliation.</p>
   </div>
   <p class="cap">Method: for the burn-and-mint contracts, every ERC-20 <code>Transfer</code> from the zero address (a mint) and to the zero address (a burn) since the 30 October 2024 migration, summed and reconciled against <code>totalSupply</code>; both use the RIO contract at <code>0x94a8&#8230;1aa0</code>. Per-chain totals are read live from each chain's public endpoint. Native emission is bounded by the 8% schedule and the 175M cap, so it cannot have created more than roughly 90M over the chain's life to date; bridging moves RIO in and out of native but does not create it. Fully reproducible from public data (see <a href="https://github.com/573v3ma/realiostats/blob/main/rio_mint_burn_audit.py" target="_blank" rel="noopener">rio_mint_burn_audit.py</a>).</p>
+</div></section>
+
+<section id="liquidity"><div class="wrap">
+  <h2>Where the liquidity sits</h2>
+  <p class="sec-lede">Circulating supply says how much RIO exists. It does not say how much can be sold right now. Almost all real exchange and DEX volume settles on BNB Chain and Ethereum, so that is where the tradable float actually lives. Here is who holds it.</p>
+  <div class="lq-grid">
+    <div class="lq-card">
+      <div class="lq-h">BNB Chain, held in exchange wallets</div>
+      <div class="ptbl-wrap"><table class="ptbl">
+        <thead><tr><th>Exchange</th><th>Wallets</th><th>RIO</th><th>% of BNB</th><th>% of circ.</th></tr></thead>
+        <tbody id="bscHoldersBody"></tbody>
+      </table></div>
+      <p class="lq-sub" id="bscHoldersSub"></p>
+    </div>
+    <div class="lq-card">
+      <div class="lq-h">Ethereum, dispersed</div>
+      <div class="lq-eth"><div class="lq-big" id="ethDispBig">—</div><div class="lq-cap2" id="ethDispCap"></div></div>
+      <p class="lq-sub">A broad retail base rather than a few custodians. That is a healthier holder distribution, but it also means less of it sits ready to trade on a major venue.</p>
+    </div>
+  </div>
+  <p class="lq-read">Two things follow. Because this liquid float is a fraction of the 326.8M circulating supply, and smaller still than the 227M that sits on the two liquid chains, a relatively modest amount of buying or selling moves the price more than the headline market cap would suggest. That cuts both ways: it makes sharp rallies possible on light volume, and equally sharp falls. It is also not fixed. Supply on the quieter chains can bridge across over time, so today's thin float is a snapshot, not a permanent floor. Circulating supply remains 326.8M. This section is about where that supply sits and how much of it is liquid today, not a different supply figure.</p>
+  <p class="cap" id="lqCap"></p>
 </div></section>
 
 <section id="method"><div class="wrap">
@@ -878,6 +911,47 @@ function initProjector(supply){
   renderProjector(1.00,"init");
 }
 
+// "Where the liquidity sits" section. Holdings come from holders.json, a dated
+// snapshot of explorer labels (balances drift as exchanges rotate wallets, and
+// name tags are not in any free API, so this is refreshed periodically, not
+// live). Percentages ARE computed live against the current per-chain supply, so
+// only the RIO amounts are as-of the snapshot date. Fails silently if the file
+// is missing; the section just stays empty.
+function renderHolders(latest, h){
+  if(!h || !latest) return;
+  const bnb = (latest.chains && latest.chains.bnb &&
+    (latest.chains.bnb.circulating ?? latest.chains.bnb.total_supply)) || 0;
+  const circ = latest.tradable_total || 0;
+  const body = document.getElementById("bscHoldersBody");
+  if(body && Array.isArray(h.bsc_exchanges)){
+    let tot = 0, wtot = 0;
+    const rows = h.bsc_exchanges.slice().sort((a,b)=>b.rio-a.rio).map(x=>{
+      tot += x.rio; wtot += x.wallets;
+      const pB = bnb ? (100*x.rio/bnb).toFixed(1)+"%" : "—";
+      const pC = circ ? (100*x.rio/circ).toFixed(1)+"%" : "—";
+      return `<tr><td>${x.entity}</td><td>${x.wallets}</td><td>${fmtM(M(x.rio))}</td><td>${pB}</td><td>${pC}</td></tr>`;
+    }).join("");
+    const tB = bnb ? (100*tot/bnb).toFixed(0)+"%" : "—";
+    const tC = circ ? (100*tot/circ).toFixed(1)+"%" : "—";
+    body.innerHTML = rows +
+      `<tr class="lq-total"><td>Identified exchanges</td><td>${wtot}</td><td>${fmtM(M(tot))}</td><td>${tB}</td><td>${tC}</td></tr>`;
+    document.getElementById("bscHoldersSub").innerHTML =
+      `Held in exchange wallets, which custody user funds. Not exhaustive: smaller labelled wallets sit below the top holders, so the real exchange-held total is a little higher.`;
+  }
+  if(typeof h.eth_outside_top100_pct === "number"){
+    document.getElementById("ethDispBig").textContent = "~"+h.eth_outside_top100_pct+"%";
+    document.getElementById("ethDispCap").textContent =
+      "of Ethereum RIO is held outside the top 100 addresses ("+(h.eth_note||"")+").";
+  }
+  if(h.as_of){
+    document.getElementById("lqCap").innerHTML =
+      "Holdings as of "+h.as_of+", from "+(h.source||"public explorers")+". Balances drift as wallets rotate; verify live on "+
+      '<a href="https://bscscan.com/token/0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0#balances" target="_blank" rel="noopener">BscScan</a> and '+
+      '<a href="https://etherscan.io/token/0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0#balances" target="_blank" rel="noopener">Etherscan</a>. '+
+      "Percentages are computed against the current live supply. Circulating supply is unchanged by any of this; the section describes distribution, not a different total.";
+  }
+}
+
 function render(latest, liveSeries, fullArr){
   const multi = latest.tradable_total;
   document.getElementById("multiNum").textContent = fmtM(M(multi));
@@ -1064,6 +1138,9 @@ fetch("./supply-history.json",{cache:"no-store"}).then(r=>r.json()).then(arr=>{
   // Projector uses our multichain supply and today's price as its anchor.
   CURRENT_PRICE = latest.price_usd || null;
   initProjector(latest.tradable_total);
+  // Liquidity/holders section: dated snapshot file, percentages live. Silent if absent.
+  fetch("./holders.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
+    .then(h=>renderHolders(latest,h)).catch(()=>{});
   // Committed volume history first: it draws the sparklines and gives
   // applyLiveMarket a baseline for the day-over-day volume change. Then the live
   // upgrade on top. Every stage is independently catch-guarded, so a failure at
