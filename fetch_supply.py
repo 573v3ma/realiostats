@@ -100,6 +100,7 @@ def _evm_call(rpc, to, data):
         raise ValueError(f"no result: {r.get('error')}")
     return int(r["result"], 16)
 
+def _evm_daily_mint_cap(rpc, c): return _evm_call(rpc, c, "0x2832bcb5")  # dailyMintCap()
 def _evm_total_supply(rpc, c): return _evm_call(rpc, c, "0x18160ddd")
 def _evm_decimals(rpc, c):     return _evm_call(rpc, c, "0x313ce567")
 def _evm_balance_of(rpc, c, holder):
@@ -182,6 +183,35 @@ def fetch_mint_params(flags):
             continue
     flags.append("mint_params_unavailable")
     return {}
+
+# ---- bridge rate limits (informational; soft-fail, never blocks the snapshot) --
+# Two independent throttles, in two directions:
+#   * EVM dailyMintCap: caps minting ONTO each EVM chain (any -> BSC / any -> ETH,
+#     which is the native -> sellable-venue direction). Mutable by the bridge admin.
+#   * Native bridge ratelimit: caps BridgeIn (EVM -> native, minting ario). 24h
+#     epoch, authority-gated. Does NOT limit native -> EVM. Verified from source
+#     (realiotech/realio-network x/bridge): only BridgeIn calls UpdateInflow.
+def fetch_bridge_caps():
+    out = {}
+    for key, contract in (("bnb", BSC_CONTRACT), ("ethereum", ETH_CONTRACT)):
+        for url in ENDPOINTS[key]:
+            try:
+                out["evm_daily_mint_cap_" + ("bnb" if key == "bnb" else "eth")] = \
+                    round(_evm_daily_mint_cap(url, contract) / 1e18, 2)
+                break
+            except Exception:
+                continue
+    for url in ENDPOINTS["native"]:
+        try:
+            d = _get(f"{url}/realionetwork/bridge/v1/ratelimits")
+            for rl in d.get("ratelimits", []):
+                if rl.get("denom") == NATIVE_DENOM:
+                    out["native_bridge_ratelimit"] = round(int(rl["rate_limit"]["ratelimit"]) / 1e18, 2)
+                    break
+            break
+        except Exception:
+            continue
+    return out
 
 # ---- failover wrapper: try each endpoint until one returns valid data --------
 def with_fallback(chain, fn, flags):
@@ -334,6 +364,7 @@ def build_snapshot():
             "expected_daily_emission_nominal_rio": exp_daily_nominal,
             "block_time_s": bt,
             "emission_block_adjusted": block_adjusted,
+            "bridge_caps": fetch_bridge_caps(),
             "flags": flags}
 
 def print_summary(s):

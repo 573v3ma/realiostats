@@ -443,6 +443,7 @@
     </div>
   </div>
   <p class="lq-read">Two things follow. Because this liquid float is a fraction of the 326.8M circulating supply, and smaller still than the 227M that sits on the two liquid chains, a relatively modest amount of buying or selling moves the price more than the headline market cap would suggest. That cuts both ways: it makes sharp rallies possible on light volume, and equally sharp falls. It is also not fixed. Supply on the quieter chains can bridge across over time, so today's thin float is a snapshot, not a permanent floor. Circulating supply remains 326.8M. This section is about where that supply sits and how much of it is liquid today, not a different supply figure.</p>
+  <p class="lq-read" id="lqCaps" hidden></p>
   <p class="cap" id="lqCap"></p>
 </div></section>
 
@@ -958,6 +959,24 @@ function renderHolders(latest, h){
     ebody.innerHTML = rows +
       `<tr class="lq-total"><td>Identified</td><td></td><td>${fmtM(M(etot))}</td><td>${tE}</td><td>${tC}</td></tr>`;
     document.getElementById("ethHoldersSub").textContent = h.eth_dispersed_note || "";
+  }
+  // Bridge throttles, read live from the snapshot. Two directions, stated
+  // neutrally: the EVM mint cap is the gate for off-venue RIO reaching a
+  // sellable venue; the native ratelimit governs the reverse flow.
+  const bc = latest.bridge_caps || {};
+  const capsEl = document.getElementById("lqCaps");
+  const capM = v => { const m=v/1e6; return (m%1===0 ? m.toFixed(0) : m.toFixed(2).replace(/0+$/,"")) + "M"; };
+  const evmB = bc.evm_daily_mint_cap_bnb, evmE = bc.evm_daily_mint_cap_eth, nat = bc.native_bridge_ratelimit;
+  if(capsEl && (evmB || evmE)){
+    const evmTxt = (evmB && evmE && evmB === evmE)
+      ? "<b>"+capM(evmB)+" per day</b> onto each chain"
+      : "<b>"+(evmB?capM(evmB):"n/a")+"/day</b> onto BNB Chain and <b>"+(evmE?capM(evmE):"n/a")+"/day</b> onto Ethereum";
+    let t = "Getting off-venue RIO onto the liquid chains is throttled on-chain. Minting onto the EVM chains is capped at "+evmTxt+
+            " (a mutable limit set by the bridge admin), so that is the real speed limit on supply reaching a major venue.";
+    if(nat) t += " A separate <b>"+capM(nat)+" per day</b> limit governs the opposite flow, RIO bridging onto the native chain.";
+    t += " Both are read live from the contracts and the bridge module.";
+    capsEl.innerHTML = t;
+    capsEl.hidden = false;
   }
   if(h.as_of){
     document.getElementById("lqCap").innerHTML =
