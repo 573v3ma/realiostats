@@ -166,7 +166,7 @@
   .proj-cap{font-size:12px;color:var(--faint);margin-top:12px}
   .cap{font-size:12.5px;color:var(--muted);line-height:1.65;margin-top:16px}
   /* provenance table */
-  .lq-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-top:8px}
+  .lq-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px}
   .lq-card{border:1px solid var(--line);border-radius:var(--radius-sm);padding:20px;background:var(--bg)}
   .lq-h{font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
   .lq-sub{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.55}
@@ -433,9 +433,12 @@
       <p class="lq-sub" id="bscHoldersSub"></p>
     </div>
     <div class="lq-card">
-      <div class="lq-h">Ethereum, dispersed</div>
-      <div class="lq-eth"><div class="lq-big" id="ethDispBig">—</div><div class="lq-cap2" id="ethDispCap"></div></div>
-      <p class="lq-sub">A broad retail base rather than a few custodians. That is a healthier holder distribution, but it also means less of it sits ready to trade on a major venue.</p>
+      <div class="lq-h">Ethereum, main identified holders</div>
+      <div class="ptbl-wrap"><table class="ptbl">
+        <thead><tr><th>Holder</th><th>Type</th><th>RIO</th><th>% of ETH</th><th>% of circ.</th></tr></thead>
+        <tbody id="ethHoldersBody"></tbody>
+      </table></div>
+      <p class="lq-sub" id="ethHoldersSub"></p>
     </div>
   </div>
   <p class="lq-read">Two things follow. Because this liquid float is a fraction of the 326.8M circulating supply, and smaller still than the 227M that sits on the two liquid chains, a relatively modest amount of buying or selling moves the price more than the headline market cap would suggest. That cuts both ways: it makes sharp rallies possible on light volume, and equally sharp falls. It is also not fixed. Supply on the quieter chains can bridge across over time, so today's thin float is a snapshot, not a permanent floor. Circulating supply remains 326.8M. This section is about where that supply sits and how much of it is liquid today, not a different supply figure.</p>
@@ -938,10 +941,22 @@ function renderHolders(latest, h){
     document.getElementById("bscHoldersSub").innerHTML =
       `Held in exchange wallets, which custody user funds. Not exhaustive: smaller labelled wallets sit below the top holders, so the real exchange-held total is a little higher.`;
   }
-  if(typeof h.eth_outside_top100_pct === "number"){
-    document.getElementById("ethDispBig").textContent = "~"+h.eth_outside_top100_pct+"%";
-    document.getElementById("ethDispCap").textContent =
-      "of Ethereum RIO is held outside the top 100 addresses ("+(h.eth_note||"")+").";
+  const eth = (latest.chains && latest.chains.ethereum &&
+    (latest.chains.ethereum.circulating ?? latest.chains.ethereum.total_supply)) || 0;
+  const ebody = document.getElementById("ethHoldersBody");
+  if(ebody && Array.isArray(h.eth_holders)){
+    let etot = 0;
+    const rows = h.eth_holders.slice().sort((a,b)=>b.rio-a.rio).map(x=>{
+      etot += x.rio;
+      const pE = eth ? (100*x.rio/eth).toFixed(1)+"%" : "—";
+      const pC = circ ? (100*x.rio/circ).toFixed(1)+"%" : "—";
+      return `<tr><td>${x.holder}</td><td>${x.type}</td><td>${fmtM(M(x.rio))}</td><td>${pE}</td><td>${pC}</td></tr>`;
+    }).join("");
+    const tE = eth ? (100*etot/eth).toFixed(1)+"%" : "—";
+    const tC = circ ? (100*etot/circ).toFixed(1)+"%" : "—";
+    ebody.innerHTML = rows +
+      `<tr class="lq-total"><td>Identified</td><td></td><td>${fmtM(M(etot))}</td><td>${tE}</td><td>${tC}</td></tr>`;
+    document.getElementById("ethHoldersSub").textContent = h.eth_dispersed_note || "";
   }
   if(h.as_of){
     document.getElementById("lqCap").innerHTML =

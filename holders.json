@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-07-28",
+  "as_of": "2026-07-31",
   "source": "BscScan and Etherscan public name tags",
   "note": "Balances read from explorer labels on the date shown. Exchange wallets custody user funds; they are not owned by the exchange. Wallets rotate over time, so figures drift between updates. Verify live on the linked explorers.",
   "bsc_exchanges": [
@@ -8,7 +8,10 @@
     { "entity": "OKX",      "wallets": 1, "rio": 8244988 },
     { "entity": "CoinSpot", "wallets": 1, "rio": 2007694 }
   ],
-  "bsc_top25_pct": 47.7,
-  "eth_outside_top100_pct": 62,
-  "eth_note": "dispersed retail, largest holders under about 2M RIO, no single dominant address"
+  "eth_holders": [
+    { "holder": "Uniswap (V3 + V4 pools)", "type": "DEX liquidity",     "rio": 2922857 },
+    { "holder": "Base bridge",             "type": "Bridge, backs Base", "rio": 2015572 },
+    { "holder": "Mercado Bitcoin",         "type": "Exchange",           "rio": 543054 }
+  ],
+  "eth_dispersed_note": "Ethereum's largest holders are DEX pools and the Base bridge, not exchange wallets. Around 92% of ETH RIO is spread across retail addresses, with no single dominant holder."
 }
