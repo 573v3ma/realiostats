@@ -1330,5 +1330,73 @@
       "native_bridge_ratelimit": 1750000.0
     },
     "flags": []
+  },
+  {
+    "ts": "2026-08-02T08:09:19Z",
+    "chains": {
+      "realio_native": {
+        "total": 87542057.2653,
+        "bridge_escrow": 0.0,
+        "circulating": 87542057.2653,
+        "_source": "https://realio-api.noders.services"
+      },
+      "bnb": {
+        "total_supply": 154067564.3846,
+        "_source": "https://bsc-rpc.publicnode.com",
+        "circulating": 154067564.3846
+      },
+      "ethereum": {
+        "total_supply": 71359099.3288,
+        "base_bridge_lock": 2015572.3609,
+        "_source": "https://ethereum-rpc.publicnode.com",
+        "circulating": 71359099.3288
+      },
+      "algorand": {
+        "total_supply": 100000000.0,
+        "reserve": 43841833.1677,
+        "bridge_wallet": 48367753.4745,
+        "circulating": 7790413.3578,
+        "_source": "https://mainnet-api.algonode.cloud"
+      },
+      "stellar": {
+        "total_supply": 74999848.3883,
+        "treasury": 69847886.1143,
+        "circulating": 5151962.2739,
+        "_source": "https://horizon.stellar.org"
+      },
+      "solana": {
+        "total_supply": 1079651.8218,
+        "_source": "https://api.mainnet-beta.solana.com",
+        "circulating": 1079651.8218
+      },
+      "base": {
+        "total_supply": 2014571.3609,
+        "_source": "https://base-rpc.publicnode.com",
+        "circulating": 0
+      }
+    },
+    "tradable_total": 326990748.43,
+    "native_cap": 175000000,
+    "price_usd": 0.03735493,
+    "price_source": "coingecko",
+    "market_cap_usd": 12214716.52,
+    "volume_24h_usd": 297611.62,
+    "volume_source": "coingecko",
+    "mint": {
+      "inflation_rate": 0.08,
+      "blocks_per_year": 6311520
+    },
+    "global_total_rio": 489048221.19,
+    "expected_annual_emission_rio": 6170872.5,
+    "expected_daily_emission_rio": 16906.5,
+    "expected_daily_emission_nominal_rio": 19168.86,
+    "block_time_s": 5.6652,
+    "emission_block_adjusted": true,
+    "bridge_caps": {
+      "evm_daily_mint_cap_bnb": 5000000.0,
+      "evm_daily_mint_cap_eth": 5000000.0,
+      "native_bridge_ratelimit": 1750000.0
+    },
+    "flags": []
   }
 ]
