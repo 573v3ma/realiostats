@@ -220,7 +220,7 @@ def fetch_bridge_caps():
 def fetch_native_holders(flags):
     for base in ENDPOINTS["native"]:
         try:
-            key, total, c100, c1k, c10k = None, 0, 0, 0, 0
+            key, total, c100, c1k, c10k, c100k = None, 0, 0, 0, 0, 0
             for _ in range(60):  # safety cap; ~5 pages at 1000/page today
                 url = f"{base}/cosmos/bank/v1beta1/denom_owners/{NATIVE_DENOM}?pagination.limit=1000"
                 if key:
@@ -229,12 +229,13 @@ def fetch_native_holders(flags):
                 for o in d.get("denom_owners", []):
                     amt = int(o["balance"]["amount"]) / 1e18
                     total += 1
-                    if amt >= 100:    c100 += 1
-                    if amt >= 1000:   c1k += 1
-                    if amt >= 10000:  c10k += 1
+                    if amt >= 100:     c100 += 1
+                    if amt >= 1000:    c1k += 1
+                    if amt >= 10000:   c10k += 1
+                    if amt >= 100000:  c100k += 1
                 key = d.get("pagination", {}).get("next_key")
                 if not key:
-                    return {"total": total, "gte_100": c100, "gte_1k": c1k, "gte_10k": c10k}
+                    return {"total": total, "gte_100": c100, "gte_1k": c1k, "gte_10k": c10k, "gte_100k": c100k}
             flags.append("native_holders_incomplete")
             return None
         except Exception:
