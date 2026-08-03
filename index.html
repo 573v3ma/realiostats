@@ -179,6 +179,10 @@
   .ptbl tbody tr.lq-total td{border-top:2px solid var(--line-strong);border-bottom:0;font-weight:600;color:var(--ink)}
   .lq-tag{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--muted);background:var(--alt);border:1px solid var(--line);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle;white-space:nowrap}
   .ptbl td.hb-pending{text-align:center;color:var(--faint);font-style:italic}
+  .hb-metricrow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .hb-mbtn{font:inherit;font-size:12px;padding:4px 11px;border:1px solid #e3e7eb;background:#fff;color:#69747f;border-radius:999px;cursor:pointer;transition:.12s}
+  .hb-mbtn:hover{border-color:#c7ced4}
+  .hb-mbtn.is-on{background:#0b1015;color:#fff;border-color:#0b1015}
   @media(max-width:880px){.lq-grid{grid-template-columns:1fr}}
   .ptbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-sm);box-shadow:var(--shadow-sm);background:var(--bg)}
   .ptbl{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
@@ -460,9 +464,19 @@
     <tbody id="hbTableBody"></tbody>
   </table></div>
   <p class="lq-sub" id="hbTableNote"></p>
+  <div class="chartcard" id="hbEvmCard" hidden>
+    <div class="hb-metricrow" id="hbMetricRow">
+      <button type="button" class="hb-mbtn is-on" data-m="gte_100">100+ RIO</button>
+      <button type="button" class="hb-mbtn" data-m="gte_1k">1,000+ RIO</button>
+      <button type="button" class="hb-mbtn" data-m="gte_10k">10,000+ RIO</button>
+      <button type="button" class="hb-mbtn" data-m="total">All holders</button>
+    </div>
+    <div class="chartwrap"><canvas id="hbEvmCanvas"></canvas></div>
+    <p class="cap">Wallets holding RIO on each EVM chain, month by month since the 30 October 2024 migration, when both tokens were re-issued on their current contracts. Each point is the on-chain holder distribution at that month's end, reconstructed in a single pass over the full ERC-20 transfer history. The current contracts carry no history before the migration, so the series starts there. BNB Chain and Ethereum tell opposite stories: BNB's base has grown, Ethereum's has consolidated from its migration peak.</p>
+  </div>
   <div class="chartcard" id="hbChartCard" hidden>
     <div class="chartwrap"><canvas id="holdersCanvas"></canvas></div>
-    <p class="cap">Native-chain wallets holding at least 100, 1,000 and 10,000 RIO, counted each day from the full on-chain holder list (Cosmos <code>denom_owners</code>). The series builds forward from the first daily reading. BNB Chain figures are reconstructed from the full ERC-20 transfer history and refresh on a separate schedule.</p>
+    <p class="cap">Native-chain wallets holding at least 100, 1,000 and 10,000 RIO, counted each day from the full on-chain holder list (Cosmos <code>denom_owners</code>). The series builds forward from the first daily reading. BNB Chain and Ethereum figures are reconstructed from the full ERC-20 transfer history and refresh on a separate schedule; their month-by-month evolution is charted above.</p>
   </div>
   <p class="cap" id="hbBuilding">The native evolution chart builds as daily readings accrue.</p>
 </div></section>
@@ -1060,6 +1074,53 @@ function renderHolderBase(arr){
   });
 }
 
+// EVM holder-base evolution (BNB + Ethereum), monthly since the Oct 2024
+// migration. Reads chains.<c>.history from holders-evm.json, produced in one
+// pass over each token's full transfer history. A metric toggle switches the
+// threshold; both chains plot on a shared month axis.
+let HB_EVM_CHART = null, HB_EVM_METRIC = "gte_100", HB_EVM_WIRED = false;
+const HB_METRIC_LABEL = {gte_100:"100+ RIO", gte_1k:"1,000+ RIO", gte_10k:"10,000+ RIO", total:"All holders"};
+function renderHolderEvm(){
+  const card = document.getElementById("hbEvmCard"); if(!card) return;
+  const cx = (HB_EVM && HB_EVM.chains) || {};
+  const have = [["Ethereum","#4f46e5", cx.ethereum && cx.ethereum.history],
+                ["BNB Chain","#f0b90b", cx.bnb && cx.bnb.history]]
+               .filter(x => x[2] && x[2].length);
+  if(!have.length){ card.hidden = true; return; }
+  card.hidden = false;
+  if(!HB_EVM_WIRED){
+    document.querySelectorAll("#hbMetricRow .hb-mbtn").forEach(b => b.addEventListener("click", () => {
+      HB_EVM_METRIC = b.dataset.m;
+      document.querySelectorAll("#hbMetricRow .hb-mbtn").forEach(x => x.classList.toggle("is-on", x === b));
+      renderHolderEvm();
+    }));
+    HB_EVM_WIRED = true;
+  }
+  const set = new Set(); have.forEach(([,,h]) => h.forEach(p => set.add(p.month)));
+  const months = [...set].sort();
+  const labels = months.map(m => { const [y,mo] = m.split("-");
+    return new Date(y, mo-1, 1).toLocaleDateString("en-GB",{month:"short",year:"2-digit"}); });
+  const datasets = have.map(([name,color,h]) => {
+    const bym = {}; h.forEach(p => bym[p.month] = p[HB_EVM_METRIC]);
+    return {label:name, data:months.map(m => bym[m] ?? null), borderColor:color,
+      backgroundColor:color+"22", tension:.25, pointRadius:0, borderWidth:1.8, fill:false, spanGaps:true};
+  });
+  if(HB_EVM_CHART) HB_EVM_CHART.destroy();
+  HB_EVM_CHART = new Chart(document.getElementById("hbEvmCanvas"),{
+    type:"line", data:{labels, datasets},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      scales:{
+        y:{beginAtZero:true,grid:{color:"#eef1f4"},ticks:{color:"#69747f",font:{family:"Inter"}}},
+        x:{grid:{display:false},ticks:{color:"#69747f",font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
+      },
+      plugins:{
+        legend:{labels:{color:"#0b1015",font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}},
+        tooltip:{callbacks:{title:i => i[0].label + " · " + HB_METRIC_LABEL[HB_EVM_METRIC]}}
+      }
+    }
+  });
+}
+
 function render(latest, liveSeries, fullArr){
   const multi = latest.tradable_total;
   document.getElementById("multiNum").textContent = fmtM(M(multi));
@@ -1253,7 +1314,7 @@ fetch("./supply-history.json",{cache:"no-store"}).then(r=>r.json()).then(arr=>{
   // EVM holder counts (reconstructed, refreshed separately). Fills the BNB/ETH
   // rows once loaded; native already rendered from the daily snapshot.
   fetch("./holders-evm.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
-    .then(e=>{ HB_EVM = e; renderHolderTable(); }).catch(()=>{});
+    .then(e=>{ HB_EVM = e; renderHolderTable(); renderHolderEvm(); }).catch(()=>{});
   // Committed volume history first: it draws the sparklines and gives
   // applyLiveMarket a baseline for the day-over-day volume change. Then the live
   // upgrade on top. Every stage is independently catch-guarded, so a failure at
