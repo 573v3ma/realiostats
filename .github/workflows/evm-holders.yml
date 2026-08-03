@@ -1,0 +1,45 @@
+name: Weekly EVM holder counts
+
+on:
+  schedule:
+    - cron: "30 6 * * 1"        # Mondays 06:30 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: evm-holders
+  cancel-in-progress: false
+
+jobs:
+  holders:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Heavy reconstruction from full transfer history. Skips a chain whose
+      # secret is unset and keeps its previous value, so it is safe to enable
+      # BNB first and add Ethereum later.
+      - name: Reconstruct EVM holder counts
+        env:
+          ALCHEMY_BNB_URL: ${{ secrets.ALCHEMY_BNB_URL }}
+          ALCHEMY_ETH_URL: ${{ secrets.ALCHEMY_ETH_URL }}
+        run: python fetch_evm_holders.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "realiostats-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if ! git diff --quiet -- holders-evm.json; then
+            git add holders-evm.json
+            git commit -m "evm holder counts $(date -u +%Y-%m-%d)"
+            git push
+          else
+            echo "No change to holders-evm.json."
+          fi
