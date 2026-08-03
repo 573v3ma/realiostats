@@ -8,6 +8,11 @@
       "gte_1k": 6153,
       "gte_10k": 1490
     },
-    "ethereum": null
+    "ethereum": {
+      "total": 27960,
+      "gte_100": 15489,
+      "gte_1k": 6218,
+      "gte_10k": 1142
+    }
   }
 }
