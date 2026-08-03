@@ -178,6 +178,7 @@
   .lq-read b{color:var(--ink);font-weight:600}
   .ptbl tbody tr.lq-total td{border-top:2px solid var(--line-strong);border-bottom:0;font-weight:600;color:var(--ink)}
   .lq-tag{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--muted);background:var(--alt);border:1px solid var(--line);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle;white-space:nowrap}
+  .ptbl td.hb-pending{text-align:center;color:var(--faint);font-style:italic}
   @media(max-width:880px){.lq-grid{grid-template-columns:1fr}}
   .ptbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-sm);box-shadow:var(--shadow-sm);background:var(--bg)}
   .ptbl{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
@@ -452,19 +453,18 @@
 </div></section>
 
 <section id="holders"><div class="wrap">
-  <h2>Holder base <span class="h2-note">native chain</span></h2>
-  <p class="sec-lede">How many wallets hold RIO on the Realio native chain, and how many hold a meaningful amount. A widening base of holders is a sign of distribution and adoption. BNB Chain and Ethereum holders will be added next.</p>
-  <div class="emit">
-    <div class="chip"><div class="cn">Total holders</div><div class="cv" id="hbTotal">—</div><div class="cx">native chain wallets</div></div>
-    <div class="chip"><div class="cn">Holding 100+ RIO</div><div class="cv" id="hb100">—</div><div class="cx">meaningful</div></div>
-    <div class="chip"><div class="cn">Holding 1,000+ RIO</div><div class="cv" id="hb1k">—</div><div class="cx">sizeable</div></div>
-    <div class="chip"><div class="cn">Holding 10,000+ RIO</div><div class="cv" id="hb10k">—</div><div class="cx">large</div></div>
-  </div>
+  <h2>Holder base</h2>
+  <p class="sec-lede">How many wallets hold RIO, and how many hold a meaningful amount, per chain. A widening base of holders is a sign of distribution and adoption. Counts are addresses per chain, so a person holding on two chains is counted on each.</p>
+  <div class="ptbl-wrap"><table class="ptbl">
+    <thead><tr><th>Chain</th><th>Total holders</th><th>100+ RIO</th><th>1,000+ RIO</th><th>10,000+ RIO</th></tr></thead>
+    <tbody id="hbTableBody"></tbody>
+  </table></div>
+  <p class="lq-sub" id="hbTableNote"></p>
   <div class="chartcard" id="hbChartCard" hidden>
     <div class="chartwrap"><canvas id="holdersCanvas"></canvas></div>
-    <p class="cap">Wallets holding at least 100, 1,000 and 10,000 RIO on the native chain, counted each day from the full on-chain holder list (Cosmos <code>denom_owners</code>). The series builds forward from the first daily reading.</p>
+    <p class="cap">Native-chain wallets holding at least 100, 1,000 and 10,000 RIO, counted each day from the full on-chain holder list (Cosmos <code>denom_owners</code>). The series builds forward from the first daily reading. BNB Chain figures are reconstructed from the full ERC-20 transfer history and refresh on a separate schedule.</p>
   </div>
-  <p class="cap" id="hbBuilding">The chart builds as daily readings accrue. The counts above are today's live figures.</p>
+  <p class="cap" id="hbBuilding">The native evolution chart builds as daily readings accrue.</p>
 </div></section>
 
 <section id="method"><div class="wrap">
@@ -1008,16 +1008,36 @@ function renderHolders(latest, h){
   }
 }
 
-// Holder base (Phase 1: native chain). Chips show today's live counts; the line
-// chart plots the meaningful-holder tiers over time and appears once two or more
-// daily readings exist. Counts come from native_holders in each snapshot.
+// Holder base. A per-chain table (native read live each day; BNB reconstructed
+// from full transfer history, refreshed separately; Ethereum pending a key) plus
+// a native evolution chart that accrues from the daily readings.
+let HB_NATIVE = null, HB_EVM = null;
+function renderHolderTable(){
+  const body = document.getElementById("hbTableBody");
+  if(!body) return;
+  const f = n => (n||0).toLocaleString("en-US");
+  const row = (name,d) => d
+    ? `<tr><td>${name}</td><td>${f(d.total)}</td><td>${f(d.gte_100)}</td><td>${f(d.gte_1k)}</td><td>${f(d.gte_10k)}</td></tr>`
+    : `<tr><td>${name}</td><td colspan="4" class="hb-pending">being added</td></tr>`;
+  const bnb = HB_EVM && HB_EVM.chains && HB_EVM.chains.bnb;
+  const eth = HB_EVM && HB_EVM.chains && HB_EVM.chains.ethereum;
+  const rows = [row("Realio Native", HB_NATIVE), row("BNB Chain", bnb), row("Ethereum", eth)];
+  const parts = [HB_NATIVE, bnb, eth].filter(Boolean);
+  if(parts.length > 1){
+    const sum = k => parts.reduce((a,d)=>a+(d[k]||0), 0);
+    rows.push(`<tr class="lq-total"><td>Combined</td><td>${f(sum("total"))}</td><td>${f(sum("gte_100"))}</td><td>${f(sum("gte_1k"))}</td><td>${f(sum("gte_10k"))}</td></tr>`);
+  }
+  body.innerHTML = rows.join("");
+  const note = document.getElementById("hbTableNote");
+  if(note) note.textContent = "Realio Native is read live each day. BNB Chain"
+    + (HB_EVM && HB_EVM.as_of ? " as of " + HB_EVM.as_of : "")
+    + ", reconstructed from its full ERC-20 transfer history. Ethereum is being added.";
+}
 function renderHolderBase(arr){
   const pts = (arr||[]).filter(s=>s.native_holders && typeof s.native_holders.total === "number");
-  if(!pts.length) return;
-  const latest = pts[pts.length-1].native_holders;
-  const setN = (id,v) => { const e=document.getElementById(id); if(e) e.textContent = (v||0).toLocaleString("en-US"); };
-  setN("hbTotal",latest.total); setN("hb100",latest.gte_100); setN("hb1k",latest.gte_1k); setN("hb10k",latest.gte_10k);
-  if(pts.length < 2) return;   // keep the "building" note until the series has depth
+  if(pts.length){ HB_NATIVE = pts[pts.length-1].native_holders; }
+  renderHolderTable();
+  if(pts.length < 2) return;   // native chart needs at least two daily readings
   const bn = document.getElementById("hbBuilding"); if(bn) bn.hidden = true;
   const card = document.getElementById("hbChartCard"); if(card) card.hidden = false;
   const labels = pts.map(s=>new Date(s.ts).toLocaleDateString("en-GB",{day:"numeric",month:"short"}));
@@ -1230,6 +1250,10 @@ fetch("./supply-history.json",{cache:"no-store"}).then(r=>r.json()).then(arr=>{
   // Liquidity/holders section: dated snapshot file, percentages live. Silent if absent.
   fetch("./holders.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
     .then(h=>renderHolders(latest,h)).catch(()=>{});
+  // EVM holder counts (reconstructed, refreshed separately). Fills the BNB/ETH
+  // rows once loaded; native already rendered from the daily snapshot.
+  fetch("./holders-evm.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
+    .then(e=>{ HB_EVM = e; renderHolderTable(); }).catch(()=>{});
   // Committed volume history first: it draws the sparklines and gives
   // applyLiveMarket a baseline for the day-over-day volume change. Then the live
   // upgrade on top. Every stage is independently catch-guarded, so a failure at

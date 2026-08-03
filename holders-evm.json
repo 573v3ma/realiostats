@@ -1,0 +1,13 @@
+{
+  "as_of": "2026-08-03",
+  "source": "Reconstructed from the full ERC-20 Transfer history via Alchemy getAssetTransfers, netted per address.",
+  "chains": {
+    "bnb": {
+      "total": 24839,
+      "gte_100": 11988,
+      "gte_1k": 6153,
+      "gte_10k": 1490
+    },
+    "ethereum": null
+  }
+}
