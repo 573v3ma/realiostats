@@ -36,7 +36,7 @@ CONTRACT = "0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0"
 ZERO = "0x0000000000000000000000000000000000000000"
 DEC = 10**18
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "holders-evm.json")
-THRESHOLDS = [("gte_100", 100), ("gte_1k", 1000), ("gte_10k", 10000)]
+THRESHOLDS = [("gte_100", 100), ("gte_1k", 1000), ("gte_10k", 10000), ("gte_100k", 100000)]
 
 
 def rpc(url, method, params):
@@ -58,7 +58,9 @@ def rpc(url, method, params):
 
 def count_bal(bal):
     """Holder distribution of the current balance map."""
-    o = {"total": 0, "gte_100": 0, "gte_1k": 0, "gte_10k": 0}
+    o = {"total": 0}
+    for k, _ in THRESHOLDS:
+        o[k] = 0
     for a, b in bal.items():
         if a == ZERO or b <= 0:
             continue

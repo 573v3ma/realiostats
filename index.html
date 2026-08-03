@@ -476,6 +476,7 @@
       <button type="button" class="hb-mbtn is-on" data-m="gte_100">100+ RIO</button>
       <button type="button" class="hb-mbtn" data-m="gte_1k">1,000+ RIO</button>
       <button type="button" class="hb-mbtn" data-m="gte_10k">10,000+ RIO</button>
+      <button type="button" class="hb-mbtn" data-m="gte_100k">100,000+ RIO</button>
       <button type="button" class="hb-mbtn" data-m="total">All holders</button>
     </div>
     <div class="chartwrap"><canvas id="hbEvmCanvas"></canvas></div>
@@ -1086,7 +1087,7 @@ function renderHolderBase(arr){
 // pass over each token's full transfer history. A metric toggle switches the
 // threshold; both chains plot on a shared month axis.
 let HB_EVM_CHART = null, HB_EVM_METRIC = "gte_100", HB_EVM_WIRED = false;
-const HB_METRIC_LABEL = {gte_100:"100+ RIO", gte_1k:"1,000+ RIO", gte_10k:"10,000+ RIO", total:"All holders"};
+const HB_METRIC_LABEL = {gte_100:"100+ RIO", gte_1k:"1,000+ RIO", gte_10k:"10,000+ RIO", gte_100k:"100,000+ RIO", total:"All holders"};
 function renderHolderEvm(){
   const card = document.getElementById("hbEvmCard"); if(!card) return;
   const cx = (HB_EVM && HB_EVM.chains) || {};
