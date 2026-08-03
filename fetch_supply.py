@@ -14,7 +14,7 @@ silently zeroed. Which endpoint served each chain is recorded in the snapshot.
 Run:  python3 fetch_supply.py           # summary + JSON
       python3 fetch_supply.py --json    # JSON only (daily append job)
 """
-import json, re, sys, urllib.request
+import json, re, sys, urllib.request, urllib.parse
 from datetime import datetime, timezone
 
 TIMEOUT = 20
@@ -213,6 +213,35 @@ def fetch_bridge_caps():
             continue
     return out
 
+# ---- native holder counts by threshold (keyless; soft-fail) ------------------
+# Phase 1 of the holder-base metric: enumerate every native ario holder via the
+# Cosmos denom_owners endpoint and count how many hold >= 100 / 1k / 10k RIO.
+# Native only for now; BSC + Ethereum need a keyed indexer and come later.
+def fetch_native_holders(flags):
+    for base in ENDPOINTS["native"]:
+        try:
+            key, total, c100, c1k, c10k = None, 0, 0, 0, 0
+            for _ in range(60):  # safety cap; ~5 pages at 1000/page today
+                url = f"{base}/cosmos/bank/v1beta1/denom_owners/{NATIVE_DENOM}?pagination.limit=1000"
+                if key:
+                    url += "&pagination.key=" + urllib.parse.quote(key, safe="")
+                d = _get(url)
+                for o in d.get("denom_owners", []):
+                    amt = int(o["balance"]["amount"]) / 1e18
+                    total += 1
+                    if amt >= 100:    c100 += 1
+                    if amt >= 1000:   c1k += 1
+                    if amt >= 10000:  c10k += 1
+                key = d.get("pagination", {}).get("next_key")
+                if not key:
+                    return {"total": total, "gte_100": c100, "gte_1k": c1k, "gte_10k": c10k}
+            flags.append("native_holders_incomplete")
+            return None
+        except Exception:
+            continue
+    flags.append("native_holders_unavailable")
+    return None
+
 # ---- failover wrapper: try each endpoint until one returns valid data --------
 def with_fallback(chain, fn, flags):
     errs = []
@@ -365,6 +394,7 @@ def build_snapshot():
             "block_time_s": bt,
             "emission_block_adjusted": block_adjusted,
             "bridge_caps": fetch_bridge_caps(),
+            "native_holders": fetch_native_holders(flags),
             "flags": flags}
 
 def print_summary(s):

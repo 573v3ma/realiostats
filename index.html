@@ -279,6 +279,7 @@
     <a href="#chart">Evolution</a>
     <a href="#provenance">Provenance</a>
     <a href="#liquidity">Liquidity</a>
+    <a href="#holders">Holders</a>
     <a href="#method">Methodology</a>
     <a href="#faq">FAQ</a>
     <a href="#contribute">Contribute</a>
@@ -448,6 +449,22 @@
   <p class="lq-read">Two things follow. Because this liquid float is a fraction of the 326.8M circulating supply, and smaller still than the 227M that sits on the two liquid chains, a relatively modest amount of buying or selling moves the price more than the headline market cap would suggest. That cuts both ways: it makes sharp rallies possible on light volume, and equally sharp falls. It is also not fixed. Supply on the quieter chains can bridge across over time, so today's thin float is a snapshot, not a permanent floor. Circulating supply remains 326.8M. This section is about where that supply sits and how much of it is liquid today, not a different supply figure.</p>
   <p class="lq-read" id="lqCaps" hidden></p>
   <p class="cap" id="lqCap"></p>
+</div></section>
+
+<section id="holders"><div class="wrap">
+  <h2>Holder base <span class="h2-note">native chain</span></h2>
+  <p class="sec-lede">How many wallets hold RIO on the Realio native chain, and how many hold a meaningful amount. A widening base of holders is a sign of distribution and adoption. BNB Chain and Ethereum holders will be added next.</p>
+  <div class="emit">
+    <div class="chip"><div class="cn">Total holders</div><div class="cv" id="hbTotal">—</div><div class="cx">native chain wallets</div></div>
+    <div class="chip"><div class="cn">Holding 100+ RIO</div><div class="cv" id="hb100">—</div><div class="cx">meaningful</div></div>
+    <div class="chip"><div class="cn">Holding 1,000+ RIO</div><div class="cv" id="hb1k">—</div><div class="cx">sizeable</div></div>
+    <div class="chip"><div class="cn">Holding 10,000+ RIO</div><div class="cv" id="hb10k">—</div><div class="cx">large</div></div>
+  </div>
+  <div class="chartcard" id="hbChartCard" hidden>
+    <div class="chartwrap"><canvas id="holdersCanvas"></canvas></div>
+    <p class="cap">Wallets holding at least 100, 1,000 and 10,000 RIO on the native chain, counted each day from the full on-chain holder list (Cosmos <code>denom_owners</code>). The series builds forward from the first daily reading.</p>
+  </div>
+  <p class="cap" id="hbBuilding">The chart builds as daily readings accrue. The counts above are today's live figures.</p>
 </div></section>
 
 <section id="method"><div class="wrap">
@@ -991,6 +1008,38 @@ function renderHolders(latest, h){
   }
 }
 
+// Holder base (Phase 1: native chain). Chips show today's live counts; the line
+// chart plots the meaningful-holder tiers over time and appears once two or more
+// daily readings exist. Counts come from native_holders in each snapshot.
+function renderHolderBase(arr){
+  const pts = (arr||[]).filter(s=>s.native_holders && typeof s.native_holders.total === "number");
+  if(!pts.length) return;
+  const latest = pts[pts.length-1].native_holders;
+  const setN = (id,v) => { const e=document.getElementById(id); if(e) e.textContent = (v||0).toLocaleString("en-US"); };
+  setN("hbTotal",latest.total); setN("hb100",latest.gte_100); setN("hb1k",latest.gte_1k); setN("hb10k",latest.gte_10k);
+  if(pts.length < 2) return;   // keep the "building" note until the series has depth
+  const bn = document.getElementById("hbBuilding"); if(bn) bn.hidden = true;
+  const card = document.getElementById("hbChartCard"); if(card) card.hidden = false;
+  const labels = pts.map(s=>new Date(s.ts).toLocaleDateString("en-GB",{day:"numeric",month:"short"}));
+  const mk = (k,c,label) => ({label, data:pts.map(s=>s.native_holders[k]), borderColor:c,
+    backgroundColor:c+"22", tension:.25, pointRadius:2, pointBackgroundColor:c, fill:false, borderWidth:1.6});
+  new Chart(document.getElementById("holdersCanvas"),{
+    type:"line",
+    data:{labels, datasets:[
+      mk("gte_100","#34d399","100+ RIO"),
+      mk("gte_1k","#4f46e5","1,000+ RIO"),
+      mk("gte_10k","#f59e0b","10,000+ RIO")
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      scales:{
+        y:{beginAtZero:true,grid:{color:"#eef1f4"},ticks:{color:"#69747f",font:{family:"Inter"}}},
+        x:{grid:{display:false},ticks:{color:"#69747f",font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
+      },
+      plugins:{legend:{labels:{color:"#0b1015",font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}}}
+    }
+  });
+}
+
 function render(latest, liveSeries, fullArr){
   const multi = latest.tradable_total;
   document.getElementById("multiNum").textContent = fmtM(M(multi));
@@ -1066,6 +1115,7 @@ function render(latest, liveSeries, fullArr){
     }
   }
   renderWhatMoved(fullArr, ed);
+  renderHolderBase(fullArr);
 
   const grid = document.getElementById("chainGrid");
   grid.innerHTML = CHAINS.map(c=>{

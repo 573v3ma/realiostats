@@ -1400,12 +1400,12 @@
     "flags": []
   },
   {
-    "ts": "2026-08-03T09:28:31Z",
+    "ts": "2026-08-03T10:25:07Z",
     "chains": {
       "realio_native": {
-        "total": 87590500.073,
+        "total": 87592164.8269,
         "bridge_escrow": 0.0,
-        "circulating": 87590500.073,
+        "circulating": 87592164.8269,
         "_source": "https://realio-api.noders.services"
       },
       "bnb": {
@@ -1414,10 +1414,10 @@
         "circulating": 154036502.7587
       },
       "ethereum": {
-        "total_supply": 71359571.3288,
+        "total_supply": 71358571.3288,
         "base_bridge_lock": 2015572.3609,
         "_source": "https://ethereum-rpc.publicnode.com",
-        "circulating": 71359571.3288
+        "circulating": 71358571.3288
       },
       "algorand": {
         "total_supply": 100000000.0,
@@ -1443,27 +1443,33 @@
         "circulating": 0
       }
     },
-    "tradable_total": 327012600.61,
+    "tradable_total": 327013265.37,
     "native_cap": 175000000,
-    "price_usd": 0.03537543,
+    "price_usd": 0.03502745,
     "price_source": "coingecko",
-    "market_cap_usd": 11568211.36,
-    "volume_24h_usd": 211968.79,
+    "market_cap_usd": 11454440.8,
+    "volume_24h_usd": 215387.19,
     "volume_source": "coingecko",
     "mint": {
       "inflation_rate": 0.08,
       "blocks_per_year": 6311520
     },
-    "global_total_rio": 489066074.37,
-    "expected_annual_emission_rio": 6172467.55,
-    "expected_daily_emission_rio": 16910.87,
-    "expected_daily_emission_nominal_rio": 19158.25,
-    "block_time_s": 5.6606,
+    "global_total_rio": 489066739.13,
+    "expected_annual_emission_rio": 6172675.6,
+    "expected_daily_emission_rio": 16911.44,
+    "expected_daily_emission_nominal_rio": 19157.88,
+    "block_time_s": 5.6603,
     "emission_block_adjusted": true,
     "bridge_caps": {
       "evm_daily_mint_cap_bnb": 5000000.0,
       "evm_daily_mint_cap_eth": 5000000.0,
       "native_bridge_ratelimit": 1750000.0
+    },
+    "native_holders": {
+      "total": 4247,
+      "gte_100": 623,
+      "gte_1k": 337,
+      "gte_10k": 107
     },
     "flags": []
   }
