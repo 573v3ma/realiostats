@@ -481,7 +481,7 @@
       <button type="button" class="hb-mbtn" data-m="total">All holders</button>
     </div>
     <div class="chartwrap"><canvas id="hbEvmCanvas"></canvas></div>
-    <p class="cap">Wallets holding RIO on each EVM chain, month by month since the 30 October 2024 migration, when both tokens were re-issued on their current contracts. Each point is the on-chain holder distribution at that month's end, reconstructed in a single pass over the full ERC-20 transfer history. The current contracts carry no history before the migration, so the series starts there. BNB Chain and Ethereum tell opposite stories: BNB's base has grown, Ethereum's has consolidated from its migration peak. The bold line sums both chains for the selected tier, the global trajectory.</p>
+    <p class="cap">Wallets holding RIO on each EVM chain, month by month since the 30 October 2024 migration, when the BNB and Ethereum tokens were re-issued on their current contracts. Each point is the on-chain holder distribution at that month's end, netted from the full ERC-20 transfer history. The current contracts carry no history before the migration, so the series starts there. Base starts later, at its first transfer in September 2025, and sits low on this scale because its holder base is small. BNB Chain and Ethereum tell opposite stories: BNB's base has grown, Ethereum's has consolidated from its migration peak. The bold line sums the EVM chains shown for the selected tier, the global trajectory. Algorand, Stellar and Solana appear in the table above but not here: their assets date from 2020 and reconstructing a monthly series would mean walking years of transactions, so they are read as a current snapshot only.</p>
   </div>
   <div class="chartcard" id="hbChartCard" hidden>
     <div class="hb-metricrow" id="hbNativeMetricRow">
@@ -1041,7 +1041,7 @@ function renderHolders(latest, h){
 // Holder base. A per-chain table (native read live each day; BNB reconstructed
 // from full transfer history, refreshed separately; Ethereum likewise) plus
 // a native evolution chart that accrues from the daily readings.
-let HB_NATIVE = null, HB_EVM = null;
+let HB_NATIVE = null, HB_EVM = null, HB_CHAINS = null;
 function renderHolderTable(){
   const body = document.getElementById("hbTableBody");
   if(!body) return;
@@ -1052,17 +1052,34 @@ function renderHolderTable(){
     : `<tr><td>${name}</td><td colspan="5" class="hb-pending">being added</td></tr>`;
   const bnb = HB_EVM && HB_EVM.chains && HB_EVM.chains.bnb;
   const eth = HB_EVM && HB_EVM.chains && HB_EVM.chains.ethereum;
-  const rows = [row("Realio Native", HB_NATIVE), row("BNB Chain", bnb), row("Ethereum", eth)];
-  const parts = [HB_NATIVE, bnb, eth].filter(Boolean);
+  const cx  = (HB_CHAINS && HB_CHAINS.chains) || {};
+  const algo = cx.algorand, xlm = cx.stellar, sol = cx.solana, base = cx.base;
+  const rows = [row("Realio Native", HB_NATIVE), row("BNB Chain", bnb), row("Ethereum", eth),
+                row("Algorand", algo), row("Stellar", xlm), row("Solana", sol), row("Base", base)];
+  const parts = [HB_NATIVE, bnb, eth, algo, xlm, sol, base].filter(Boolean);
   if(parts.length > 1){
     const sum = k => parts.reduce((a,d)=>a+(d[k]||0), 0);
     rows.push(`<tr class="lq-total"><td>Combined</td><td>${f(sum("total"))}</td><td>${f(sum("gte_100"))}</td><td>${f(sum("gte_1k"))}</td><td>${f(sum("gte_10k"))}</td><td>${f(sum("gte_100k"))}</td></tr>`);
   }
   body.innerHTML = rows.join("");
   const note = document.getElementById("hbTableNote");
-  if(note) note.textContent = "Realio Native counts each wallet's liquid + staked RIO (module accounts excluded), read live each day. BNB Chain and Ethereum"
-    + (HB_EVM && HB_EVM.as_of ? " as of " + HB_EVM.as_of : "")
-    + ", each reconstructed from its full ERC-20 transfer history and reconciled against on-chain total supply.";
+  if(note){
+    // Every row counts the same thing: addresses holding more than zero. The
+    // per-chain method differs, so it is spelled out rather than implied.
+    let t = "Every row counts addresses holding more than zero RIO, so the chains are comparable. "
+      + "Realio Native counts each wallet's liquid + staked RIO (module accounts excluded), read live each day. "
+      + "BNB Chain and Ethereum"
+      + (HB_EVM && HB_EVM.as_of ? " as of " + HB_EVM.as_of : "")
+      + ", each reconstructed from its full ERC-20 transfer history and reconciled against on-chain total supply. "
+      + "Algorand, Stellar, Solana and Base"
+      + (HB_CHAINS && HB_CHAINS.as_of ? " as of " + HB_CHAINS.as_of : "")
+      + ", read from public keyless endpoints: asset balances on Algorand, accounts by asset on Stellar, "
+      + "token accounts aggregated by owner on Solana, and transfer logs netted per address on Base.";
+    if(xlm && xlm.trustlines) t += " Stellar shows " + f(xlm.trustlines)
+      + " trustlines, but opening one costs nothing and most hold nothing, so only funded accounts are counted here.";
+    if(base) t += " Base RIO is bridged from Ethereum under lock and mint, so it adds nothing to circulating supply: these are holder addresses only.";
+    note.textContent = t;
+  }
 }
 // Draws a faint "realiostats.com" attribution into the chart canvas (bottom-right
 // of the plot area) so screenshots stay sourced. Opt-in per chart via plugins:[].
@@ -1135,8 +1152,13 @@ const HB_METRIC_LABEL = {gte_100:"100+ RIO", gte_1k:"1,000+ RIO", gte_10k:"10,00
 function renderHolderEvm(){
   const card = document.getElementById("hbEvmCard"); if(!card) return;
   const cx = (HB_EVM && HB_EVM.chains) || {};
+  // Base joins the two reconstructed chains: it is an EVM chain whose whole
+  // transfer log fits in one public request, so its monthly history is free.
+  // Algorand, Stellar and Solana stay out of this chart, snapshot only.
+  const bx = (HB_CHAINS && HB_CHAINS.chains) || {};
   const have = [["Ethereum","#4f46e5", cx.ethereum && cx.ethereum.history],
-                ["BNB Chain","#f0b90b", cx.bnb && cx.bnb.history]]
+                ["BNB Chain","#f0b90b", cx.bnb && cx.bnb.history],
+                ["Base","#0052ff", bx.base && bx.base.history]]
                .filter(x => x[2] && x[2].length);
   if(!have.length){ card.hidden = true; return; }
   card.hidden = false;
@@ -1167,7 +1189,7 @@ function renderHolderEvm(){
       series.forEach(s => { if(s.data[i] != null){ sum += s.data[i]; any = true; } });
       return any ? sum : null;
     });
-    datasets.push({label:"Combined (BNB + Ethereum)", data:combined, borderColor:"#0b1015",
+    datasets.push({label:"Combined (" + series.map(s=>s.name).join(" + ") + ")", data:combined, borderColor:"#0b1015",
       backgroundColor:"transparent", tension:.25, pointRadius:0, borderWidth:2.4, fill:false, spanGaps:true});
   }
   if(HB_EVM_CHART) HB_EVM_CHART.destroy();
@@ -1380,6 +1402,10 @@ fetch("./supply-history.json",{cache:"no-store"}).then(r=>r.json()).then(arr=>{
   // rows once loaded; native already rendered from the daily snapshot.
   fetch("./holders-evm.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
     .then(e=>{ HB_EVM = e; renderHolderTable(); renderHolderEvm(); }).catch(()=>{});
+  // Algorand, Stellar, Solana and Base, read from public keyless endpoints.
+  // Fills their table rows, and adds the Base line to the EVM chart.
+  fetch("./holders-chains.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
+    .then(c=>{ HB_CHAINS = c; renderHolderTable(); renderHolderEvm(); }).catch(()=>{});
   // Committed volume history first: it draws the sparklines and gives
   // applyLiveMarket a baseline for the day-over-day volume change. Then the live
   // upgrade on top. Every stage is independently catch-guarded, so a failure at

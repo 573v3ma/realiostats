@@ -1,0 +1,144 @@
+{
+  "as_of": "2026-08-04",
+  "source": "Read from public keyless endpoints: Algorand indexer asset balances, Stellar Horizon accounts by asset, Solana getProgramAccounts on the Token-2022 mint aggregated by owner, and Base ERC-20 Transfer logs netted per address and reconciled against on-chain total supply.",
+  "notes": {
+    "counting": "total counts addresses with a balance above zero, the same definition used for every other chain.",
+    "stellar": "trustlines counts accounts that trust the asset, most of which hold nothing; total counts funded holders only.",
+    "solana": "Token-2022 mint with 11 decimals; token accounts are aggregated by owner so one wallet counts once.",
+    "base": "Bridged under lock-and-mint from Ethereum, so Base RIO adds nothing to circulating supply; these are holder addresses only.",
+    "history": "Only Base carries a monthly history. Algorand, Stellar and Solana are current-snapshot only, because their 2020-era assets would need a full multi-year transaction walk to reconstruct."
+  },
+  "chains": {
+    "algorand": {
+      "total": 4607,
+      "gte_100": 1555,
+      "gte_1k": 871,
+      "gte_10k": 167,
+      "gte_100k": 10,
+      "opted_in": 27788
+    },
+    "stellar": {
+      "total": 4523,
+      "gte_100": 1297,
+      "gte_1k": 507,
+      "gte_10k": 159,
+      "gte_100k": 7,
+      "trustlines": 22535
+    },
+    "solana": {
+      "total": 996,
+      "gte_100": 407,
+      "gte_1k": 158,
+      "gte_10k": 31,
+      "gte_100k": 0,
+      "token_accounts": 2316
+    },
+    "base": {
+      "total": 311,
+      "gte_100": 91,
+      "gte_1k": 47,
+      "gte_10k": 4,
+      "gte_100k": 1,
+      "history": [
+        {
+          "month": "2025-09",
+          "total": 1,
+          "gte_100": 0,
+          "gte_1k": 0,
+          "gte_10k": 0,
+          "gte_100k": 0
+        },
+        {
+          "month": "2025-10",
+          "total": 33,
+          "gte_100": 15,
+          "gte_1k": 9,
+          "gte_10k": 3,
+          "gte_100k": 2
+        },
+        {
+          "month": "2025-11",
+          "total": 85,
+          "gte_100": 45,
+          "gte_1k": 25,
+          "gte_10k": 5,
+          "gte_100k": 2
+        },
+        {
+          "month": "2025-12",
+          "total": 115,
+          "gte_100": 55,
+          "gte_1k": 29,
+          "gte_10k": 6,
+          "gte_100k": 2
+        },
+        {
+          "month": "2026-01",
+          "total": 146,
+          "gte_100": 72,
+          "gte_1k": 37,
+          "gte_10k": 7,
+          "gte_100k": 2
+        },
+        {
+          "month": "2026-02",
+          "total": 152,
+          "gte_100": 75,
+          "gte_1k": 37,
+          "gte_10k": 6,
+          "gte_100k": 2
+        },
+        {
+          "month": "2026-03",
+          "total": 161,
+          "gte_100": 78,
+          "gte_1k": 38,
+          "gte_10k": 7,
+          "gte_100k": 2
+        },
+        {
+          "month": "2026-04",
+          "total": 173,
+          "gte_100": 78,
+          "gte_1k": 40,
+          "gte_10k": 6,
+          "gte_100k": 2
+        },
+        {
+          "month": "2026-05",
+          "total": 213,
+          "gte_100": 90,
+          "gte_1k": 46,
+          "gte_10k": 4,
+          "gte_100k": 1
+        },
+        {
+          "month": "2026-06",
+          "total": 285,
+          "gte_100": 91,
+          "gte_1k": 46,
+          "gte_10k": 4,
+          "gte_100k": 1
+        },
+        {
+          "month": "2026-07",
+          "total": 311,
+          "gte_100": 91,
+          "gte_1k": 47,
+          "gte_10k": 4,
+          "gte_100k": 1
+        },
+        {
+          "month": "2026-08",
+          "total": 311,
+          "gte_100": 91,
+          "gte_1k": 47,
+          "gte_10k": 4,
+          "gte_100k": 1
+        }
+      ],
+      "transfers": 5305,
+      "supply_delta_pct": 0.0
+    }
+  }
+}

@@ -8,6 +8,8 @@ Headline number: **on-chain tradable supply (~326M)**, shown alongside the 175M 
 
 - **`fetch_supply.py`** — reads RIO supply from Realio native, Ethereum, BNB, Base, Solana, Algorand and Stellar; excludes Realio-controlled reserve/treasury/bridge wallets; runs verification checks; prints a snapshot. Standard library only, no keys, read-only public endpoints, each with a verified fallback list.
 - **`append_snapshot.py`** — runs the fetch and appends one row to `supply-history.json`. Refuses to write (exits non-zero) if any chain fails on all its endpoints, so a wrong/incomplete total is never committed. Same-day re-runs replace that day's row.
+- **`fetch_evm_holders.py`** — weekly: BNB and Ethereum holder counts plus their monthly evolution, netted from the full ERC-20 transfer history. Needs an Alchemy endpoint per chain (GitHub secrets). Writes `holders-evm.json`.
+- **`fetch_chain_holders.py`** — weekly: holder counts for Algorand, Stellar, Solana and Base, all from public keyless endpoints (Algorand indexer asset balances, Horizon accounts by asset, Solana `getProgramAccounts` on the Token-2022 mint aggregated by owner, Base transfer logs netted per address and reconciled against on-chain supply). Base also gets a monthly history; the other three are current-snapshot only. Writes `holders-chains.json`.
 - **`supply-history.json`** — the append-only time series the site reads. Its git history is the audit trail.
 - **`.github/workflows/daily-supply.yml`** — runs `append_snapshot.py` daily at 06:00 UTC and commits the new snapshot.
 
