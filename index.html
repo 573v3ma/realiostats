@@ -481,7 +481,7 @@
       <button type="button" class="hb-mbtn" data-m="total">All holders</button>
     </div>
     <div class="chartwrap"><canvas id="hbEvmCanvas"></canvas></div>
-    <p class="cap">Wallets holding RIO on each EVM chain, month by month since the 30 October 2024 migration, when both tokens were re-issued on their current contracts. Each point is the on-chain holder distribution at that month's end, reconstructed in a single pass over the full ERC-20 transfer history. The current contracts carry no history before the migration, so the series starts there. BNB Chain and Ethereum tell opposite stories: BNB's base has grown, Ethereum's has consolidated from its migration peak.</p>
+    <p class="cap">Wallets holding RIO on each EVM chain, month by month since the 30 October 2024 migration, when both tokens were re-issued on their current contracts. Each point is the on-chain holder distribution at that month's end, reconstructed in a single pass over the full ERC-20 transfer history. The current contracts carry no history before the migration, so the series starts there. BNB Chain and Ethereum tell opposite stories: BNB's base has grown, Ethereum's has consolidated from its migration peak. The bold line sums both chains for the selected tier, the global trajectory.</p>
   </div>
   <div class="chartcard" id="hbChartCard" hidden>
     <div class="chartwrap"><canvas id="holdersCanvas"></canvas></div>
@@ -1110,11 +1110,24 @@ function renderHolderEvm(){
   const months = [...set].sort();
   const labels = months.map(m => { const [y,mo] = m.split("-");
     return new Date(y, mo-1, 1).toLocaleDateString("en-GB",{month:"short",year:"2-digit"}); });
-  const datasets = have.map(([name,color,h]) => {
+  const series = have.map(([name,color,h]) => {
     const bym = {}; h.forEach(p => bym[p.month] = p[HB_EVM_METRIC]);
-    return {label:name, data:months.map(m => bym[m] ?? null), borderColor:color,
-      backgroundColor:color+"22", tension:.25, pointRadius:0, borderWidth:1.8, fill:false, spanGaps:true};
+    return {name, color, data: months.map(m => bym[m] ?? null)};
   });
+  const datasets = series.map(s => ({label:s.name, data:s.data, borderColor:s.color,
+    backgroundColor:s.color+"22", tension:.25, pointRadius:0, borderWidth:1.8, fill:false, spanGaps:true}));
+  // Combined line = both EVM chains summed for the selected tier, the global
+  // trajectory. Drawn last so it sits on top; native is not included because it
+  // has no reconstructable monthly history.
+  if(series.length > 1){
+    const combined = months.map((m,i) => {
+      let sum = 0, any = false;
+      series.forEach(s => { if(s.data[i] != null){ sum += s.data[i]; any = true; } });
+      return any ? sum : null;
+    });
+    datasets.push({label:"Combined (BNB + Ethereum)", data:combined, borderColor:"#0b1015",
+      backgroundColor:"transparent", tension:.25, pointRadius:0, borderWidth:2.4, fill:false, spanGaps:true});
+  }
   if(HB_EVM_CHART) HB_EVM_CHART.destroy();
   HB_EVM_CHART = new Chart(document.getElementById("hbEvmCanvas"),{
     type:"line", data:{labels, datasets},
