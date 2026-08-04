@@ -1064,6 +1064,23 @@ function renderHolderTable(){
     + (HB_EVM && HB_EVM.as_of ? " as of " + HB_EVM.as_of : "")
     + ", each reconstructed from its full ERC-20 transfer history and reconciled against on-chain total supply.";
 }
+// Draws a faint "realiostats.com" attribution into the chart canvas (bottom-right
+// of the plot area) so screenshots stay sourced. Opt-in per chart via plugins:[].
+const watermarkPlugin = {
+  id: "watermark",
+  afterDraw(chart){
+    const a = chart.chartArea; if(!a) return;
+    const ctx = chart.ctx;
+    ctx.save();
+    ctx.font = "600 12px Inter, system-ui, sans-serif";
+    ctx.fillStyle = "rgba(11,16,21,0.12)";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("realiostats.com", a.right - 8, a.bottom - 6);
+    ctx.restore();
+  }
+};
+
 // Native holder evolution. Same metric toggle as the EVM chart, but a single
 // Realio Native line. Native cannot be reconstructed historically (no cheap
 // Cosmos historical holder query), so it is counted forward only from the first
@@ -1088,6 +1105,7 @@ function renderNativeChart(){
   if(HB_NAT_CHART) HB_NAT_CHART.destroy();
   HB_NAT_CHART = new Chart(document.getElementById("holdersCanvas"),{
     type:"line",
+    plugins:[watermarkPlugin],
     data:{labels, datasets:[{label:"Native, " + HB_METRIC_LABEL[HB_NAT_METRIC], data,
       borderColor:"#10b981", backgroundColor:"#10b98122", tension:.25, pointRadius:3,
       pointBackgroundColor:"#10b981", fill:false, borderWidth:1.8}]},
@@ -1154,7 +1172,7 @@ function renderHolderEvm(){
   }
   if(HB_EVM_CHART) HB_EVM_CHART.destroy();
   HB_EVM_CHART = new Chart(document.getElementById("hbEvmCanvas"),{
-    type:"line", data:{labels, datasets},
+    type:"line", plugins:[watermarkPlugin], data:{labels, datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
       scales:{
         y:{beginAtZero:true,grid:{color:"#eef1f4"},ticks:{color:"#69747f",font:{family:"Inter"}}},
@@ -1312,7 +1330,7 @@ function drawChart(liveSeries){
   new Chart(document.getElementById("evo"),{
     type:"line",
     data:{labels,datasets},
-    plugins:[rampPlugin],
+    plugins:[rampPlugin, watermarkPlugin],
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
       scales:{
         y:{stacked:true,beginAtZero:true,suggestedMax:360,grid:{color:"#eef1f4"},
