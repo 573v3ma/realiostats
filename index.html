@@ -484,10 +484,17 @@
     <p class="cap">Wallets holding RIO on each EVM chain, month by month since the 30 October 2024 migration, when both tokens were re-issued on their current contracts. Each point is the on-chain holder distribution at that month's end, reconstructed in a single pass over the full ERC-20 transfer history. The current contracts carry no history before the migration, so the series starts there. BNB Chain and Ethereum tell opposite stories: BNB's base has grown, Ethereum's has consolidated from its migration peak. The bold line sums both chains for the selected tier, the global trajectory.</p>
   </div>
   <div class="chartcard" id="hbChartCard" hidden>
+    <div class="hb-metricrow" id="hbNativeMetricRow">
+      <button type="button" class="hb-mbtn is-on" data-m="gte_100">100+ RIO</button>
+      <button type="button" class="hb-mbtn" data-m="gte_1k">1,000+ RIO</button>
+      <button type="button" class="hb-mbtn" data-m="gte_10k">10,000+ RIO</button>
+      <button type="button" class="hb-mbtn" data-m="gte_100k">100,000+ RIO</button>
+      <button type="button" class="hb-mbtn" data-m="total">All holders</button>
+    </div>
     <div class="chartwrap"><canvas id="holdersCanvas"></canvas></div>
-    <p class="cap">Native-chain wallets holding at least 100, 1,000 and 10,000 RIO, counted each day from the full on-chain holder list (Cosmos <code>denom_owners</code>). The series builds forward from the first daily reading. BNB Chain and Ethereum figures are reconstructed from the full ERC-20 transfer history and refresh on a separate schedule; their month-by-month evolution is charted above.</p>
+    <p class="cap">Realio Native wallets holding RIO, counted each day from the full on-chain holder list (Cosmos <code>denom_owners</code>). Unlike the EVM chains, native history cannot be reconstructed: Cosmos offers no cheap way to read past holder snapshots, so this series is not backfilled. It is counted forward only, from 3 August 2026 when our native monitoring began, and grows one point per day.</p>
   </div>
-  <p class="cap" id="hbBuilding">The native evolution chart builds as daily readings accrue.</p>
+  <p class="cap" id="hbBuilding" hidden>The native evolution chart builds as daily readings accrue.</p>
 </div></section>
 
 <section id="method"><div class="wrap">
@@ -1057,23 +1064,33 @@ function renderHolderTable(){
     + (HB_EVM && HB_EVM.as_of ? " as of " + HB_EVM.as_of : "")
     + ", each reconstructed from its full ERC-20 transfer history and reconciled against on-chain total supply.";
 }
-function renderHolderBase(arr){
-  const pts = (arr||[]).filter(s=>s.native_holders && typeof s.native_holders.total === "number");
-  if(pts.length){ HB_NATIVE = pts[pts.length-1].native_holders; }
-  renderHolderTable();
-  if(pts.length < 2) return;   // native chart needs at least two daily readings
-  const bn = document.getElementById("hbBuilding"); if(bn) bn.hidden = true;
-  const card = document.getElementById("hbChartCard"); if(card) card.hidden = false;
-  const labels = pts.map(s=>new Date(s.ts).toLocaleDateString("en-GB",{day:"numeric",month:"short"}));
-  const mk = (k,c,label) => ({label, data:pts.map(s=>s.native_holders[k]), borderColor:c,
-    backgroundColor:c+"22", tension:.25, pointRadius:2, pointBackgroundColor:c, fill:false, borderWidth:1.6});
-  new Chart(document.getElementById("holdersCanvas"),{
+// Native holder evolution. Same metric toggle as the EVM chart, but a single
+// Realio Native line. Native cannot be reconstructed historically (no cheap
+// Cosmos historical holder query), so it is counted forward only from the first
+// daily reading and grows one point per day.
+let HB_NAT_METRIC = "gte_100", HB_NAT_CHART = null, HB_NAT_WIRED = false, HB_NAT_PTS = [];
+function renderNativeChart(){
+  const card = document.getElementById("hbChartCard"); if(!card) return;
+  const building = document.getElementById("hbBuilding");
+  const pts = HB_NAT_PTS;
+  if(!pts.length){ card.hidden = true; if(building) building.hidden = false; return; }
+  card.hidden = false; if(building) building.hidden = true;
+  if(!HB_NAT_WIRED){
+    document.querySelectorAll("#hbNativeMetricRow .hb-mbtn").forEach(b => b.addEventListener("click", () => {
+      HB_NAT_METRIC = b.dataset.m;
+      document.querySelectorAll("#hbNativeMetricRow .hb-mbtn").forEach(x => x.classList.toggle("is-on", x === b));
+      renderNativeChart();
+    }));
+    HB_NAT_WIRED = true;
+  }
+  const labels = pts.map(s => new Date(s.ts).toLocaleDateString("en-GB",{day:"numeric",month:"short"}));
+  const data = pts.map(s => s.native_holders[HB_NAT_METRIC]);
+  if(HB_NAT_CHART) HB_NAT_CHART.destroy();
+  HB_NAT_CHART = new Chart(document.getElementById("holdersCanvas"),{
     type:"line",
-    data:{labels, datasets:[
-      mk("gte_100","#34d399","100+ RIO"),
-      mk("gte_1k","#4f46e5","1,000+ RIO"),
-      mk("gte_10k","#f59e0b","10,000+ RIO")
-    ]},
+    data:{labels, datasets:[{label:"Native, " + HB_METRIC_LABEL[HB_NAT_METRIC], data,
+      borderColor:"#10b981", backgroundColor:"#10b98122", tension:.25, pointRadius:3,
+      pointBackgroundColor:"#10b981", fill:false, borderWidth:1.8}]},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
       scales:{
         y:{beginAtZero:true,grid:{color:"#eef1f4"},ticks:{color:"#69747f",font:{family:"Inter"}}},
@@ -1082,6 +1099,13 @@ function renderHolderBase(arr){
       plugins:{legend:{labels:{color:"#0b1015",font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}}}
     }
   });
+}
+function renderHolderBase(arr){
+  const pts = (arr||[]).filter(s=>s.native_holders && typeof s.native_holders.total === "number");
+  if(pts.length){ HB_NATIVE = pts[pts.length-1].native_holders; }
+  renderHolderTable();
+  HB_NAT_PTS = pts;
+  renderNativeChart();
 }
 
 // EVM holder-base evolution (BNB + Ethereum), monthly since the Oct 2024
