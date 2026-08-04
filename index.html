@@ -492,7 +492,7 @@
       <button type="button" class="hb-mbtn" data-m="total">All holders</button>
     </div>
     <div class="chartwrap"><canvas id="holdersCanvas"></canvas></div>
-    <p class="cap">Realio Native wallets holding RIO, counted each day from the full on-chain holder list (Cosmos <code>denom_owners</code>). Unlike the EVM chains, native history cannot be reconstructed: Cosmos offers no cheap way to read past holder snapshots, so this series is not backfilled. It is counted forward only, from 3 August 2026 when our native monitoring began, and grows one point per day.</p>
+    <p class="cap">Realio Native wallets by total position, each wallet's <b>liquid + staked</b> RIO, counted daily. Most native RIO is delegated and pooled in the staking module, so a liquid-only count would hide real stakers; we add each wallet's stake across every validator and exclude module/pool accounts. Staked uses the network's bonded stake (1:1 bond weight), the same figure the official Realio validator pages show; because Realio staking is multi-denom, that bundles native RIO with RST and a bridged token. Unlike the EVM chains, native history cannot be reconstructed, so it is counted forward only, from 3 August 2026 when monitoring began, and grows one point per day.</p>
   </div>
   <p class="cap" id="hbBuilding" hidden>The native evolution chart builds as daily readings accrue.</p>
 </div></section>
@@ -1060,7 +1060,7 @@ function renderHolderTable(){
   }
   body.innerHTML = rows.join("");
   const note = document.getElementById("hbTableNote");
-  if(note) note.textContent = "Realio Native is read live each day. BNB Chain and Ethereum"
+  if(note) note.textContent = "Realio Native counts each wallet's liquid + staked RIO (module accounts excluded), read live each day. BNB Chain and Ethereum"
     + (HB_EVM && HB_EVM.as_of ? " as of " + HB_EVM.as_of : "")
     + ", each reconstructed from its full ERC-20 transfer history and reconciled against on-chain total supply.";
 }

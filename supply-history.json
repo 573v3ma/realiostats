@@ -1466,11 +1466,11 @@
       "native_bridge_ratelimit": 1750000.0
     },
     "native_holders": {
-      "total": 4247,
-      "gte_100": 623,
-      "gte_1k": 337,
-      "gte_10k": 107,
-      "gte_100k": 13
+      "total": 4341,
+      "gte_100": 1244,
+      "gte_1k": 885,
+      "gte_10k": 431,
+      "gte_100k": 132
     },
     "flags": []
   },
@@ -1541,11 +1541,11 @@
       "native_bridge_ratelimit": 1750000.0
     },
     "native_holders": {
-      "total": 4247,
-      "gte_100": 623,
-      "gte_1k": 336,
-      "gte_10k": 107,
-      "gte_100k": 13
+      "total": 4341,
+      "gte_100": 1244,
+      "gte_1k": 885,
+      "gte_10k": 431,
+      "gte_100k": 132
     },
     "flags": []
   }

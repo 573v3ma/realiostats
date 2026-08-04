@@ -214,30 +214,73 @@ def fetch_bridge_caps():
     return out
 
 # ---- native holder counts by threshold (keyless; soft-fail) ------------------
-# Phase 1 of the holder-base metric: enumerate every native ario holder via the
-# Cosmos denom_owners endpoint and count how many hold >= 100 / 1k / 10k RIO.
-# Native only for now; BSC + Ethereum need a keyed indexer and come later.
+# Native holder-base metric, counting each wallet's TOTAL position = liquid RIO
+# (bank ario) + staked RIO. Most native RIO is delegated, and delegated tokens
+# are pooled in the multistaking module account, so a liquid-only count both
+# hides real stakers and counts the pool itself as a holder. We therefore:
+#   1. exclude module/pool accounts,
+#   2. add each wallet's liquid ario, and
+#   3. add each wallet's staked amount, summed across every validator.
+# Staked uses the network's bonded "stake" (bond weights are 1:1), the same
+# figure the official Realio validator pages display. Note: Realio staking is
+# multi-denom, so total bonded stake bundles native RIO with RST and a bridged
+# token; isolating pure-RIO stake per wallet needs the multistaking module's
+# per-lock breakdown, which is not exposed publicly (all those routes 501).
+def _paginate(base, path, field, cap=60):
+    key, items = None, []
+    for _ in range(cap):
+        url = f"{base}{path}{'&' if '?' in path else '?'}pagination.limit=1000"
+        if key:
+            url += "&pagination.key=" + urllib.parse.quote(key, safe="")
+        d = _get(url)
+        items += d.get(field, [])
+        key = d.get("pagination", {}).get("next_key")
+        if not key:
+            return items
+    raise RuntimeError("pagination cap hit for " + path)
+
 def fetch_native_holders(flags):
     for base in ENDPOINTS["native"]:
         try:
-            key, total, c100, c1k, c10k, c100k = None, 0, 0, 0, 0, 0
-            for _ in range(60):  # safety cap; ~5 pages at 1000/page today
-                url = f"{base}/cosmos/bank/v1beta1/denom_owners/{NATIVE_DENOM}?pagination.limit=1000"
-                if key:
-                    url += "&pagination.key=" + urllib.parse.quote(key, safe="")
-                d = _get(url)
-                for o in d.get("denom_owners", []):
-                    amt = int(o["balance"]["amount"]) / 1e18
-                    total += 1
-                    if amt >= 100:     c100 += 1
-                    if amt >= 1000:    c1k += 1
-                    if amt >= 10000:   c10k += 1
-                    if amt >= 100000:  c100k += 1
-                key = d.get("pagination", {}).get("next_key")
-                if not key:
-                    return {"total": total, "gte_100": c100, "gte_1k": c1k, "gte_10k": c10k, "gte_100k": c100k}
-            flags.append("native_holders_incomplete")
-            return None
+            # module/pool accounts to exclude (multistaking pool, distribution, etc.)
+            mods = set()
+            for m in _get(f"{base}/cosmos/auth/v1beta1/module_accounts").get("accounts", []):
+                acc = m.get("base_account") or {}
+                a = acc.get("address") or m.get("address")
+                if a:
+                    mods.add(a)
+            bal = {}
+            # 1) liquid ario
+            for o in _paginate(base, f"/cosmos/bank/v1beta1/denom_owners/{NATIVE_DENOM}", "denom_owners"):
+                a = o["address"]
+                if a in mods:
+                    continue
+                bal[a] = bal.get(a, 0) + int(o["balance"]["amount"]) / 1e18
+            # 2) staked, summed across every validator
+            vals = _paginate(base, "/cosmos/staking/v1beta1/validators", "validators", cap=20)
+            for v in vals:
+                op = v["operator_address"]
+                try:
+                    for x in _paginate(base, f"/cosmos/staking/v1beta1/validators/{op}/delegations",
+                                       "delegation_responses", cap=30):
+                        a = x["delegation"]["delegator_address"]
+                        if a in mods:
+                            continue
+                        bal[a] = bal.get(a, 0) + int(x["balance"]["amount"]) / 1e18
+                except Exception:
+                    continue  # skip a validator whose delegations page fails
+            total = c100 = c1k = c10k = c100k = 0
+            for amt in bal.values():
+                if amt <= 0:
+                    continue
+                total += 1
+                if amt >= 100:     c100 += 1
+                if amt >= 1000:    c1k += 1
+                if amt >= 10000:   c10k += 1
+                if amt >= 100000:  c100k += 1
+            if total:
+                return {"total": total, "gte_100": c100, "gte_1k": c1k,
+                        "gte_10k": c10k, "gte_100k": c100k}
         except Exception:
             continue
     flags.append("native_holders_unavailable")
