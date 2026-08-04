@@ -1,4 +1,4 @@
-name: Weekly EVM holder counts
+name: Weekly holder counts
 
 on:
   schedule:
@@ -32,14 +32,21 @@ jobs:
           ALCHEMY_ETH_URL: ${{ secrets.ALCHEMY_ETH_URL }}
         run: python fetch_evm_holders.py
 
+      # Algorand, Stellar, Solana and Base, all from public keyless endpoints.
+      # No secret needed. Runs even if the Alchemy step above failed, and keeps
+      # a chain's previous value if its own endpoints are down, so a flaky
+      # public node cannot blank the holder table.
+      - name: Read remaining chain holder counts
+        run: python fetch_chain_holders.py
+
       - name: Commit if changed
         run: |
           git config user.name  "realiostats-bot"
           git config user.email "actions@users.noreply.github.com"
-          if ! git diff --quiet -- holders-evm.json; then
-            git add holders-evm.json
-            git commit -m "evm holder counts $(date -u +%Y-%m-%d)"
+          if ! git diff --quiet -- holders-evm.json holders-chains.json; then
+            git add holders-evm.json holders-chains.json
+            git commit -m "holder counts $(date -u +%Y-%m-%d)"
             git push
           else
-            echo "No change to holders-evm.json."
+            echo "No change to holders-evm.json / holders-chains.json."
           fi
