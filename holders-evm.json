@@ -1,14 +1,14 @@
 {
-  "as_of": "2026-08-10",
+  "as_of": "2026-08-17",
   "source": "Reconstructed from the full ERC-20 transfer history via Alchemy getAssetTransfers, netted per address; monthly points are the holder distribution at each month-end.",
   "history_starts": "2024-10 (30 Oct 2024 migration; the current contracts carry no earlier history)",
   "chains": {
     "bnb": {
-      "total": 24863,
-      "gte_100": 11995,
-      "gte_1k": 6153,
-      "gte_10k": 1496,
-      "gte_100k": 174,
+      "total": 24893,
+      "gte_100": 12020,
+      "gte_1k": 6163,
+      "gte_10k": 1493,
+      "gte_100k": 175,
       "history": [
         {
           "month": "2024-10",
@@ -188,20 +188,20 @@
         },
         {
           "month": "2026-08",
-          "total": 24863,
-          "gte_100": 11995,
-          "gte_1k": 6153,
-          "gte_10k": 1496,
-          "gte_100k": 174
+          "total": 24893,
+          "gte_100": 12020,
+          "gte_1k": 6163,
+          "gte_10k": 1493,
+          "gte_100k": 175
         }
       ]
     },
     "ethereum": {
-      "total": 27945,
-      "gte_100": 15473,
-      "gte_1k": 6205,
+      "total": 27947,
+      "gte_100": 15465,
+      "gte_1k": 6202,
       "gte_10k": 1144,
-      "gte_100k": 98,
+      "gte_100k": 101,
       "history": [
         {
           "month": "2024-10",
@@ -381,11 +381,11 @@
         },
         {
           "month": "2026-08",
-          "total": 27945,
-          "gte_100": 15473,
-          "gte_1k": 6205,
+          "total": 27947,
+          "gte_100": 15465,
+          "gte_1k": 6202,
           "gte_10k": 1144,
-          "gte_100k": 98
+          "gte_100k": 101
         }
       ]
     }
