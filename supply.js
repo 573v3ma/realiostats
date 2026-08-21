@@ -1,0 +1,574 @@
+/* realiostats — supply page. Hero, projector, emissions & integrity,
+   per-chain grid, exclusions, evolution chart. Requires assets/core.js. */
+
+/* ---- reconstructed per-chain circulating history (millions of RIO) ----
+   From rio_supply_history.csv + the project's evolution analysis. Each field is
+   that chain's public float. Stellar & Algorand float held flat pre-live (the
+   history of their Realio-controlled wallets was not reconstructed). Base = 0
+   (counted on Ethereum). Bands sum to the multichain total.                     */
+const HISTORY = [
+  {label:"2024 Q4",  bnb:118.76, native:77.05, ethereum:56.76, algorand:7.76, stellar:5.86, solana:0},
+  {label:"2025 Q1",  bnb:144.79, native:81.60, ethereum:59.68, algorand:7.76, stellar:5.86, solana:0.5},
+  {label:"2025 Q2",  bnb:163.25, native:86.20, ethereum:65.90, algorand:7.76, stellar:5.86, solana:1.0},
+  {label:"2025 Q3",  bnb:161.72, native:90.85, ethereum:66.10, algorand:7.76, stellar:5.86, solana:1.0},
+  {label:"2025 Q4",  bnb:143.81, native:95.50, ethereum:64.56, algorand:7.76, stellar:5.86, solana:1.0},
+  {label:"2026 Q1",  bnb:143.81, native:92.47, ethereum:66.86, algorand:7.76, stellar:5.86, solana:1.04},
+  {label:"2026 Q2",  bnb:156.63, native:84.27, ethereum:69.80, algorand:7.76, stellar:5.86, solana:1.07},
+  {label:"Jul 5 '26",bnb:156.61, native:84.97, ethereum:70.16, algorand:7.76, stellar:5.86, solana:1.08}
+];
+const STACK = [
+  {key:"native",   name:"Realio Native", color:"#10b981"},
+  {key:"bnb",      name:"BNB Chain",     color:"#f59e0b"},
+  {key:"ethereum", name:"Ethereum",      color:"#4f46e5"},
+  {key:"algorand", name:"Algorand",      color:"#0ea5e9"},
+  {key:"stellar",  name:"Stellar",       color:"#64748b"},
+  {key:"solana",   name:"Solana",        color:"#a855f7"}
+];
+
+const CHAINS = [
+  {key:"bnb",       name:"BNB Chain",       color:"#f59e0b", verify:"https://bscscan.com/token/0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0#balances"},
+  {key:"realio_native",name:"Realio Native",color:"#10b981", verify:"https://explorer.nodestake.org/realio"},
+  {key:"ethereum",  name:"Ethereum",        color:"#4f46e5", verify:"https://etherscan.io/token/0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0"},
+  {key:"algorand",  name:"Algorand",        color:"#0ea5e9", verify:"https://allo.info/asset/2751733"},
+  {key:"stellar",   name:"Stellar",         color:"#64748b", verify:"https://stellar.expert/explorer/public/asset/RIO-GBNLJIYH34UWO5YZFA3A3HD3N76R6DOI33N4JONUOHEEYZYCAYTEJ5AK"},
+  {key:"solana",    name:"Solana",          color:"#a855f7", verify:"https://solscan.io/token/HELn8rSM1rp8vAjNH4NYXzX6FvCbwWMGqLfaMgiBnZFV"},
+  {key:"base",      name:"Base",            color:"#3b82f6", verify:"https://basescan.org/token/0x5e64c9049455b3bb6e9fbdc33565fa313bae9b53", note:"counted on Ethereum"}
+];
+
+// What this measures: RIO that came into existence, so it can be compared like
+// for like against scheduled emission.
+//
+// NOT global_total_rio (= tradable + all excluded balances). That double-counts
+// a lock-and-mint bridge: RIO locked in the Stellar escrow stays counted under
+// "excluded" while the RIO minted against it is counted on the destination
+// chain. Verified 17 Jul 2026, when a Stellar->BSC bridge (707,924.83 locked
+// 19:41:55, minted 19:42:10, 15s apart) pushed global_total to +726,539/day, a
+// 37x false positive.
+//
+// NOT tradable_total alone either. Float also grows when Realio releases
+// pre-existing RIO from a team wallet, which is not new supply. Over 11-17 Jul
+// the Algorand wallets released 33,991 RIO, pushing tradable ~9% above schedule
+// with nothing minted.
+//
+// So: tradable_total + Algorand team-held. Adding those back cancels the
+// release, leaving emission minus burns. The Stellar treasury is deliberately
+// NOT added back: it is proven bridge escrow, and its flows already net to zero
+// inside tradable_total, so adding it would reintroduce the bug inverted.
+//
+// Caveat: assumes the Algorand "bridge wallet" is a team wallet rather than
+// escrow. Evidence supports it (uniform 3,999 drips to one fixed address, not
+// user-shaped bridge withdrawals) but it is unconfirmed. If it is escrow, an
+// Algorand->EVM bridge would read as a false positive here.
+function teamHeld(s){
+  const a = (s.chains && s.chains.algorand) || {};
+  if(typeof a.reserve !== "number" || typeof a.bridge_wallet !== "number") return null;
+  return a.reserve + a.bridge_wallet;
+}
+function netNewSupply(s){
+  const t = teamHeld(s);
+  return (typeof s.tradable_total === "number" && t !== null) ? s.tradable_total + t : null;
+}
+
+// Multi-day net-new = the MEDIAN of the per-day deltas, not first-vs-last.
+// Endpoint-to-endpoint is fragile: if the first or last snapshot happens to
+// catch a cross-chain bridge mid-settlement (one leg burned, the matching mint
+// not yet landed), that single dip skews the whole multi-day figure. On 24 Jul
+// the endpoint method read 16,748 (below expected) purely because that day's
+// snapshot caught a bridge in flight; ending one day earlier it read 17,547.
+// The median ignores such one-off spikes (7,677 / 30,226 / 8,366 in this window
+// are all bridge-timing days) and tracks the true issuance rate.
+function computeObserved(arr){
+  const pts = (arr||[]).filter(s=>netNewSupply(s)!==null);
+  if(pts.length<2) return null;
+  const rates=[];
+  for(let i=1;i<pts.length;i++){
+    const d=(new Date(pts[i].ts)-new Date(pts[i-1].ts))/864e5;
+    if(d>0) rates.push((netNewSupply(pts[i])-netNewSupply(pts[i-1]))/d);
+  }
+  if(!rates.length) return null;
+  const sorted=rates.slice().sort((x,y)=>x-y);
+  const mid=Math.floor(sorted.length/2);
+  const median = sorted.length%2 ? sorted[mid] : (sorted[mid-1]+sorted[mid])/2;
+  const days=(new Date(pts[pts.length-1].ts)-new Date(pts[0].ts))/864e5;
+  if(days<0.5) return null;
+  return {days, perDay:median, samples:rates.length};
+}
+// Most recent consecutive pair of snapshots = the freshest reading available.
+// Unlike computeObserved (which averages across the whole series and so smooths
+// harder the longer the series gets), this stays at daily resolution: it shows
+// whether net-new is easing off, and can legitimately go negative on a day when
+// burns exceed emission. One sample, so it is noisier - cross-chain bridge
+// transfers are not atomic, and a snapshot landing mid-transfer skews the day.
+function computeLast24h(arr){
+  const pts = (arr||[]).filter(s=>netNewSupply(s)!==null);
+  if(pts.length<2) return null;
+  const a=pts[pts.length-2], b=pts[pts.length-1];
+  const days=(new Date(b.ts)-new Date(a.ts))/864e5;
+  if(!(days>0)) return null;
+  const d=netNewSupply(b)-netNewSupply(a);
+  return {days, netNew:d, perDay:d/days};
+}
+
+// "What moved" — decompose the latest 24h into per-chain deltas (Tier 1) and a
+// plain-language read of observed vs expected (Tier 2). Everything here comes
+// from data already committed in supply-history.json; nothing new is fetched.
+function circOf(s, key){
+  const c = s.chains && s.chains[key];
+  if(!c) return 0;
+  const v = (c.circulating != null ? c.circulating
+           : c.total != null ? c.total
+           : c.total_supply);
+  return typeof v === "number" ? v : 0;
+}
+function computeWhatMoved(arr, expectedDaily){
+  const pts = (arr||[]).filter(s=>netNewSupply(s)!==null);
+  if(pts.length < 2) return null;
+  const a = pts[pts.length-2], b = pts[pts.length-1];
+  const days = (new Date(b.ts) - new Date(a.ts)) / 864e5;
+  if(!(days > 0)) return null;
+
+  // Per-chain deltas as daily rates. Algorand is shown on the team-adjusted
+  // basis (reserve+bridge added back) so releasing pre-existing RIO into float
+  // does not masquerade as new supply, matching the net-new figure.
+  const perChain = CHAINS.map(c=>{
+    let d;
+    if(c.key === "algorand"){
+      const teamA = (a.chains.algorand.reserve||0)+(a.chains.algorand.bridge_wallet||0);
+      const teamB = (b.chains.algorand.reserve||0)+(b.chains.algorand.bridge_wallet||0);
+      d = (circOf(b,"algorand")+teamB) - (circOf(a,"algorand")+teamA);
+    } else if(c.key === "base"){
+      d = 0; // backing locked on Ethereum, always counts 0
+    } else {
+      d = circOf(b,c.key) - circOf(a,c.key);
+    }
+    return {key:c.key, name:c.name, color:c.color, perDay:d/days};
+  }).filter(x=>Math.abs(x.perDay) >= 1)
+    .sort((x,y)=>Math.abs(y.perDay)-Math.abs(x.perDay));
+
+  const net = netNewSupply(b)-netNewSupply(a);
+  const perDay = net/days;
+  const exp = expectedDaily || 0;
+  const gap = exp - perDay;  // positive gap = observed below emission
+
+  // The two chains moving hardest in opposite directions: the signature of a
+  // cross-chain bridge whose two legs straddle the snapshot boundary.
+  const ups = perChain.filter(x=>x.perDay>0), downs = perChain.filter(x=>x.perDay<0);
+  const biggestUp = ups[0], biggestDown = downs[0];
+  const offsetting = biggestUp && biggestDown &&
+    Math.min(biggestUp.perDay, -biggestDown.perDay) > Math.max(2*exp, 40000);
+
+  return {days, perChain, perDay, exp, gap, offsetting};
+}
+
+// Sparkline. minRangePct is the honesty control: a plain min/max scale stretches
+// ANY series to fill the box, so a 0.06% drift renders as a mountain range. If
+// the real spread is smaller than minRangePct of the midpoint, the scale is
+// widened so the line renders flat, which is what actually happened. Circulating
+// supply moves ~0.06% in ten days and MUST look flat; price and volume swing
+// tens of percent and are unaffected.
+function drawSpark(id, pts, label, minRangePct){
+  const svg = document.getElementById(id);
+  if(!svg) return;
+  if(!pts || pts.length < 2){ svg.style.display = "none"; return; }
+  const W = +svg.getAttribute("width") || 132, H = 26, PAD = 3;
+  let min = Math.min(...pts), max = Math.max(...pts);
+  const mid = (min + max) / 2 || 1;
+  const floor = Math.abs(mid) * (minRangePct || 0) / 100;
+  if((max - min) < floor){ min = mid - floor/2; max = mid + floor/2; }
+  const span = (max - min) || 1;
+  const x = i => i * (W / (pts.length - 1));
+  const y = n => H - PAD - ((n - min) / span) * (H - PAD*2);
+  const line = pts.map((n,i)=>`${i?"L":"M"}${x(i).toFixed(1)},${y(n).toFixed(1)}`).join(" ");
+  svg.innerHTML =
+    `<path d="${line} L${W},${H} L0,${H} Z" fill="rgba(52,211,153,.14)"/>`+
+    `<path d="${line}" fill="none" stroke="#34d399" stroke-width="1.5" `+
+    `stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>`+
+    `<circle cx="${x(pts.length-1).toFixed(1)}" cy="${y(pts[pts.length-1]).toFixed(1)}" r="2.2" fill="#34d399"/>`;
+  svg.setAttribute("role","img");
+  svg.setAttribute("aria-label", label);
+}
+
+// Shared change chip. deadband suppresses direction for moves too small to mean
+// anything, so it reads "flat" rather than implying a trend from noise.
+function setChg(id, pct, deadband, tip){
+  const el = document.getElementById(id);
+  if(!el || typeof pct !== "number") return;
+  const dir = pct > deadband ? "up" : (pct < -deadband ? "down" : "flat");
+  el.className = "chg " + dir;
+  el.textContent = (dir==="up"?"▲ ":dir==="down"?"▼ ":"") + (pct>=0?"+":"") + pct.toFixed(pct===0?0:2).replace(/\.?0+$/,"") + "%";
+  el.title = tip;
+}
+
+// Last committed volume history, kept so the live refresh can compute a
+// day-over-day change against yesterday's reading.
+let VOLHIST = null;
+
+// Progressive enhancement: the page renders instantly from the committed daily
+// snapshot, then upgrades price, market cap and volume to live values if the
+// browser can reach CoinGecko. Rationale: SUPPLY is our own measurement and its
+// git history is the audit trail, so it stays on the daily snapshot. Price and
+// volume are third-party conveniences where staleness is just wrong: a snapshot
+// taken 16h earlier showed +15.91% while the real 24h move was -1.52%, the wrong
+// number AND the wrong direction.
+//
+// CoinGecko does send Access-Control-Allow-Origin when the request carries an
+// Origin header, so this works from the browser. (A server-side curl without an
+// Origin shows no CORS header, which is misleading.) If the call fails or is
+// rate-limited, the snapshot values simply remain, timestamped.
+function applyLiveMarket(latest){
+  fetch("https://api.coingecko.com/api/v3/simple/price?ids=realio-network"
+       +"&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_market_cap=true",{cache:"no-store"})
+    .then(r=>r.ok?r.json():null)
+    .then(j=>{
+      const d = j && j["realio-network"];
+      if(!d) return;
+      const p = d.usd;
+      if(typeof p === "number" && p > 0){
+        document.getElementById("priceNum").textContent = "$"+p.toFixed(4);
+        document.getElementById("priceSrc").textContent = "via coingecko · live";
+        setChg("priceChg", d.usd_24h_change, 0.5, "CoinGecko 24h change, live");
+        const supply = latest && latest.tradable_total;
+        if(supply){
+          document.getElementById("mcapNum").textContent = fmtUsd(supply * p);
+          // Market cap tracks price almost exactly: supply moves ~0.006%/day.
+          setChg("mcapChg", d.usd_24h_change, 0.5, "tracks price; supply moves ~0.006% per day");
+        }
+        // Refresh the projector against the live price, and derive the aggregator
+        // supply from CoinGecko's own market cap (mcap / price = their ~100M).
+        CURRENT_PRICE = p;
+        if(typeof d.usd_market_cap === "number" && d.usd_market_cap > 0) PROJ_AGG_SUPPLY = d.usd_market_cap / p;
+        if(PROJ_SUPPLY){ const cur = projParse(document.getElementById("projPrice").value) || 1; renderProjector(cur, "live"); }
+      }
+      const v = d.usd_24h_vol;
+      if(typeof v === "number" && v > 0){
+        document.getElementById("volNum").textContent = fmtUsd(v);
+        // Change vs yesterday's committed end-of-day reading, so both sides are
+        // trailing-24h figures roughly a day apart.
+        const daily = VOLHIST && VOLHIST.daily;
+        if(daily && daily.length){
+          const prev = daily[daily.length-1].volume_usd;
+          if(prev) setChg("volChg", (v-prev)/prev*100, 0.5, "versus yesterday's reading");
+        }
+      }
+    })
+    .catch(()=>{});
+}
+
+// Volume + price trend, from volume-history.json (third-party, regenerated
+// daily). Separate from render() because it is a separate file with its own
+// failure mode: if it is missing or stale, the headline figures from the
+// snapshot still show, just without the change and sparkline. Never touches the
+// integrity checks.
+function renderVolumeTrend(v){
+  if(!v) return;
+  if(typeof v.latest_usd === "number"){
+    document.getElementById("volNum").textContent = fmtUsd(v.latest_usd);
+    document.getElementById("volSrc").innerHTML =
+      'exchange-reported · <a href="https://www.coingecko.com/en/coins/realio-network" target="_blank" rel="noopener">see markets</a>';
+  }
+  setChg("volChg", v.change_24h_pct, 0.5, "versus the same 24h window one day earlier");
+  const vp = (v.daily||[]).map(d=>d.volume_usd).filter(n=>typeof n === "number");
+  drawSpark("volSpark", vp, `Reported 24h trading volume over the last ${vp.length} days`, 0);
+
+  setChg("priceChg", v.price_change_24h_pct, 0.5, "versus 24 hours earlier");
+  const pp = (v.price_daily||[]).map(d=>d.price_usd).filter(n=>typeof n === "number");
+  drawSpark("priceSpark", pp, `RIO price over the last ${pp.length} days`, 0);
+}
+
+// Circulating market cap trend. Deliberately NOT CoinGecko's market cap, which
+// is computed from their hard-coded 100M circulating supply, the very figure
+// this site disputes. This series is our own: tradable_total x price, as
+// recorded in each snapshot, so it is internally consistent with the headline.
+// That also means it only reaches back to the first snapshot, not 30 days.
+function renderMcapTrend(arr){
+  const pts = (arr||[]).map(s=>s.market_cap_usd).filter(n=>typeof n === "number");
+  if(pts.length < 2) return;
+  const prev = pts[pts.length-2], last = pts[pts.length-1];
+  setChg("mcapChg", (last-prev)/prev*100, 0.5, "versus the previous daily snapshot");
+  drawSpark("mcapSpark", pts, `Circulating market cap over the last ${pts.length} days`, 2);
+}
+
+// NOTE: there is deliberately no circulating-supply trend in the hero. A raw
+// tradable_total series grows through BOTH emission and pre-existing RIO being
+// released from team wallets, so its per-day rate (19,655 over 11-21 Jul) does
+// not match the Emissions panel's new-supply rate (17,589), which adds team-held
+// balances back. Two "RIO/day" figures with different definitions on one page
+// caused real confusion. Supply-over-time lives in the Evolution chart, and
+// per-day rates live in the Emissions panel, each defined once.
+
+// Renders the "what moved today" block under the integrity line: per-chain
+// deltas (Tier 1) and a plain-language observed-vs-expected read (Tier 2).
+function renderWhatMoved(arr, expectedDaily){
+  const box = document.getElementById("whatMoved");
+  const wm = computeWhatMoved(arr, expectedDaily);
+  if(!wm || !wm.perChain.length){ if(box) box.hidden = true; return; }
+  box.hidden = false;
+
+  document.getElementById("wmChips").innerHTML = wm.perChain.map(x=>{
+    const dir = x.perDay >= 0 ? "up" : "down";
+    const s = x.perDay >= 0 ? "+" : "−";
+    return `<span class="wm-chip"><span class="cdot" style="background:${x.color}"></span>`+
+           `<span class="wm-name">${x.name}</span>`+
+           `<span class="wm-val ${dir}">${s}${fmtInt(Math.abs(x.perDay))}</span></span>`;
+  }).join("");
+
+  const win = Math.abs(wm.days-1) < 0.15 ? "In the last 24h" : `Over the last ${wm.days.toFixed(1)} days`;
+  let read;
+  if(wm.exp && wm.gap > wm.exp*0.25){
+    // Observed materially BELOW scheduled emission.
+    read = `${win}, new supply ran <b>${fmtInt(wm.perDay)}/day</b>, below the scheduled <b>~${fmtInt(wm.exp)}</b>. `;
+    if(wm.offsetting){
+      read += `The bulk of the move is ${wm.perChain[0].name} and ${wm.perChain.find(x=>Math.sign(x.perDay)!==Math.sign(wm.perChain[0].perDay)).name} moving in opposite directions, the signature of a bridge transfer whose two legs straddle the snapshot. That kind of gap usually reverses on the next reading.`;
+    } else {
+      read += `Because bridging nets to zero globally, a shortfall like this reflects burns over the window (for example Districts land claims), or a bridge settling across the snapshot boundary. Both leave supply below the emission line, and only the next reading distinguishes them.`;
+    }
+  } else if(wm.exp && wm.perDay > wm.exp*1.25){
+    read = `${win}, new supply ran <b>${fmtInt(wm.perDay)}/day</b>, above the scheduled <b>~${fmtInt(wm.exp)}</b>. The chains below show where it came from; a sustained excess with no matching burn elsewhere is what would warrant a closer look.`;
+  } else {
+    read = `${win}, new supply ran <b>${fmtInt(wm.perDay)}/day</b>, in line with the scheduled <b>~${fmtInt(wm.exp)}</b>. The chains below show where the movement was; cross-chain shifts net out, leaving emission minus burns.`;
+  }
+  document.getElementById("wmRead").innerHTML = read;
+}
+
+// Price-to-market-cap projector. Pure arithmetic (mcap = price x supply) on our
+// multichain circulating supply. Two-way price <-> mcap, a log-scaled slider,
+// presets, a live multiple vs today's price, and the aggregator-supply contrast
+// that makes the point: the same price implies a ~3x larger cap on the real
+// supply than on the ~100M aggregators report. It forecasts nothing.
+let PROJ_SUPPLY = null, PROJ_AGG_SUPPLY = 100e6, CURRENT_PRICE = null;
+const PROJ_MIN = 0.01, PROJ_MAX = 10;
+const projParse = s => parseFloat(String(s).replace(/[^0-9.]/g, ""));
+const projFmtPrice = p => p>=1 ? p.toFixed(2) : p.toFixed(4);
+const projSliderToPrice = v => PROJ_MIN*Math.pow(PROJ_MAX/PROJ_MIN, v/1000);
+const projPriceToSlider = p => Math.round(1000*Math.log(Math.min(PROJ_MAX,Math.max(PROJ_MIN,p))/PROJ_MIN)/Math.log(PROJ_MAX/PROJ_MIN));
+
+function renderProjector(price, from){
+  if(!PROJ_SUPPLY || !(price>0)) return;
+  const mcap = price*PROJ_SUPPLY;
+  // "hold" edits must not reformat the price/mcap/slider the user set.
+  if(from!=="price"  && from!=="hold") document.getElementById("projPrice").value = projFmtPrice(price);
+  if(from!=="mcap"   && from!=="hold") document.getElementById("projMcap").value  = Math.round(mcap).toLocaleString("en-US");
+  if(from!=="slider" && from!=="hold") document.getElementById("projSlider").value = projPriceToSlider(price);
+  // Optional personal readout: value of the holdings the user entered.
+  const holdEl = document.getElementById("projHold");
+  const hv = holdEl ? projParse(holdEl.value) : NaN;
+  const holdOut = document.getElementById("projHoldOut");
+  if(hv > 0){
+    let t = "would be worth <b>"+fmtBig(hv*price)+"</b> at $"+projFmtPrice(price);
+    if(CURRENT_PRICE>0) t += " · "+fmtBig(hv*CURRENT_PRICE)+" today";
+    holdOut.innerHTML = t;
+  } else {
+    holdOut.innerHTML = "";
+  }
+  const mult = document.getElementById("projMult");
+  if(CURRENT_PRICE>0){
+    const x = price/CURRENT_PRICE;
+    mult.innerHTML = "<b>"+fmtBig(mcap)+"</b> market cap · about <b>"+(x>=1?x.toFixed(1):x.toFixed(2))+"x</b> from today's $"+projFmtPrice(CURRENT_PRICE);
+  } else {
+    mult.innerHTML = "<b>"+fmtBig(mcap)+"</b> circulating market cap";
+  }
+}
+function initProjector(supply){
+  if(!(supply>0)) return;
+  PROJ_SUPPLY = supply;
+  const presets=[[0.10,"$0.10"],[0.50,"$0.50"],[1,"$1"],[3,"$3"],[5,"$5"],[5.12,"$5.12 · 2020 ATH"]];
+  document.getElementById("projPresets").innerHTML =
+    presets.map(p=>`<button type="button" class="proj-preset" data-p="${p[0]}">${p[1]}</button>`).join("");
+  document.getElementById("projPresets").addEventListener("click",e=>{
+    const b=e.target.closest(".proj-preset"); if(b) renderProjector(parseFloat(b.dataset.p),"preset");
+  });
+  const pIn=document.getElementById("projPrice"), mIn=document.getElementById("projMcap"), sl=document.getElementById("projSlider");
+  pIn.addEventListener("input",()=>{ const v=projParse(pIn.value); if(v>0) renderProjector(v,"price"); });
+  mIn.addEventListener("input",()=>{ const v=projParse(mIn.value); if(v>0) renderProjector(v/PROJ_SUPPLY,"mcap"); });
+  sl.addEventListener("input",()=>renderProjector(projSliderToPrice(+sl.value),"slider"));
+  document.getElementById("projHold").addEventListener("input",()=>renderProjector(projParse(pIn.value)||1,"hold"));
+  renderProjector(1.00,"init");
+}
+
+function render(latest, liveSeries, fullArr){
+  const multi = latest.tradable_total;
+  document.getElementById("multiNum").textContent = fmtM(M(multi));
+  document.getElementById("totalNum").textContent = fmtM(M(multi)) + " RIO";
+  // price + circulating market cap
+  const price = latest.price_usd, mcap = latest.market_cap_usd ?? (price ? multi*price : null);
+  document.getElementById("priceNum").textContent = price ? "$"+price.toFixed(4) : "n/a";
+  // Snapshot price is up to 24h old. Show WHEN it was taken rather than the
+  // vague "at refresh"; applyLiveMarket() replaces this with "live" if the
+  // browser can reach CoinGecko.
+  const pts_ = new Date(latest.ts);
+  const stamp = pts_.toLocaleDateString("en-GB",{day:"numeric",month:"short"})+" "+
+                String(pts_.getUTCHours()).padStart(2,"0")+":"+String(pts_.getUTCMinutes()).padStart(2,"0")+" UTC";
+  document.getElementById("priceSrc").textContent =
+    (latest.price_source ? "via "+latest.price_source+" · " : "") + stamp;
+  document.getElementById("mcapNum").textContent = mcap ? fmtUsd(mcap) : "n/a";
+  // Exchange-reported, not measured on chain. Informational only: it is never
+  // used by the supply-integrity checks. Null on days the CoinGecko call failed
+  // and a price-only fallback served instead, shown as "unavailable" rather
+  // than carrying the previous day forward.
+  const vol = latest.volume_24h_usd;
+  document.getElementById("volNum").textContent = vol ? fmtUsd(vol) : "n/a";
+  document.getElementById("volSrc").innerHTML = vol
+    ? 'exchange-reported · <a href="https://www.coingecko.com/en/coins/realio-network" target="_blank" rel="noopener">see markets</a>'
+    : 'unavailable at last refresh';
+  const d = new Date(latest.ts);
+  document.getElementById("updated").textContent = d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+
+  // emissions & supply integrity
+  const mint = latest.mint || {};
+  const infl = mint.inflation_rate;
+  document.getElementById("emRate").textContent = infl ? (infl*100).toFixed(1)+"% / yr" : "n/a";
+  const ed = latest.expected_daily_emission_rio, ea = latest.expected_annual_emission_rio;
+  // 8% is the configured mint parameter. The chain pays a fixed reward per block
+  // and produces blocks slower than the 5s that parameter assumes, so the rate
+  // actually realised on supply is lower. Show it, computed from the block-
+  // adjusted annual issuance over the unminted base, so it reconciles with the
+  // "Expected new RIO" figure beside it instead of contradicting it.
+  const nativeSupply = latest.chains && latest.chains.realio_native
+    ? (latest.chains.realio_native.total ?? latest.chains.realio_native.circulating) : null;
+  const unminted = (typeof nativeSupply === "number" && latest.native_cap)
+    ? (latest.native_cap - nativeSupply) : null;
+  document.getElementById("emRateNote").textContent =
+    (latest.emission_block_adjusted && ea && unminted && unminted > 0)
+      ? "configured rate · ~"+((ea/unminted)*100).toFixed(1)+"% effective at the chain's real block speed"
+      : "of unminted native supply, per year";
+  document.getElementById("emDaily").textContent = ed ? "~"+fmtInt(ed) : "n/a";
+  document.getElementById("emAnnual").textContent = ea
+    ? "per day · ~"+fmtM(M(ea))+" / yr" + (latest.emission_block_adjusted ? " · block-rate adjusted" : "")
+    : "per day";
+  const l24 = computeLast24h(fullArr);
+  if(l24){
+    const sign = l24.perDay>=0 ? "+" : "−";
+    document.getElementById("emObs24").textContent = sign+fmtInt(Math.abs(l24.perDay))+" / day";
+    document.getElementById("emObs24Note").textContent = Math.abs(l24.days-1)<0.15
+      ? "latest snapshot vs previous"
+      : "latest pair, "+l24.days.toFixed(1)+" days apart, as a daily rate";
+  }
+  renderMcapTrend(fullArr);
+  const obs = computeObserved(fullArr);
+  const dot = document.getElementById("iDot"), it = document.getElementById("iText");
+  if(obs){
+    document.getElementById("emObserved").textContent = (obs.perDay>=0?"+":"")+fmtInt(obs.perDay)+" / day";
+    const obsDays = Math.round(obs.days);
+    document.getElementById("emObservedNote").textContent = obsDays<=1 ? "measured over the last 24h" : "median day, last "+obsDays+" days";
+    const pct = infl ? (infl*100).toFixed(0) : "8";
+    if(ed && obs.perDay <= ed*1.25){
+      dot.className="idot ok";
+      it.textContent="Circulating RIO supply is growing within the scheduled ~"+pct+"% emission. No unexplained minting detected over the measured window.";
+    } else if(ed){
+      dot.className="idot warn";
+      it.textContent="Circulating RIO supply grew faster than the ~"+pct+"% schedule over the measured window, worth a closer look.";
+    }
+  }
+  renderWhatMoved(fullArr, ed);
+
+  const grid = document.getElementById("chainGrid");
+  grid.innerHTML = CHAINS.map(c=>{
+    const v = latest.chains[c.key]?.circulating ?? 0;
+    const val = c.key==="base" ? "0" : fmtM(M(v));
+    const sub = c.key==="base" ? "backing locked on Ethereum" : fmtFull(v)+" RIO";
+    return `<div class="chip">
+      <div class="cn"><span class="cdot" style="background:${c.color}"></span>${c.name}</div>
+      <div class="cv">${val}</div>
+      <div class="cx">${sub}</div>
+      <div style="margin-top:8px"><a href="${c.verify}" target="_blank" rel="noopener">Verify ↗</a></div>
+    </div>`;
+  }).join("");
+
+  const a = latest.chains.algorand, s = latest.chains.stellar;
+  document.getElementById("exclGrid").innerHTML = `
+    <div class="ex"><div class="exk">Algorand · reserve</div><div class="exv">${fmtM(M(a.reserve))}</div>
+      <div class="exa">GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA</div>
+      <div style="margin-top:8px"><a href="https://allo.info/account/GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA" target="_blank" rel="noopener">Verify ↗</a></div></div>
+    <div class="ex"><div class="exk">Algorand · bridge wallet</div><div class="exv">${fmtM(M(a.bridge_wallet))}</div>
+      <div class="exa">M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM</div>
+      <div style="margin-top:8px"><a href="https://allo.info/account/M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM" target="_blank" rel="noopener">Verify ↗</a></div></div>
+    <div class="ex"><div class="exk">Stellar · treasury (realio.fund)</div><div class="exv">${fmtM(M(s.treasury))}</div>
+      <div class="exa">GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L</div>
+      <div style="margin-top:8px"><a href="https://stellar.expert/explorer/public/account/GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L" target="_blank" rel="noopener">Verify ↗</a></div></div>`;
+
+  drawChart(liveSeries);
+}
+
+function drawChart(liveSeries){
+  const rows = HISTORY.concat(liveSeries);
+  const labels = rows.map(r=>r.label);
+  const nHist = HISTORY.length;
+  const liveRadius = labels.map((_,i)=> i>=nHist ? 3 : 0);
+  const datasets = STACK.map((s,i)=>({
+    label:s.name, data:rows.map(r=> r[s.key] ?? 0),
+    borderColor:s.color, backgroundColor:s.color+"cc",
+    fill: i===0 ? "origin" : "-1", stack:"s", borderWidth:1, tension:.2,
+    pointRadius:liveRadius, pointBackgroundColor:s.color, pointBorderColor:"#fff", pointBorderWidth:1
+  }));
+  datasets.push({label:"175M native emission cap (reference)", data:labels.map(()=>175),
+    borderColor:"#9aa7b2", borderWidth:1.4, borderDash:[6,5], pointRadius:0, fill:false, stack:"ref"});
+  const rampEnd = 2; // index of 2025 Q2 (end of migration ramp)
+  const rampPlugin = {
+    id:"ramp",
+    beforeDatasetsDraw(chart){
+      const {ctx,chartArea,scales}=chart;
+      const x2=scales.x.getPixelForValue(rampEnd);
+      ctx.save();
+      ctx.fillStyle="rgba(100,116,139,0.14)";
+      ctx.fillRect(chartArea.left,chartArea.top,x2-chartArea.left,chartArea.bottom-chartArea.top);
+      ctx.restore();
+    },
+    afterDatasetsDraw(chart){
+      const {ctx,chartArea,scales}=chart;
+      const x2=scales.x.getPixelForValue(rampEnd);
+      ctx.save();
+      ctx.strokeStyle="rgba(100,116,139,0.45)";ctx.setLineDash([4,4]);ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x2,chartArea.top);ctx.lineTo(x2,chartArea.bottom);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle="#64748b";ctx.font="600 11px Inter,system-ui,sans-serif";ctx.textAlign="left";
+      ctx.fillText("Migration & bridge ramp (Oct 2024 to mid 2025)", chartArea.left+8, chartArea.top+13);
+      ctx.restore();
+    }
+  };
+  new Chart(document.getElementById("evo"),{
+    type:"line",
+    data:{labels,datasets},
+    plugins:[rampPlugin, watermarkPlugin],
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      scales:{
+        y:{stacked:true,beginAtZero:true,suggestedMax:360,grid:{color:"#eef1f4"},
+           ticks:{callback:v=>v+"M",color:"#69747f",font:{family:"Inter"}}},
+        x:{grid:{display:false},ticks:{color:"#69747f",font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
+      },
+      plugins:{
+        legend:{labels:{color:"#0b1015",font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}},
+        tooltip:{callbacks:{
+          label:c=>` ${c.dataset.label}: ${(+c.parsed.y).toFixed(1)}M`,
+          footer:items=>{const t=items.filter(i=>i.dataset.stack==="s").reduce((a,i)=>a+(+i.parsed.y||0),0);
+                         return "Total circulating: "+t.toFixed(1)+"M";}
+        }}
+      }
+    }
+  });
+}
+
+const perChain = s => ({
+  label:new Date(s.ts).toLocaleDateString("en-GB",{day:"numeric",month:"short"}),
+  bnb:+M(s.chains.bnb.circulating).toFixed(2),
+  native:+M(s.chains.realio_native.circulating).toFixed(2),
+  ethereum:+M(s.chains.ethereum.circulating).toFixed(2),
+  algorand:+M(s.chains.algorand.circulating).toFixed(2),
+  stellar:+M(s.chains.stellar.circulating).toFixed(2),
+  solana:+M(s.chains.solana.circulating).toFixed(2)
+});
+
+loadSupply().then(({arr, latest})=>{
+  render(latest, arr.map(perChain), arr);
+  // Projector uses our multichain supply and today's price as its anchor.
+  CURRENT_PRICE = latest.price_usd || null;
+  initProjector(latest.tradable_total);
+  // Committed volume history first: it draws the sparklines and gives
+  // applyLiveMarket a baseline for the day-over-day volume change. Then the live
+  // upgrade on top. Every stage is independently catch-guarded, so a failure at
+  // any point leaves the page showing the last good values rather than blanking.
+  return fetch("./volume-history.json",{cache:"no-store"})
+    .then(r=>r.ok?r.json():null)
+    .then(v=>{ VOLHIST = v; renderVolumeTrend(v); })
+    .catch(()=>{})
+    .then(()=>applyLiveMarket(latest));
+});
