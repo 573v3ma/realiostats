@@ -279,3 +279,28 @@
 .page-lede h1{ font-size:clamp(28px,3.6vw,42px); line-height:1.08; margin:14px 0 10px;
                font-weight:700; letter-spacing:-.03em; max-width:820px; }
 .page-lede .lede{ max-width:760px; }
+
+/* ---- network page: the staking-yield ladder --------------------------- */
+.ladder{ border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--bg); }
+.rung{ display:grid; grid-template-columns:132px 1fr; gap:20px; align-items:start;
+       padding:17px 22px; border-top:1px solid var(--line); }
+.rung:first-child{ border-top:none; }
+.rung.is-official{ background:var(--alt); }
+.rung.is-final{ background:var(--mint-soft); }
+.rung .rv{ font-family:"Space Grotesk",Inter,sans-serif; font-size:27px; font-weight:700;
+           letter-spacing:-.025em; line-height:1.1; }
+.rung.is-final .rv{ color:var(--green-ink); }
+.rung .rvsub{ display:block; font-family:Inter,sans-serif; font-size:11.5px; font-weight:600;
+              letter-spacing:.08em; text-transform:uppercase; color:var(--faint); margin-top:3px; }
+.rung .rk{ font-weight:600; font-size:14.5px; margin-bottom:3px; }
+.rung .rx{ color:var(--muted); font-size:13.5px; line-height:1.58; }
+.rung .rtag{ display:inline-block; font-size:11px; font-weight:600; letter-spacing:.04em;
+             text-transform:uppercase; color:var(--green-ink); background:var(--mint-soft);
+             border-radius:999px; padding:2px 9px; margin-left:8px; vertical-align:2px; }
+.rung .rtag.grey{ color:var(--muted); background:var(--alt); border:1px solid var(--line); }
+@media (max-width:640px){
+  .rung{ grid-template-columns:1fr; gap:6px; padding:15px 16px; }
+  .rung .rv{ font-size:23px; }
+}
+.vbar{ display:inline-block; height:7px; border-radius:4px; background:var(--green);
+       vertical-align:middle; margin-right:8px; min-width:2px; }

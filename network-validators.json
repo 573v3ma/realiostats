@@ -1,0 +1,338 @@
+{
+ "as_of": "2026-08-21T06:16:31Z",
+ "height": 19509300,
+ "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
+ "bonded_weight": 131623512.57,
+ "validators": [
+  {
+   "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
+   "weight": 7567592.12,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Reallionaires Club | RST",
+   "weight": 7350604.2,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Rose Validators | $DSTRX",
+   "weight": 7236127.7,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Realio Italy \ud83c\uddee\ud83c\uddf9 \ud83c\udf0f",
+   "weight": 7011751.8,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Marx-Realio",
+   "weight": 6734100.3,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Reallionaires Club | RIO",
+   "weight": 6688986.0,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "genznodes",
+   "weight": 6619199.31,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Teshy 103k Bonded RIO",
+   "weight": 6582026.31,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "min fee\ud83c\udf84 \ud835\udc25\ud835\udc1e\ud835\udc2c\ud835\udc27\ud835\udc22\ud835\udc24 | \ud835\udc14\ud835\udc13\ud835\udc12\ud835\udc00",
+   "weight": 5259052.12,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Teshy - DSTRX",
+   "weight": 4788659.54,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Realio Pro Max USA \ud83d\uddfd REStake\u2705",
+   "weight": 4295295.99,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Realio",
+   "weight": 4181280.64,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "RST Validator by genznodes",
+   "weight": 3755779.46,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Indonode | DSTRX | Low Fees",
+   "weight": 3530592.6,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "NodesHub | DSTRX ",
+   "weight": 3519891.61,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Vinjan.Inc | DSTRX",
+   "weight": 3502858.58,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Rose RST Node",
+   "weight": 3499069.9,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Sr20de DSTRX",
+   "weight": 3362378.52,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "KonsorTech | DSTRX",
+   "weight": 3216222.18,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Decentrio",
+   "weight": 3178993.39,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Indonode | RST | Low Fees",
+   "weight": 3000001.0,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Teshy 136k Self Bonded RST",
+   "weight": 2943673.41,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Decentrio | RST",
+   "weight": 2938023.14,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Kynraze | DSTRX",
+   "weight": 2928130.61,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "dnsarz | DSTRX",
+   "weight": 2842924.84,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Blockval",
+   "weight": 2580643.08,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "cryptobtcbuyer | Low fees \u26a1",
+   "weight": 1844922.29,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "NodeStake",
+   "weight": 1264598.31,
+   "commission": 0.1,
+   "jailed": false
+  },
+  {
+   "moniker": "hubprovider",
+   "weight": 824498.07,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "NodesHub | RST",
+   "weight": 799932.0,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "NodesHub | RIO ",
+   "weight": 747249.99,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "StakeTrust",
+   "weight": 652290.34,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "StingRay",
+   "weight": 604521.03,
+   "commission": 0.1,
+   "jailed": false
+  },
+  {
+   "moniker": "breskulpeak.com",
+   "weight": 598807.03,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "[NODERS]",
+   "weight": 594611.17,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "KonsorTech | RIO",
+   "weight": 581715.27,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "\ud83d\udd25 BIERFORGE \u2692 \ud83d\udd25 REStake",
+   "weight": 569568.93,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "ITRocket",
+   "weight": 554302.95,
+   "commission": 0.1,
+   "jailed": false
+  },
+  {
+   "moniker": "Kynraze | RIO",
+   "weight": 375328.64,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Moonbridge",
+   "weight": 328138.69,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Indonode | RIO | Low Fees",
+   "weight": 312239.07,
+   "commission": 0.1,
+   "jailed": false
+  },
+  {
+   "moniker": "Stefani",
+   "weight": 309320.96,
+   "commission": 0.07,
+   "jailed": false
+  },
+  {
+   "moniker": "KonsorTech | RST",
+   "weight": 300047.42,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Apollo",
+   "weight": 288678.96,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Kynraze | RST",
+   "weight": 250039.25,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Vinjan.Inc | RST",
+   "weight": 250015.0,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Sr20de | RIO \ud83d\udd25 Restake enabled",
+   "weight": 122617.26,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Astrosynx",
+   "weight": 63052.86,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "AlxVoy \u26a1 ANODE.TEAM",
+   "weight": 56812.67,
+   "commission": 0.08,
+   "jailed": false
+  },
+  {
+   "moniker": "Decloud Nodes Lab",
+   "weight": 54857.26,
+   "commission": 0.1,
+   "jailed": false
+  },
+  {
+   "moniker": "Vinjan.Inc | RIO",
+   "weight": 44196.13,
+   "commission": 0.09,
+   "jailed": false
+  },
+  {
+   "moniker": "SerGo",
+   "weight": 43030.38,
+   "commission": 0.1,
+   "jailed": false
+  },
+  {
+   "moniker": "Berito",
+   "weight": 42600.25,
+   "commission": 0.1,
+   "jailed": false
+  },
+  {
+   "moniker": "GarageNodes",
+   "weight": 31661.07,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Aringoty | \ud83d\udc8eRST\ud83d\udc8e",
+   "weight": 1.0,
+   "commission": 0.1,
+   "jailed": false
+  }
+ ]
+}
