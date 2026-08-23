@@ -62,7 +62,7 @@ function renderFloatLadder(latest, h){
       +"escrow is excluded: it backs wrapped RIO elsewhere and cannot be traded. Smaller labelled wallets "
       +"sit below the top holders, so the true figure is somewhat higher."},
 
-    {v:fmtM(M(f.withMarket)), sub:"realistically sellable", cls:"is-final",
+    {v:fmtM(M(f.withMarket)), sub:"realistically tradable", cls:"is-final",
      k:'On a venue with an active market <span class="rtag">the practical float</span>',
      x:"The rung above, less the <b>"+fmtM(M(f.dead))+"</b> held on venues that list RIO but show no "
       +"active market, so that balance cannot presently be sold into. This is the number to hold next to "
