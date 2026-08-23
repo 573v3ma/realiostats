@@ -7,36 +7,9 @@
 // live). Percentages ARE computed live against the current per-chain supply, so
 // only the RIO amounts are as-of the snapshot date. Fails silently if the file
 // is missing; the section just stays empty.
-/* Tradable float ladder.
-
-   "How much RIO can actually be sold" has several defensible answers differing
-   by more than 4x, so this shows the whole descent rather than one number: what
-   exists, what sits where volume actually settles, what is identifiably on a
-   venue, and what is on a venue with a live market.
-
-   Two honest limits, both stated on the page rather than buried here:
-   - Rungs 3 and 4 are a FLOOR, not a total. They count only wallets we could
-     label from public explorer name tags, so the real venue-held figure is
-     higher by an unknown amount.
-   - The Base bridge is deliberately NOT counted as a venue. It is lock-and-mint
-     escrow backing Base RIO, not somewhere anyone can sell into. Counting it
-     would inflate the bottom rung by ~2M.                                     */
-function computeFloat(latest, h){
-  const circ = latest.tradable_total || 0;
-  const c = latest.chains || {};
-  const liquidChains = ((c.bnb && c.bnb.circulating) || 0)
-                     + ((c.ethereum && c.ethereum.circulating) || 0);
-  const bsc = h.bsc_exchanges || [];
-  const bscTotal = bsc.reduce((a,x)=>a+x.rio, 0);
-  const bscDead  = bsc.filter(x=>x.note).reduce((a,x)=>a+x.rio, 0);
-  // Exclude bridges: escrow, not a place anyone trades.
-  const ethVenues = (h.eth_holders || [])
-    .filter(x => !/bridge/i.test(x.type || ""))
-    .reduce((a,x)=>a+x.rio, 0);
-  const onVenues = bscTotal + ethVenues;
-  return {circ, liquidChains, onVenues, withMarket: onVenues - bscDead, dead: bscDead};
-}
-
+/* Tradable float ladder. computeFloat() lives in core.js because the supply
+   page quotes the bottom rung too; one definition, one computation, so the two
+   pages cannot drift into different numbers for the same thing. */
 function renderFloatLadder(latest, h){
   const el = document.getElementById("floatLadder");
   if(!el || !h || !latest) return;

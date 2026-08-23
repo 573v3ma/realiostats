@@ -57,6 +57,33 @@ function loadSupply(){
     .catch(()=>({arr:[FALLBACK], latest:FALLBACK}));
 }
 
+/* Tradable float, shared.
+
+   Lives here rather than in holders.js because BOTH pages need it: /holders
+   renders the full four-rung ladder, and the supply page quotes the bottom rung
+   inside the market-cap clarifier. One definition, one computation, so the two
+   pages can never drift into quoting different numbers for the same thing.
+
+   Two deliberate choices, explained on /holders rather than hidden:
+   - onVenues / withMarket are a FLOOR, not a total. Only wallets identifiable
+     from public explorer name tags are counted.
+   - Bridges are excluded from the venue rungs. Bridge balances are lock-and-mint
+     escrow backing wrapped RIO elsewhere, not somewhere anyone can trade.      */
+function computeFloat(latest, h){
+  const circ = latest.tradable_total || 0;
+  const c = latest.chains || {};
+  const liquidChains = ((c.bnb && c.bnb.circulating) || 0)
+                     + ((c.ethereum && c.ethereum.circulating) || 0);
+  const bsc = h.bsc_exchanges || [];
+  const bscTotal = bsc.reduce((a,x)=>a+x.rio, 0);
+  const bscDead  = bsc.filter(x=>x.note).reduce((a,x)=>a+x.rio, 0);
+  const ethVenues = (h.eth_holders || [])
+    .filter(x => !/bridge/i.test(x.type || ""))
+    .reduce((a,x)=>a+x.rio, 0);
+  const onVenues = bscTotal + ethVenues;
+  return {circ, liquidChains, onVenues, withMarket: onVenues - bscDead, dead: bscDead};
+}
+
 /* Legacy deep links. Before the page split every section lived at
    realiostats.com/#<id>, and those URLs are out in the wild (they were the nav
    for months). A fragment never reaches the server, so Cloudflare _redirects

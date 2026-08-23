@@ -566,6 +566,19 @@ loadSupply().then(({arr, latest})=>{
   // applyLiveMarket a baseline for the day-over-day volume change. Then the live
   // upgrade on top. Every stage is independently catch-guarded, so a failure at
   // any point leaves the page showing the last good values rather than blanking.
+  // The market-cap clarifier is the site's most load-bearing caveat, so it
+  // states the actual liquid figure inline rather than only linking to it.
+  // Same computeFloat() the holders page uses, so the two can never disagree.
+  fetch("./holders.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
+    .then(h=>{
+      const el = document.getElementById("projFloat");
+      if(!el || !h) return;
+      const f = computeFloat(latest, h);
+      if(!(f.withMarket > 0)) return;
+      el.innerHTML = " Today only about <b>"+fmtM(M(f.withMarket))+"</b> of the "
+        + fmtM(M(f.circ))+" circulating sits on a venue with an active market, roughly "
+        + (f.circ/f.withMarket).toFixed(1)+"x less than the supply the cap is priced on.";
+    }).catch(()=>{});
   return fetch("./volume-history.json",{cache:"no-store"})
     .then(r=>r.ok?r.json():null)
     .then(v=>{ VOLHIST = v; renderVolumeTrend(v); })
