@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Methodology &amp; FAQ · realiostats</title>
+<meta name="description" content="How realiostats measures RIO circulating supply: what is counted, what is excluded and why, plus answers to the questions RIO holders ask most." />
+<link rel="canonical" href="https://realiostats.com/methodology.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="site.css?v=3">
+</head>
+<body>
+<header><div class="wrap nav">
+  <a class="brand" href="index.html"><span class="dot"></span> realiostats</a>
+  <nav>
+    <a href="index.html">Supply</a>
+    <a href="holders.html">Holders</a>
+    <a href="network.html">Network</a>
+    <a href="methodology.html" class="is-active">Methodology</a>
+    <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">Source</a>
+  </nav>
+</div></header>
+
+<div class="wrap page-lede">
+  <div class="eyebrow">Independent · community-led · not affiliated with the Realio team</div>
+  <h1>How realiostats calculates its numbers</h1>
+  <p class="lede">The rules behind every figure on this site, the questions RIO holders ask most, and how to tell us when we have something wrong.</p>
+</div>
+
+<section id="method"><div class="wrap">
+  <h2>How the numbers are calculated</h2>
+  <p class="sec-lede">One conventional approach, applied consistently. The full methodology and the code that produces these numbers are open source and update daily in public.</p>
+  <div class="rules">
+    <div class="rule"><h3>Counted unless shown otherwise</h3><p>Any RIO in a public wallet on-chain is treated as circulating float, unless we can identify it as a Realio-controlled reserve, treasury or bridge balance.</p></div>
+    <div class="rule"><h3>Staked RIO is included</h3><p>Tokens bonded to validators are owned by the public and can be unbonded within seven days and sold, so they count, consistent with standard tracker methodology.</p></div>
+    <div class="rule"><h3>Each token counted once</h3><p>Lock-and-mint wrappers (Base) are counted only on the origin chain; the burn-and-mint chains hold no locked collateral, verified on-chain, so their balances are additive rather than double-counted.</p></div>
+    <div class="rule"><h3>Team-controlled wallets removed</h3><p>RIO in Realio reserve, treasury or idle bridge wallets is not public float and is subtracted. Every excluded address is published on the supply page and links to its explorer.</p></div>
+  </div>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <h2>Frequently asked questions</h2>
+  <p class="sec-lede">The questions RIO holders ask most, answered plainly. Where we cannot be certain, we say so rather than guess.</p>
+  <div class="faq">
+    <details><summary>Why is circulating supply around 326M when RIO's cap is 175M?</summary><div class="a">The 175M is a long-term emission cap, not the current supply. It is the ceiling that native block-reward issuance approaches gradually over roughly 38 years. RIO's original 2019 whitepaper cap was 75M, and governance raised it to 175M in October 2024. The ~326M figure is something different: it is the RIO that is live and tradable across every chain today, counted once. One describes future native issuance, the other describes today's cross-chain reality. Both are real; they have simply never been reconciled in a single public number.</div></details>
+    <details><summary>Which number is right: 85M, 175M, or 326M?</summary><div class="a">All three are real and answer different questions. ~85M is the supply on the Realio native chain alone, which is what native block explorers show. 175M is the long-term native emission cap. ~326M is the sum of public, tradable RIO across all seven chains, counted once. None is wrong; they measure different things, and this site's job is to show the cross-chain figure the others leave out.</div></details>
+    <details><summary>Is my RIO being diluted, and how fast does supply grow?</summary><div class="a">New RIO is created only through scheduled block-reward emissions, currently about 8% per year charged on the unminted native supply, meaning the gap between native supply today and the 175M cap (read live from Realio's on-chain mint module). Because that gap shrinks as the cap is approached, the amount of new RIO falls a little each year, and the 175M is reached only gradually, over roughly 38 years. So there is real, ongoing inflation. It is not zero, but it is bounded, scheduled, and transparent rather than open-ended. You can watch it on the Emissions panel above.</div></details>
+    <details><summary>If emission is 8%, why is the staking APR lower, and which number is right?</summary><div class="a">All of them are right; they measure different things, which is exactly why the question keeps coming up. The 8% is a mint parameter charged on the <b>unminted</b> native supply, the gap between today's supply and the 175M cap, so it is not a yield at all. From there, three deductions sit between it and your wallet. The chain produces blocks slower than its own <code>blocks_per_year</code> parameter assumes, and the mint pays per block, so real issuance runs below nominal. A 2% community tax comes off before distribution. And your validator's commission comes off your share. On top of that, Realio uses multi-staking: validators are secured by RIO, RST and DSTRX together, so the new RIO is shared across a bonded base roughly twice the size of the staked RIO alone. We publish every rung of that ladder, computed live rather than quoted, on the <a href="network.html#yield">staking yield page</a>, including how our figure reconciles with the APR shown on Realio's own staking app. We deliberately no longer quote a single APR number here, because every input moves and a hardcoded figure goes stale.</div></details>
+    <details><summary>Can the team mint unlimited RIO?</summary><div class="a">No. New issuance is governed by the on-chain mint module (the ~8% schedule) and the 175M governance cap. The burn-and-mint bridge also carries a disclosed daily mint limit, set at 1.75M RIO per day in the reissued contract code, which throttles how fast tokens can be minted through it and rules out any sudden surge. We still flag one thing honestly: that is a rate limit, not a second hard cap, and it is adjustable by the bridge's multi-signature controllers, so it is not fully clear from public data whether bridging RIO to the native chain could, over time, mint native supply beyond the 175M cap. Only the team's complete bridge records can settle it, which is one of the open questions we invite them to answer.</div></details>
+    <details><summary>Why did supply jump so much in 2024 and 2025?</summary><div class="a">That rise (the shaded band on the chart) was a one-time event: the October 2024 migration to a burn-and-mint bridge, during which the new contracts were populated and supply expanded across chains as the system came online. BSC alone went from ~119M to ~163M over that window, which we verified directly against archival on-chain reads. Since about mid-2025 the total has been roughly flat, consistent with the low, scheduled emission described above.</div></details>
+    <details><summary>Does bridging create new RIO?</summary><div class="a">No, but it works in two different ways, and the distinction matters. Between the Realio native chain and the EVM chains it is burn-and-mint: the token is destroyed on the origin chain and minted on the destination. On the Stellar and Base legs it is lock-and-mint: the token is not destroyed, it is held in an escrow wallet while a matching token is minted elsewhere. Either way the same coin never exists in two tradable places at once, which is why we can sum across chains and count each token once. For lock-and-mint we exclude the escrowed balance, so it is not counted twice. Only block-reward emission, minus burns, changes how much RIO is circulating.</div></details>
+    <details><summary>Can I verify these numbers myself?</summary><div class="a">Yes, that is the whole point. Every figure comes from public blockchain endpoints, with no private data. Each chain has a "Verify" link to its explorer, the excluded wallets are listed with their addresses, and the full code that produces these numbers is <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">open-source</a> and re-runs daily in public, with the data history stored in git as an audit trail.</div></details>
+    <details><summary>Why do you exclude some wallets, and does staked RIO count?</summary><div class="a">We exclude balances held in Realio-controlled reserve, treasury, and bridge wallets, because those are not public float, and we list every excluded address so anyone can check. Staked RIO is included, because a holder can unbond it within the seven-day unbonding period and sell it, so it is genuinely part of tradable supply, consistent with standard tracker methodology.</div></details>
+    <details><summary>Does the Districts Land Bank, or its RIO burn, change these numbers?</summary><div class="a">Both are already reflected. Districts is built on the Realio Network, and claiming a Land Pixel deposits 5,000 native RIO: 20% (1,000 RIO) is permanently burned, and 80% (4,000 RIO) is locked in the Land Bank, redeemable by returning the land after a 7-day unbonding period. Because both happen in native RIO, they already sit inside the native supply we read live every day. Burned RIO has left that figure, and Land Bank RIO is still in it. We count the Land Bank as circulating for the same reason we count staked RIO: the owner can redeem it within seven days and sell it, and it is not a Realio-controlled treasury, so it does not meet our exclusion test. Districts reports roughly 5.8M RIO burned to date and about 8.1M held in the Land Bank. We quote those two figures from the Districts dashboard rather than measure them, because the Land Bank and burn contract addresses are not published, and we would rather read them from the chain. If you prefer a stricter definition of circulating supply, you can subtract the Land Bank balance yourself.</div></details>
+    <details><summary>What are RIO, RST, and DSTRX, and what is the "stake" token?</summary><div class="a">This site tracks <b>RIO</b>, the Realio Network's utility token (fees, staking, rewards). <b>RST</b> is Realio's digital security token, representing equity and profit-sharing in Realio Network. <b>DSTRX</b> belongs to a separate project: Districts, a virtual-world land-ownership platform built on Realio, with a fixed 125M supply, mined by staking RIO to claim land. Realio uses multi-staking, so a validator can be secured by RIO, RST, or DSTRX; the "stake" denom you may see on the chain is a synthetic aggregate of that bonded weight, not a separate reward token. All staking rewards are paid in RIO. We count RIO only.</div></details>
+    <details><summary>Who runs this, and is it official?</summary><div class="a">No, this is an independent, community-led project and is not affiliated with, endorsed by, or operated by the Realio team. It is built and maintained by the operator of the Realio Pro Max USA validator, using only public on-chain data. Its only aim is a shared, accurate view of RIO supply, and it openly invites the team to publish the definitive reconciliation.</div></details>
+    <details><summary>What are you unsure about?</summary><div class="a">Several things that only the team can confirm: whether native minting is hard-capped at 175M or can rise through bridging, and the complete bridge ledger of mints and burns across all chains. Where we cannot be certain, we say so rather than guess. If the team publishes data that changes the picture, that data wins and we update.</div></details>
+  </div>
+</div></section>
+
+<section id="contribute"><div class="wrap">
+  <h2>Help refine the numbers</h2>
+  <p class="sec-lede">This is one transparent method, and it gets sharper with scrutiny. Spotted a wallet we have mis-classified, a chain or contract we have missed, or a way to improve the app? Please tell us. Corrections and suggestions are genuinely welcome, and the better the inputs, the better the number.</p>
+  <div class="btns">
+    <a class="btn" href="https://t.me/Cryptomus2634" target="_blank" rel="noopener">Message on Telegram</a>
+    <a class="btn ghost" href="https://github.com/573v3ma/realiostats/issues" target="_blank" rel="noopener">Open a GitHub issue</a>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="disclaimer">
+    <b>Independent &amp; good-faith.</b> realiostats is a community-led project and is <b>not affiliated with, endorsed by, or operated by the Realio team</b>. Circulating supply can be measured in more than one legitimate way; this is one transparent, reproducible approach, with its assumptions stated above. Every figure is drawn from public on-chain data and can be checked. Only the Realio team holds the complete bridge records and can publish a definitive number, an invitation we extend openly. <b>Nothing here is financial advice.</b>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="support">
+    <h3>Support this project</h3>
+    <p>realiostats is run and maintained by the operator of the <b>Realio Pro Max USA</b> validator. If you find it useful, you can support its upkeep by delegating, or send a tip. Entirely optional, and it never changes the numbers.</p>
+    <div class="btns">
+      <a class="btn" href="https://app.realio.network/validator/realiovaloper1namfyxy3s4ty7f4vwyc7plmmcqxayam89qkwym" target="_blank" rel="noopener">Stake with Realio Pro Max USA</a>
+      <div class="wallet"><span id="donAddr">realio1aewslaqkqh8yjwevefdpvtv746l5g7ah4z568g</span>
+        <button class="copy" onclick="copyAddr()" id="copyBtn">Copy</button></div>
+    </div>
+  </div>
+  <div class="foot-links">
+    <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">GitHub &amp; methodology</a>
+    <a href="https://t.me/Cryptomus2634" target="_blank" rel="noopener">Telegram</a>
+    <a href="methodology.html#method">How it's calculated</a>
+  </div>
+  <p class="foot-note">Data is drawn from public blockchain endpoints and updated daily. Figures are one on-chain measurement, not the Realio team's official numbers, and should be read as a transparent starting point pending an official reconciliation. Not affiliated with the Realio team. Not financial advice.</p>
+</div></footer>
+
+<script src="core.js?v=3"></script>
+</body>
+</html>

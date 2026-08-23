@@ -35,14 +35,22 @@ jobs:
         continue-on-error: true
         run: python fetch_volume.py
 
+      # Staking yield ladder + validator health. Independent of the supply
+      # count: it reads the same native LCD but nothing it produces feeds the
+      # integrity checks, so a failure must not block the supply snapshot.
+      - name: Refresh network stats
+        continue-on-error: true
+        run: python fetch_network.py
+
       - name: Commit snapshot if changed
         run: |
           git config user.name  "realiostats-bot"
           git config user.email "actions@users.noreply.github.com"
-          if ! git diff --quiet -- supply-history.json volume-history.json; then
-            git add supply-history.json volume-history.json
+          FILES="supply-history.json volume-history.json network-history.json network-validators.json"
+          if ! git diff --quiet -- $FILES; then
+            git add $FILES
             git commit -m "supply snapshot $(date -u +%Y-%m-%d)"
             git push
           else
-            echo "No change to supply-history.json / volume-history.json - nothing to commit."
+            echo "No change to the snapshot files - nothing to commit."
           fi

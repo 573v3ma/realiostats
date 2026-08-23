@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>realiostats · RIO circulating supply across every chain</title>
+<meta name="description" content="An independent, community-led, reproducible measure of RIO circulating supply across every chain it lives on. One transparent method, with its assumptions stated openly." />
+<link rel="canonical" href="https://realiostats.com/" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="site.css?v=3">
+</head>
+<body>
+<header><div class="wrap nav">
+  <a class="brand" href="index.html"><span class="dot"></span> realiostats</a>
+  <nav>
+    <a href="index.html" class="is-active">Supply</a>
+    <a href="holders.html">Holders</a>
+    <a href="network.html">Network</a>
+    <a href="methodology.html">Methodology</a>
+    <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">Source</a>
+  </nav>
+</div></header>
+
+<div class="wrap hero">
+  <div class="eyebrow">Independent · community-led · not affiliated with the Realio team</div>
+  <h1>RIO circulating supply, counted across every chain</h1>
+  <p class="lede">Every RIO token that exists in a public wallet and can be traded, summed once across all seven chains it lives on, net of Realio-controlled reserve, treasury and bridge wallets.</p>
+
+  <div class="hero-stat">
+    <div class="k">Multichain circulating supply</div>
+    <div class="num" id="multiNum">326M</div>
+    <div class="sub" id="multiSub">RIO · across 7 chains, counted once</div>
+    <div class="hero-metrics">
+      <div class="hm"><div class="hmk">RIO price</div><div class="hmv"><span id="priceNum">—</span><span class="chg" id="priceChg"></span></div><svg class="spark" id="priceSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="priceSrc">at time of refresh</div></div>
+      <div class="hm"><div class="hmk">Circulating market cap</div><div class="hmv"><span id="mcapNum">—</span><span class="chg" id="mcapChg"></span></div><svg class="spark" id="mcapSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx">circulating supply × price</div></div>
+      <div class="hm"><div class="hmk">24h trading volume</div><div class="hmv"><span id="volNum">—</span><span class="chg" id="volChg"></span></div><svg class="spark" id="volSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="volSrc">exchange-reported</div></div>
+    </div>
+    <div class="updated">Last updated <b id="updated">—</b> · refreshes daily from a public, open-source pipeline.</div>
+  </div>
+
+  <div class="proj" id="proj">
+    <div class="proj-h">Price to market cap</div>
+    <p class="proj-lede">Try a price. See the circulating market cap it would imply, on our real multichain supply.</p>
+    <div class="proj-row">
+      <label class="proj-field"><span>RIO price</span>
+        <div class="proj-inwrap"><span class="proj-pfx">$</span><input id="projPrice" type="text" inputmode="decimal" value="1.00" aria-label="RIO price in USD"></div>
+      </label>
+      <div class="proj-eq">=</div>
+      <label class="proj-field"><span>Circulating market cap</span>
+        <div class="proj-inwrap"><span class="proj-pfx">$</span><input id="projMcap" type="text" inputmode="decimal" aria-label="Circulating market cap in USD"></div>
+      </label>
+    </div>
+    <input id="projSlider" class="proj-slider" type="range" min="0" max="1000" value="0" aria-label="RIO price slider">
+    <div class="proj-mult" id="projMult"></div>
+    <div class="proj-presets" id="projPresets"></div>
+    <div class="proj-hold">
+      <span class="proj-holdlab">Your RIO</span>
+      <div class="proj-inwrap proj-holdin"><input id="projHold" type="text" inputmode="decimal" placeholder="amount you hold" aria-label="Your RIO holdings"></div>
+      <span class="proj-holdout" id="projHoldOut"></span>
+    </div>
+    <p class="proj-clarify"><b class="imp">Important</b>A market cap is a valuation, price times supply, not the capital needed to reach that price. Because only a fraction of the supply is actively liquid, price can move on far less than the market cap implies, in either direction. <a href="holders.html#liquidity">See where the liquidity sits</a> for how much RIO is actually tradable today.</p>
+    <p class="proj-cap">Arithmetic, price times supply, not a forecast. Uses realiostats' full multichain circulating supply. Anything you enter stays in your browser.</p>
+  </div>
+
+  <div class="assume">
+    <div class="ah">One method, stated openly</div>
+    <p>Circulating supply can be measured in more than one legitimate way. This is one of them, built to be transparent and reproducible. It rests on two assumptions:</p>
+    <ul>
+      <li><b>Counted unless shown otherwise.</b> Any RIO sitting in a public on-chain wallet is treated as circulating, unless it can be identified as a Realio-controlled reserve, treasury or bridge balance. Those are listed and excluded below.</li>
+      <li><b>Staked RIO is included.</b> Tokens bonded to validators count, because a holder can unbond them within the seven-day unbonding period and sell them.</li>
+    </ul>
+  </div>
+</div>
+
+<section id="emissions"><div class="wrap">
+  <h2>Emissions &amp; supply integrity</h2>
+  <p class="sec-lede">New RIO is issued on the Realio native chain only, through scheduled block-reward emissions paid to stakers, and native supply is capped at 175M. The token contracts on the other six chains can mint as well, but only against RIO burned or escrowed elsewhere, so bridging moves RIO between chains without changing how much of it exists. Circulating supply should therefore grow only at the scheduled rate. We check that every day.</p>
+  <div class="emit">
+    <div class="chip"><div class="cn">Emission rate</div><div class="cv" id="emRate">—</div><div class="cx" id="emRateNote">of unminted native supply, per year</div></div>
+    <div class="chip"><div class="cn">Expected new RIO</div><div class="cv" id="emDaily">—</div><div class="cx" id="emAnnual">per day</div></div>
+    <div class="chip"><div class="cn">Native emission cap</div><div class="cv">175M</div><div class="cx">native chain only, ~38-year schedule</div></div>
+    <div class="chip"><div class="cn">Observed last 24h</div><div class="cv" id="emObs24">—</div><div class="cx" id="emObs24Note">awaiting a second reading</div></div>
+    <div class="chip"><div class="cn">Observed net-new</div><div class="cv" id="emObserved">—</div><div class="cx" id="emObservedNote">accruing daily</div></div>
+  </div>
+  <div class="integrity">
+    <span class="idot" id="iDot"></span>
+    <span id="iText">Building the daily baseline. As readings accrue, this confirms whether circulating RIO supply is growing within the scheduled emission and flags anything above it.</span>
+  </div>
+  <div class="whatmoved" id="whatMoved" hidden>
+    <div class="wm-read" id="wmRead"></div>
+    <div class="wm-chips" id="wmChips"></div>
+  </div>
+  <p class="cap">Emission parameters are read live from Realio's on-chain mint module (<code>/realionetwork/mint/v1/params</code>). The 8% is charged on the unminted native supply, the gap between native supply and the 175M cap, so the amount of new RIO declines as the cap is approached. The observed figures measure RIO that came into existence across all seven chains: circulating supply, plus whatever is still held in Realio's Algorand wallets, so that pre-existing RIO being released into public float is never mistaken for new issuance. RIO also bridges in two different ways: burn-and-mint between native and the EVM chains, and lock-and-mint on the Stellar and Base legs, where the token is escrowed rather than destroyed. Either way the token is counted once, so bridging nets to zero, and only block-reward emission, minus burns, moves this figure. Expected issuance is adjusted for the chain's real block rate: the mint module pays a fixed reward per block, and Realio produces blocks a little slower than the 5-second pace its parameter assumes (currently ~5.67s, measured live), so real issuance is about 12% below a naive <code>annual_provisions ÷ 365</code>. With that correction, observed net-new sits right on the expected line, and genuine day-to-day dips are bridge transfers caught mid-settlement, not a shortfall.</p>
+</div></section>
+
+<section id="chains"><div class="wrap">
+  <h2>Circulating supply, chain by chain</h2>
+  <p class="sec-lede">Each figure is public float on that chain: total minted, minus any Realio-controlled wallets. Every number is verifiable on that chain's explorer.</p>
+  <div class="chains" id="chainGrid"></div>
+  <div class="total-row">
+    <span class="tl">Total across all chains, counted once</span>
+    <span class="tv" id="totalNum">—</span>
+  </div>
+</div></section>
+
+<section id="excluded"><div class="wrap">
+  <h2>What we exclude, and why</h2>
+  <p class="sec-lede">These balances sit in Realio-controlled wallets, so they are treated as non-circulating and subtracted from the figures above. Addresses are listed so anyone can check.</p>
+  <div class="excl" id="exclGrid"></div>
+  <p class="cap">Base is also excluded from the sum: its ~2M is lock-and-minted against RIO held in the Base bridge on Ethereum, so it is already counted inside the Ethereum figure. The native bridge module holds 0 RIO, which is what confirms balances add up rather than double-count.</p>
+</div></section>
+
+<section id="chart"><div class="wrap">
+  <h2>How circulating supply has evolved</h2>
+  <p class="sec-lede">From the 30 October 2024 migration, when the Ethereum and BNB tokens were re-issued and the bridge switched from a reserve/lock model to burn-and-mint. Each colour is one chain's circulating float; stacked together they make up the multichain total. Values in millions of RIO.</p>
+  <div class="chartcard">
+    <div class="chartwrap"><canvas id="evo"></canvas></div>
+    <p class="cap">The shaded period marks the one-time post-migration bridge ramp: as the burn-and-mint system was populated, supply expanded across chains (BSC alone went ~119M to ~163M, verified on-chain via archival reads). Supply has been roughly flat since. Bands stack to the total circulating supply. Solid points are live daily readings from this project; earlier points are reconstructed from on-chain archival data (<a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">rio_supply_history.csv</a>). Stellar and Algorand public float is held flat before the live period, as the history of their Realio-controlled wallets was not reconstructed. The dashed 175M line is the network's long-term emission cap, shown only as a reference for scale.</p>
+  </div>
+</div></section>
+
+<section id="provenance"><div class="wrap">
+  <h2>Where today's supply came from</h2>
+  <p class="sec-lede">The post-migration bridge really is burn-and-mint, and it can be checked. Below is the full mint and burn ledger of the two main EVM contracts, reconciled against their live supply, followed by the origin of RIO on every chain it lives on. Together they show why the multichain total sits so far above the native figure.</p>
+
+  <div class="ptbl-label">Burn-and-mint reconciliation, main EVM contracts (since Oct 2024)</div>
+  <div class="ptbl-wrap">
+    <table class="ptbl">
+      <thead><tr><th>Contract</th><th>Minted</th><th>Burned</th><th>Net</th><th>Live supply</th></tr></thead>
+      <tbody>
+        <tr><td>BNB Chain</td><td>275.4M</td><td class="burn">119.5M</td><td>156.0M</td><td class="ok">155.9M &#10003;</td></tr>
+        <tr><td>Ethereum</td><td>134.7M</td><td class="burn">63.8M</td><td>70.9M</td><td class="ok">70.9M &#10003;</td></tr>
+        <tr class="tot"><td>Both contracts</td><td>410.1M</td><td class="burn">183.3M</td><td>226.8M</td><td class="ok">reconciles</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ptbl-label" style="margin-top:26px">Origin of RIO on every chain</div>
+  <div class="ptbl-wrap">
+    <table class="ptbl">
+      <thead><tr><th>Chain</th><th>On chain</th><th>Public float</th><th>How it was created</th></tr></thead>
+      <tbody>
+        <tr><td>Realio native</td><td>85M</td><td>85M</td><td class="orig">Block-reward emission (capped at 175M) since 2023, plus burn-and-mint bridging to and from the other chains</td></tr>
+        <tr><td>BNB Chain</td><td>156M</td><td>156M</td><td class="orig">Direct mint in 2023, re-issued and expanded in the 2024 migration</td></tr>
+        <tr><td>Ethereum</td><td>71M</td><td>71M</td><td class="orig">Direct mint in 2020, re-issued on a new contract in the 2024 migration</td></tr>
+        <tr><td>Algorand</td><td>100M</td><td>7.8M</td><td class="orig">Direct mint in 2020, fixed supply, most still held in Realio wallets</td></tr>
+        <tr><td>Stellar</td><td>75M</td><td>5.9M</td><td class="orig">Direct mint in 2020 (100M), burned to 75M in 2022, most in treasury</td></tr>
+        <tr><td>Solana</td><td>1.1M</td><td>1.1M</td><td class="orig">Bridged from the EVM chains (burn-and-mint)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="assume" style="margin-top:22px">
+    <div class="ah">What this shows</div>
+    <p>First, the bridge genuinely burns as well as mints: about <b>183M RIO</b> has been burned across the two EVM contracts, roughly <b>45%</b> of everything minted on them, so RIO moves off these chains as well as onto them. Every net figure reconciles with the live <code>totalSupply</code>, so the capture is complete.</p>
+    <p>Second, almost none of this supply originates from the native chain. Back in 2020, before the native chain existed and before any bridge, RIO was minted directly and at the same time on three separate chains, Ethereum, Algorand and Stellar, at 100M each. Ethereum and Stellar were later partly burned, and Algorand's 100M is fixed. BNB Chain added a further 75M direct mint in 2023. Most of the Algorand and Stellar supply still sits in Realio-controlled wallets and is excluded from the circulating figure, but it exists on-chain. Native creates new RIO through its emission schedule, which is bounded by the 8% rate and the 175M cap, and holds around 85M today. RIO does bridge between native and the other chains in both directions, but bridging only moves existing tokens, it does not create them, so native emission cannot be the source of the multichain total.</p>
+    <p>So the ongoing bridge is consistent and two-way, but the size of the cross-chain supply is a legacy of historical direct issuance across several chains, not of the native emission schedule. We present this as measurement, not accusation, and we invite the team to publish the full cross-chain reconciliation.</p>
+  </div>
+  <p class="cap">Method: for the burn-and-mint contracts, every ERC-20 <code>Transfer</code> from the zero address (a mint) and to the zero address (a burn) since the 30 October 2024 migration, summed and reconciled against <code>totalSupply</code>; both use the RIO contract at <code>0x94a8&#8230;1aa0</code>. Per-chain totals are read live from each chain's public endpoint. Native emission is bounded by the 8% schedule and the 175M cap, so it cannot have created more than roughly 90M over the chain's life to date; bridging moves RIO in and out of native but does not create it. Fully reproducible from public data (see <a href="https://github.com/573v3ma/realiostats/blob/main/rio_mint_burn_audit.py" target="_blank" rel="noopener">rio_mint_burn_audit.py</a>).</p>
+</div></section>
+
+<section><div class="wrap">
+  <div class="disclaimer">
+    <b>Independent &amp; good-faith.</b> realiostats is a community-led project and is <b>not affiliated with, endorsed by, or operated by the Realio team</b>. Circulating supply can be measured in more than one legitimate way; this is one transparent, reproducible approach, with its assumptions stated above. Every figure is drawn from public on-chain data and can be checked. Only the Realio team holds the complete bridge records and can publish a definitive number, an invitation we extend openly. <b>Nothing here is financial advice.</b>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="support">
+    <h3>Support this project</h3>
+    <p>realiostats is run and maintained by the operator of the <b>Realio Pro Max USA</b> validator. If you find it useful, you can support its upkeep by delegating, or send a tip. Entirely optional, and it never changes the numbers.</p>
+    <div class="btns">
+      <a class="btn" href="https://app.realio.network/validator/realiovaloper1namfyxy3s4ty7f4vwyc7plmmcqxayam89qkwym" target="_blank" rel="noopener">Stake with Realio Pro Max USA</a>
+      <div class="wallet"><span id="donAddr">realio1aewslaqkqh8yjwevefdpvtv746l5g7ah4z568g</span>
+        <button class="copy" onclick="copyAddr()" id="copyBtn">Copy</button></div>
+    </div>
+  </div>
+  <div class="foot-links">
+    <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">GitHub &amp; methodology</a>
+    <a href="https://t.me/Cryptomus2634" target="_blank" rel="noopener">Telegram</a>
+    <a href="methodology.html#method">How it's calculated</a>
+  </div>
+  <p class="foot-note">Data is drawn from public blockchain endpoints and updated daily. Figures are one on-chain measurement, not the Realio team's official numbers, and should be read as a transparent starting point pending an official reconciliation. Not affiliated with the Realio team. Not financial advice.</p>
+</div></footer>
+
+<script src="core.js?v=3"></script>
+<script src="supply.js?v=3"></script>
+</body>
+</html>
