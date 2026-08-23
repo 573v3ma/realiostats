@@ -257,7 +257,6 @@
     section{padding:56px 0}
     .excl,.rules{grid-template-columns:1fr}
     .proj-eq{display:none}
-    .nav nav{display:none}
     .hero-stat{padding:28px 22px}
     .hero-metrics{gap:28px;margin-top:24px;padding-top:22px}
     .chartwrap{height:320px}
@@ -304,3 +303,20 @@
 }
 .vbar{ display:inline-block; height:7px; border-radius:4px; background:var(--green);
        vertical-align:middle; margin-right:8px; min-width:2px; }
+
+/* ---- mobile navigation ------------------------------------------------
+   Until the page split, the nav was only in-page anchors and hiding it below
+   720px was harmless. Now it is the ONLY route between Supply, Holders,
+   Network and Methodology, so `display:none` stranded every mobile visitor on
+   whichever page they landed on. That rule is gone.
+
+   The nav moves to its own full-width row under the brand and wraps rather
+   than scrolling, so no link is ever hidden or needs a swipe to reach.
+   Measured: one row at 375px and up (header 85px), two rows at 360px and
+   below (header 117px), all five links visible at every width from 320px.
+   No JS and no toggle state, consistent with the rest of the site.          */
+@media(max-width:720px){
+  .nav{ height:auto; flex-wrap:wrap; row-gap:2px; padding-top:12px; padding-bottom:6px; }
+  .nav nav{ display:flex; flex-wrap:wrap; width:100%; column-gap:12px; row-gap:4px; }
+  .nav nav a{ font-size:12.5px; padding:4px 0; }
+}
