@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="site.css?v=3">
+<link rel="stylesheet" href="site.css?v=4">
 </head>
 <body>
 <header><div class="wrap nav">
@@ -33,6 +33,9 @@
 <section id="liquidity"><div class="wrap">
   <h2>Where the liquidity sits <span class="h2-note">liquid float</span></h2>
   <p class="sec-lede">Circulating supply says how much RIO exists. It does not say how much can be sold right now. Almost all real exchange and DEX volume settles on BNB Chain and Ethereum, so that is where the tradable float actually lives. Here is who holds it.</p>
+  <div class="ladder" id="floatLadder"></div>
+  <p class="lq-read" id="floatRead"></p>
+  <p class="cap" id="floatCap"></p>
   <div class="lq-grid">
     <div class="lq-card">
       <div class="lq-h">BNB Chain, held in exchange wallets</div>
@@ -51,7 +54,7 @@
       <p class="lq-sub" id="ethHoldersSub"></p>
     </div>
   </div>
-  <p class="lq-read">Two things follow. Because this liquid float is a fraction of the 326.8M circulating supply, and smaller still than the 227M that sits on the two liquid chains, a relatively modest amount of buying or selling moves the price more than the headline market cap would suggest. That cuts both ways: it makes sharp rallies possible on light volume, and equally sharp falls. It is also not fixed. Supply on the quieter chains can bridge across over time, so today's thin float is a snapshot, not a permanent floor. Circulating supply remains 326.8M. This section is about where that supply sits and how much of it is liquid today, not a different supply figure.</p>
+  <p class="lq-read" id="lqRead"></p>
   <p class="lq-read" id="lqCaps" hidden></p>
   <p class="cap" id="lqCap"></p>
 </div></section>
@@ -113,7 +116,7 @@
   <p class="foot-note">Data is drawn from public blockchain endpoints and updated daily. Figures are one on-chain measurement, not the Realio team's official numbers, and should be read as a transparent starting point pending an official reconciliation. Not affiliated with the Realio team. Not financial advice.</p>
 </div></footer>
 
-<script src="core.js?v=3"></script>
-<script src="holders.js?v=3"></script>
+<script src="core.js?v=4"></script>
+<script src="holders.js?v=4"></script>
 </body>
 </html>
