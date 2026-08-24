@@ -10,6 +10,35 @@
 /* Tradable float ladder. computeFloat() lives in core.js because the supply
    page quotes the bottom rung too; one definition, one computation, so the two
    pages cannot drift into different numbers for the same thing. */
+/* What actually constrains selling is not where the coins sit, it is how thin
+   the market is. The old wording here claimed the venue-held float explained
+   price impact, which it does not: an exchange's hot wallet is customer custody,
+   not depth on the order book. Daily traded volume is the honest anchor, and it
+   is already published in volume-history.json. */
+let FLOAT_F = null, FLOAT_VOL = null;
+function renderFloatRead(){
+  const el = document.getElementById("floatRead");
+  if(!el || !FLOAT_F) return;
+  const f = FLOAT_F, v = FLOAT_VOL;
+  const usd = v && v.latest_usd, px = v && v.price_latest_usd;
+  const rioPerDay = (usd && px) ? usd/px : null;
+
+  let t = "What limits selling is not where the coins sit, it is how thin the market is. ";
+  if(rioPerDay > 0){
+    t += "Reported volume across every venue is about <b>"+fmtUsd(usd)+" a day</b>, roughly <b>"
+       + fmtM(M(rioPerDay))+" RIO</b>. Even the bottom rung above is around <b>"
+       + Math.round(f.withMarket/rioPerDay)+" days</b> of total global trading, and circulating supply is "
+       + "about <b>"+Math.round(f.circ/rioPerDay)+" days</b> of it. ";
+  } else {
+    t += "Daily traded volume is a small fraction of any rung above. ";
+  }
+  t += "That is why a relatively modest amount of buying or selling moves the price more than the headline "
+     + "market cap implies, and it cuts both ways: sharp rallies on light volume, and equally sharp falls. "
+     + "None of this is fixed. Supply can bridge between chains and reach a venue in minutes, so today's "
+     + "picture is a snapshot, not a permanent floor.";
+  el.innerHTML = t;
+}
+
 function renderFloatLadder(latest, h){
   const el = document.getElementById("floatLadder");
   if(!el || !h || !latest) return;
@@ -35,11 +64,12 @@ function renderFloatLadder(latest, h){
       +"escrow is excluded: it backs wrapped RIO elsewhere and cannot be traded. Smaller labelled wallets "
       +"sit below the top holders, so the true figure is somewhat higher."},
 
-    {v:fmtM(M(f.withMarket)), sub:"realistically tradable", cls:"is-final",
-     k:'On a venue with an active market <span class="rtag">the practical float</span>',
-     x:"The rung above, less the <b>"+fmtM(M(f.dead))+"</b> held on venues that list RIO but show no "
-      +"active market, so that balance cannot presently be sold into. This is the number to hold next to "
-      +"the market cap."}
+    {v:fmtM(M(f.withMarket)), sub:"already on a venue", cls:"is-final",
+     k:'Sitting on a venue with a live market <span class="rtag">inventory in place</span>',
+     x:"The rung above, less the <b>"+fmtM(M(f.dead))+"</b> parked on venues that list RIO but show no "
+      +"functioning market. <b>This is not a ceiling on what could be sold.</b> Anything on the liquid "
+      +"chains is minutes from an exchange deposit, and a swap into a DEX pool needs no deposit at all. "
+      +"It measures inventory already in position, not permission to trade."}
   ];
 
   el.innerHTML = rungs.map(r =>
@@ -48,14 +78,8 @@ function renderFloatLadder(latest, h){
        <div><div class="rk">${r.k}</div><div class="rx">${r.x}</div></div>
      </div>`).join("");
 
-  const ratio = f.withMarket ? (f.circ/f.withMarket).toFixed(1) : null;
-  document.getElementById("floatRead").innerHTML =
-    "The gap between the top and bottom of that ladder is the point of this page. Circulating supply is "
-    +(ratio ? "about <b>"+ratio+"x</b> " : "far ")
-    +"the RIO identifiably sitting on a venue with a live market, so a relatively modest amount of buying "
-    +"or selling moves the price more than the headline market cap implies. That cuts both ways: sharp "
-    +"rallies on light volume, and equally sharp falls. It is also not fixed. Supply on the quieter chains "
-    +"can bridge across over time, so today's thin float is a snapshot, not a permanent floor.";
+  FLOAT_F = f;
+  renderFloatRead();
 
   document.getElementById("floatCap").innerHTML =
     "Rungs 1 and 2 are read live on-chain each day. Rungs 3 and 4 come from <code>holders.json</code>, a "
@@ -63,7 +87,7 @@ function renderFloatLadder(latest, h){
     +(h.as_of ? " last refreshed <b>"+h.as_of+"</b>" : "")
     +", because wallet labels are not in any free API and balances drift as venues rotate wallets. "
     +"Percentages are computed against the current live supply, so a dated numerator is divided by a live "
-    +"denominator. Treat the bottom two rungs as a well-sourced lower bound rather than an exact total. "
+    +"denominator. Treat the bottom two rungs as a well-sourced lower bound rather than an exact total: they count only venues whose wallets we could label, and several smaller markets are not yet included. "
     +"Circulating supply is unchanged by any of this: this section describes where that supply sits, not a "
     +"different supply figure.";
 }
@@ -108,7 +132,9 @@ function renderHolders(latest, h){
       etot += x.rio;
       const pE = eth ? (100*x.rio/eth).toFixed(1)+"%" : "—";
       const pC = circ ? (100*x.rio/circ).toFixed(1)+"%" : "—";
-      return `<tr><td>${x.holder}</td><td>${x.type}</td><td>${fmtM(M(x.rio))}</td><td>${pE}</td><td>${pC}</td></tr>`;
+      // Same "no active market" tag the BNB table shows, so the two are consistent.
+      const tag = x.note ? ` <span class="lq-tag">${x.note}</span>` : "";
+      return `<tr><td>${x.holder}${tag}</td><td>${x.type}</td><td>${fmtM(M(x.rio))}</td><td>${pE}</td><td>${pC}</td></tr>`;
     }).join("");
     const tE = eth ? (100*etot/eth).toFixed(1)+"%" : "—";
     const tC = circ ? (100*etot/circ).toFixed(1)+"%" : "—";
@@ -304,6 +330,10 @@ loadSupply().then(({arr, latest})=>{
   // Liquidity/holders snapshot file, percentages computed live. Silent if absent.
   fetch("./holders.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
     .then(h=>renderHolders(latest,h)).catch(()=>{});
+  // Daily traded volume, the honest anchor for "how thin is this market".
+  // Arrives independently; re-renders the read-out if it lands after the ladder.
+  fetch("./volume-history.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
+    .then(v=>{ FLOAT_VOL = v; renderFloatRead(); }).catch(()=>{});
   // EVM holder counts (reconstructed, refreshed separately). Fills the BNB/ETH
   // rows once loaded; native already rendered from the daily snapshot.
   fetch("./holders-evm.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)

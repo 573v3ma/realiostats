@@ -75,13 +75,14 @@ function computeFloat(latest, h){
   const liquidChains = ((c.bnb && c.bnb.circulating) || 0)
                      + ((c.ethereum && c.ethereum.circulating) || 0);
   const bsc = h.bsc_exchanges || [];
-  const bscTotal = bsc.reduce((a,x)=>a+x.rio, 0);
-  const bscDead  = bsc.filter(x=>x.note).reduce((a,x)=>a+x.rio, 0);
-  const ethVenues = (h.eth_holders || [])
-    .filter(x => !/bridge/i.test(x.type || ""))
-    .reduce((a,x)=>a+x.rio, 0);
-  const onVenues = bscTotal + ethVenues;
-  return {circ, liquidChains, onVenues, withMarket: onVenues - bscDead, dead: bscDead};
+  const eth = (h.eth_holders || []).filter(x => !/bridge/i.test(x.type || ""));
+  const sum = a => a.reduce((t,x)=>t+x.rio, 0);
+  // A venue is "dead" if it carries a note (currently set by hand from the
+  // CoinGecko ticker list: no listing at all, or negligible volume on a huge
+  // spread). Applies to both sides, not just BNB.
+  const dead = sum(bsc.filter(x=>x.note)) + sum(eth.filter(x=>x.note));
+  const onVenues = sum(bsc) + sum(eth);
+  return {circ, liquidChains, onVenues, withMarket: onVenues - dead, dead};
 }
 
 /* Legacy deep links. Before the page split every section lived at
