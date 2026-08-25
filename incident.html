@@ -46,7 +46,7 @@
       <tr class="sum-row"><td><b>Total</b></td><td></td><td><b>115,843,022</b></td><td></td><td></td></tr>
     </tbody>
   </table></div>
-  <p class="cap">115.8M RIO is roughly 35% of the 327.3M multichain circulating supply recorded the previous day. Of that, 113.0M was still sitting in the two receiving accounts at 11:50 UTC, unsold; the remainder has been forwarded on or sold, detailed below. The rUSD and realio.fund USD figures are listed because they are on-chain facts, but neither asset is tradable, so neither represents a realised loss; the material exposure is the RIO. Ethereum, BNB Chain, Base, Solana and the Realio native chain show no comparable movement: their balances sit within normal daily drift.</p>
+  <p class="cap">115.8M RIO is roughly <b>24% of all RIO in existence</b> across every chain, against 489.3M on the previous day's reading. It is <b>not</b> 35% of circulating supply, and an earlier version of this page said so, wrongly. Almost all of what was taken, <b>113.7M or 98% of it</b>, was sitting in reserve and treasury wallets that this site already excludes from circulating supply, so it was never counted as float in the first place. Only about <b>2.1M</b> came out of wallets counted as public float, which is <b>0.65%</b> of the 327.3M circulating. That is why the corrected circulating figure moved by under 1M rather than collapsing. Of the total taken, 113.0M was still sitting in the two receiving accounts at 11:50 UTC, unsold; the remainder has been forwarded on or sold, detailed below. The rUSD and realio.fund USD figures are listed because they are on-chain facts, but neither asset is tradable, so neither represents a realised loss; the material exposure is the RIO. Ethereum, BNB Chain, Base, Solana and the Realio native chain show no comparable movement: their balances sit within normal daily drift.</p>
 
   <div class="inc-ok">
     <div class="inc-status-h"><span class="idot ok"></span> RIO in your own wallet is not affected</div>
@@ -145,7 +145,8 @@
     <li><b>A compromised bucket</b>, so balances outside Realio's control but not in public hands are reported separately instead of being absorbed into float.</li>
     <li><b>Chain liveness on the native reading.</b> A halted chain keeps serving its last committed state, so every figure still returns a number and nothing looks wrong. Native readings now carry block height, block time and age, and a halt is flagged.</li>
   </ul>
-  <p class="cap">The corrected history, the code and the daily snapshots are all in the public repository, including the incorrect reading and its replacement. We have not rewritten it away.</p>
+  <p>A second correction, logged here for the same reason. For about forty minutes this page described the 115.8M as <i>"about 35% of circulating supply"</i>. That was wrong and it overstated the damage: circulating supply on this site already excludes Realio's reserve and treasury wallets, and 113.7M of the 115.8M came out of exactly those wallets. The stolen RIO was, with the exception of about 2.1M, never inside the circulating figure. Dividing it by circulating supply compared a number against a denominator that did not contain it. The correct comparison is against all RIO in existence, roughly 489.3M, which puts it at about 24%.</p>
+  <p class="cap">The corrected history, the code and the daily snapshots are all in the public repository, including both incorrect readings and their replacements. We have not rewritten them away.</p>
 </div></section>
 
 <section id="unknown"><div class="wrap">
