@@ -347,13 +347,7 @@
   .inc-danger b{color:var(--ink)}
   .inc-danger a{color:#991b1b;font-weight:500;text-decoration:underline;text-underline-offset:3px}
   .inc-danger .q{display:block;margin:10px 0;padding:10px 14px;border-left:3px solid #dc2626;
-    background:rgba(255,255,255,.5);border-radius:0 8px 8px 0;font-size:15px;color:#7f1d1d;font-weight:500}
-  @media (prefers-color-scheme:dark){
-    .inc-danger{border-color:#7f1d1d;background:linear-gradient(180deg,rgba(127,29,29,.22),rgba(127,29,29,.10))}
-    .inc-danger-h{color:#fca5a5}
-    .inc-danger a{color:#fca5a5}
-    .inc-danger .q{background:rgba(0,0,0,.22);color:#fecaca}
-  }
+    background:rgba(255,255,255,.72);border-radius:0 8px 8px 0;font-size:15px;color:#7f1d1d;font-weight:600}
   .inc-tl{margin-top:22px;border-left:2px solid var(--line);padding-left:0}
   .tli{display:flex;gap:18px;padding:0 0 20px 22px;position:relative}
   .tli:last-child{padding-bottom:0}
