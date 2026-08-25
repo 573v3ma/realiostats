@@ -46,7 +46,7 @@
       <tr class="sum-row"><td><b>Total</b></td><td></td><td><b>115,843,022</b></td><td></td><td></td></tr>
     </tbody>
   </table></div>
-  <p class="cap">115.8M RIO is roughly <b>24% of all RIO in existence</b> across every chain, against 489.3M on the previous day's reading. It is <b>not</b> 35% of circulating supply, and an earlier version of this page said so, wrongly. Almost all of what was taken, <b>113.7M or 98% of it</b>, was sitting in reserve and treasury wallets that this site already excludes from circulating supply, so it was never counted as float in the first place. Only about <b>2.1M</b> came out of wallets counted as public float, which is <b>0.65%</b> of the 327.3M circulating. That is why the corrected circulating figure moved by under 1M rather than collapsing. Of the total taken, 113.0M was still sitting in the two receiving accounts at 11:50 UTC, unsold; the remainder has been forwarded on or sold, detailed below. The rUSD and realio.fund USD figures are listed because they are on-chain facts, but neither asset is tradable, so neither represents a realised loss; the material exposure is the RIO. Ethereum, BNB Chain, Base, Solana and the Realio native chain show no comparable movement: their balances sit within normal daily drift.</p>
+  <p class="cap">115.8M RIO is roughly <b>24% of all RIO in existence</b> across every chain, against 489.3M on the previous day's reading. It is <b>not</b> 35% of circulating supply, and an earlier version of this page said so, wrongly. Almost all of what was taken, <b>113.7M or 98% of it</b>, was sitting in reserve and treasury wallets that this site already excludes from circulating supply, so it was never counted as float in the first place. Only about <b>2.1M</b> came out of wallets counted as public float, which is <b>0.65%</b> of the 327.3M circulating. That is why the corrected circulating figure moved by under 1M rather than collapsing. Of the total taken, 113.0M was still sitting in the two receiving accounts at 11:50 UTC, unsold; the remainder has been forwarded on or sold, detailed below. The rUSD and realio.fund USD figures are listed because they are on-chain facts, but neither asset is tradable, so neither represents a realised loss; the material exposure is the RIO. Nothing was minted on either chain: the Algorand asset has been fixed at 100,000,000 and immutable since July 2020, and Stellar's RIO total is unchanged, so any chart showing a supply increase on 25 August is showing an accounting artefact rather than new tokens. Ethereum, BNB Chain, Base, Solana and the Realio native chain show no comparable movement: their balances sit within normal daily drift.</p>
 
   <div class="inc-ok">
     <div class="inc-status-h"><span class="idot ok"></span> RIO in your own wallet is not affected</div>
@@ -61,7 +61,7 @@
     <div class="tli"><div class="tlt">03:31:47</div><div class="tlb"><b>Stellar receiving account created.</b> Account <span class="mono">GBDMMICW…FLWXKZ</span> is created and funded with 2 XLM <b>by the realio.fund treasury itself</b>. This is the earliest public evidence that treasury signing capability was already in the wrong hands.</div></div>
     <div class="tli"><div class="tlt">04:52:50</div><div class="tlb"><b>Algorand receiving account created</b> at round 64396365, and the first sweeps begin.</div></div>
     <div class="tli"><div class="tlt">05:24</div><div class="tlb"><b>Algorand reserve emptied.</b> 43,850,860.26 RIO leaves the ASA reserve and manager address in a single transaction (<span class="mono">WV3XE2N7BTBB…</span>, round 64397068). The reserve drops from about 43.9M RIO to 94,230.</div></div>
-    <div class="tli"><div class="tlt">06:33</div><div class="tlb"><b>This site published a wrong number.</b> Our unattended daily job ran, saw the reserve at near zero, and reported Algorand float rising from 7.84M to 51.68M. No alert was raised. See <a href="#ourerror">what we got wrong</a>.</div></div>
+    <div class="tli"><div class="tlt">06:33</div><div class="tlb"><b>This site published a wrong number.</b> Our unattended daily job ran, saw the reserve at near zero, and reported Algorand float rising from 7.84M to 51.68M, taking the headline total from 327.3M to 371.1M. Nothing was watching for an excluded wallet going to zero. Corrected, and the pipeline now flags it.</div></div>
     <div class="tli"><div class="tlt">06:44 onward</div><div class="tlb"><b>Algorand outbound routing starts.</b> RIO begins moving out through an intermediary account dormant since January 2025.</div></div>
     <div class="tli"><div class="tlt">07:25:19</div><div class="tlb"><b>Stellar treasury emptied.</b> 69,869,351.74 RIO, the entire balance, moves to <span class="mono">GBDMMICW…FLWXKZ</span> in one payment.</div></div>
     <div class="tli"><div class="tlt">07:44:07</div><div class="tlb"><b>1,000,000 RIO reaches a MEXC deposit address</b> on Algorand, routed through the dormant pass-through account. This is the attempt to convert stolen RIO into something sellable.</div></div>
@@ -114,39 +114,6 @@
   </div>
 
   <p class="cap">Neither the Algorand asset nor the Stellar asset has clawback enabled. On Stellar the issuer carries <span class="mono">auth_clawback_enabled: false</span> and <span class="mono">auth_immutable: true</span>, so that cannot be changed later. There is no on-chain mechanism by which these transfers can be reversed.</p>
-</div></section>
-
-<section id="supplyeffect"><div class="wrap">
-  <h2>What this does to the supply figure</h2>
-  <p class="sec-lede">This is the part that matters for the rest of this site, and it is the part most likely to be misread.</p>
-  <div class="rules">
-    <div class="rule"><h3>No RIO was created</h3><p>The Algorand asset is fixed at 100,000,000 and has been immutable since July 2020. Stellar's RIO total is unchanged. Nothing was minted on either chain. Any chart showing a supply increase on 25 August is showing an accounting artefact, not new tokens.</p></div>
-    <div class="rule"><h3>Why a naive count spikes</h3><p>Circulating supply here is total supply minus balances held in Realio-controlled reserve, treasury and bridge wallets. Empty those wallets and the subtraction shrinks, so the same tokens are silently reclassified as public float. That is arithmetic, not an event.</p></div>
-    <div class="rule"><h3>How we now count it</h3><p>The 113.0M sitting in the two receiving accounts is held in a separate <b>compromised</b> bucket. It is not counted as circulating float, because it is not a holder deciding whether to sell, and it is not counted as Realio-controlled either, because it plainly is not. It is shown on its own line and never folded into either.</p></div>
-    <div class="rule"><h3>What we do count</h3><p>RIO the receiving accounts have already sold or forwarded on is counted as circulating, because it genuinely has entered the market. That is why the multichain total moves slightly rather than not at all.</p></div>
-  </div>
-  <div class="ptbl-wrap"><table class="ptbl">
-    <thead><tr><th>Reading</th><th>Multichain circulating</th><th>Compromised bucket</th><th>Note</th></tr></thead>
-    <tbody>
-      <tr><td>24 Aug, 06:40 UTC</td><td>327,292,172</td><td>0</td><td>Last clean reading</td></tr>
-      <tr><td>25 Aug, 06:33 UTC</td><td>371,054,545</td><td>0</td><td>Wrong. Published automatically, since corrected</td></tr>
-      <tr><td>25 Aug, 11:03 UTC</td><td>328,273,791</td><td>113,012,599</td><td>Corrected method</td></tr>
-    </tbody>
-  </table></div>
-</div></section>
-
-<section id="ourerror"><div class="wrap">
-  <h2>What we got wrong, and what we changed</h2>
-  <p class="sec-lede">This site published an incorrect figure for about four and a half hours. It is worth being precise about why.</p>
-  <p>Our daily job ran unattended at 06:33 UTC, an hour after the Algorand reserve was emptied. It read the reserve at near zero, subtracted almost nothing, and reported Algorand float rising from 7.84M to 51.68M, taking the headline multichain total from 327.3M to 371.1M. The only warning it raised was an unrelated routine one. A 43.8M reserve going to zero passed silently, because nothing was watching for it.</p>
-  <p>Three changes are now in the open-source pipeline:</p>
-  <ul class="inc-list">
-    <li><b>A movement assertion on every excluded wallet.</b> Any excluded balance moving more than 2%, above a 25,000 RIO noise floor, is flagged loudly rather than quietly reclassified. This check is what found the Stellar leg: we were looking at Algorand and it surfaced the treasury going to zero on a chain we had not thought to check.</li>
-    <li><b>A compromised bucket</b>, so balances outside Realio's control but not in public hands are reported separately instead of being absorbed into float.</li>
-    <li><b>Chain liveness on the native reading.</b> A halted chain keeps serving its last committed state, so every figure still returns a number and nothing looks wrong. Native readings now carry block height, block time and age, and a halt is flagged.</li>
-  </ul>
-  <p>A second correction, logged here for the same reason. For about forty minutes this page described the 115.8M as <i>"about 35% of circulating supply"</i>. That was wrong and it overstated the damage: circulating supply on this site already excludes Realio's reserve and treasury wallets, and 113.7M of the 115.8M came out of exactly those wallets. The stolen RIO was, with the exception of about 2.1M, never inside the circulating figure. Dividing it by circulating supply compared a number against a denominator that did not contain it. The correct comparison is against all RIO in existence, roughly 489.3M, which puts it at about 24%.</p>
-  <p class="cap">The corrected history, the code and the daily snapshots are all in the public repository, including both incorrect readings and their replacements. We have not rewritten them away.</p>
 </div></section>
 
 <section id="unknown"><div class="wrap">
