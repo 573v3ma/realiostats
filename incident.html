@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Incident report, 25 August 2026 · realiostats</title>
-<meta name="description" content="On-chain record of the 25 August 2026 movement of roughly 121.6M RIO on Algorand, Stellar and the Realio native chain, with addresses, transaction IDs and timestamps, and what it means for the circulating supply figure." />
+<meta name="description" content="On-chain record of the 25 August 2026 movement of roughly 122.2M RIO on Ethereum, Algorand, Stellar and the Realio native chain, with addresses, transaction IDs and timestamps, and what it means for the circulating supply figure." />
 <link rel="canonical" href="https://realiostats.com/incident.html" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +37,7 @@
   </div>
 
   <h2>What moved</h2>
-  <p class="sec-lede">The headline is 121.6M RIO. The number that matters for market cap is far smaller, because most of what was taken had already been excluded from circulating supply. Here is the split.</p>
+  <p class="sec-lede">The headline is 122.2M RIO. The number that matters for market cap is far smaller, because most of what was taken had already been excluded from circulating supply. Here is the split.</p>
   <div class="ptbl-wrap"><table class="ptbl">
     <thead><tr><th>Where it came from</th><th>RIO taken</th><th>Share</th><th>In circulating supply?</th></tr></thead>
     <tbody>
@@ -62,7 +62,7 @@
       <tr><td>25 Aug, 13:06 UTC, corrected method</td><td>322,596,741</td><td>-4,695,432 (-1.43%)</td></tr>
     </tbody>
   </table></div>
-  <p class="cap">Circulating supply falls by <b>1.43%</b>. The native sweep took 5.73M out of ordinary holder balances, which were counted as float, and that is now held in a separate compromised bucket instead. Partly offsetting it, RIO the attacker forwarded to an exchange and sold on the Stellar DEX genuinely entered the market. Across all three legs <b>118.7M sits in the compromised bucket</b> and is not counted as circulating. Nothing was minted anywhere: the Algorand asset has been fixed at 100,000,000 and immutable since July 2020, Stellar's RIO total is unchanged, and native supply moved only by scheduled emission, so any chart showing a supply increase on 25 August is showing an accounting artefact rather than new tokens. The Ethereum leg does not change this figure: those 638,286 RIO were already counted as float, and the attacker has since dispersed them into the market, so they remain float in different hands. <b>What we have and have not checked:</b> Ethereum, Algorand, Stellar and the native chain have each been swept transaction by transaction. <b>BNB Chain, Base and Solana have not</b>, because every free log endpoint we tried refused the query. We are not going to assert those chains are clean on the strength of a contract total, which is exactly the check that missed Ethereum and native.</p>
+  <p class="cap">Circulating supply falls by <b>1.43%</b>. The native sweep took 5.73M out of ordinary holder balances, which were counted as float, and that is now held in a separate compromised bucket instead. Partly offsetting it, RIO the attacker forwarded to an exchange and sold on the Stellar DEX genuinely entered the market. Across the Algorand, Stellar and native legs <b>118.7M sits in the compromised bucket</b> and is not counted as circulating. Nothing was minted anywhere: the Algorand asset has been fixed at 100,000,000 and immutable since July 2020, Stellar's RIO total is unchanged, and native supply moved only by scheduled emission, so any chart showing a supply increase on 25 August is showing an accounting artefact rather than new tokens. The Ethereum leg does not change this figure: those 638,286 RIO were already counted as float, and the attacker has since dispersed them into the market, so they remain float in different hands. <b>What we have and have not checked:</b> Ethereum, Algorand, Stellar and the native chain have each been swept transaction by transaction. <b>BNB Chain, Base and Solana have not</b>, because every free log endpoint we tried refused the query. We are not going to assert those chains are clean on the strength of a contract total, which is exactly the check that missed Ethereum and native.</p>
   <p class="cap">Alongside the RIO the receiving accounts also took 137,340 ALGO, 72,565 XLM, 1,813 USDC, and the rUSD and realioUSD balances. Those last two were essentially the entire <i>unissued</i> supply of each asset, sitting in treasury rather than in user hands, and neither trades on any market, so neither is a realised loss. The <a href="#unknown">detail is below</a>.</p>
 
   <div class="inc-status">
@@ -135,12 +135,12 @@
   <ul class="inc-list">
     <li><b>Sold on the Stellar DEX.</b> 491,636.87 RIO sold for 17,207.78 XLM between 08:08:42 and 09:47:14, at roughly 0.035 XLM per RIO. Small against the holdings, and it stopped there.</li>
     <li><b>Routed off Algorand.</b> 2,066,161 RIO has left the Algorand account. 1,510,000 of it went through <span class="mono">OTJX45HK…MDQ724</span>, an account dormant since January 2025 that forwards its balance on within minutes, into <span class="mono">ZEJPIFQF5M…BWQSLQ</span>: a MEXC deposit address, holding 14.15M ALGO and taking continuous small deposits from thousands of unrelated addresses. The largest single hop, 1,000,000 RIO, landed there at 07:44:07.</li>
-    <li><b>Still in place.</b> 118.7M RIO of the 121.6M has not moved, and none of it has been sold since 09:47 UTC. That includes the whole 5.73M native leg, frozen by the chain halt.</li>
+    <li><b>Still in place.</b> 118.7M RIO of the 122.2M has not moved, and none of it has been sold since 09:47 UTC. That includes the whole 5.73M native leg, frozen by the chain halt. The Ethereum 638,286 is the exception: it was dispersed onward the same morning.</li>
   </ul>
   <div class="inc-ok">
     <div class="inc-status-h"><span class="idot ok"></span> The cash-out route was closed</div>
     <p><b>MEXC and KuCoin suspended RIO deposits on the Algorand network</b> after community members spotted the movement and raised it with the exchanges. That is reported by the community and by Realio rather than something on-chain data can show directly, but the effect is visible on-chain: no RIO has left the Algorand receiving account since <b>08:29:02 UTC</b>, and no sale has been recorded on the Stellar DEX since <b>09:47:14 UTC</b>. As at 11:50 UTC both accounts are static.</p>
-    <p style="margin-top:12px">Worth being precise about what this does and does not mean. Deposit suspensions on two exchanges and one network close the fastest exit, and on the evidence they closed it early: of 121.6M RIO taken, roughly 2.5M reached an exchange or a buyer. It is not a recovery and it is not a freeze. The attacker still controls about 118.7M RIO, other venues and other networks exist, and the Stellar holding is untouched by an Algorand deposit suspension. The 5.73M on native is frozen only for as long as that chain stays halted.</p>
+    <p style="margin-top:12px">Worth being precise about what this does and does not mean. Deposit suspensions on two exchanges and one network close the fastest exit, and on the evidence they closed it early: of 122.2M RIO taken, roughly 3.1M reached an exchange or a buyer. It is not a recovery and it is not a freeze. The attacker still controls about 118.7M RIO, other venues and other networks exist, and the Stellar holding is untouched by an Algorand deposit suspension. The 5.73M on native is frozen only for as long as that chain stays halted.</p>
   </div>
 
   <p class="cap">Neither the Algorand asset nor the Stellar asset has clawback enabled. On Stellar the issuer carries <span class="mono">auth_clawback_enabled: false</span> and <span class="mono">auth_immutable: true</span>, so that cannot be changed later. There is no on-chain mechanism by which these transfers can be reversed.</p>
