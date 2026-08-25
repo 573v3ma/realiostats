@@ -1,12 +1,18 @@
 {
- "as_of": "2026-08-24T06:41:27Z",
- "height": 19555469,
+ "as_of": "2026-08-25T06:34:05Z",
+ "height": 19570676,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 135714145.33,
+ "bonded_weight": 136755720.45,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
-   "weight": 7554301.12,
+   "weight": 7534301.12,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Rose Validators | $DSTRX",
+   "weight": 7406933.49,
    "commission": 0.05,
    "jailed": false
   },
@@ -18,13 +24,7 @@
   },
   {
    "moniker": "Teshy 103k Bonded RIO",
-   "weight": 7337751.43,
-   "commission": 0.05,
-   "jailed": false
-  },
-  {
-   "moniker": "Rose Validators | $DSTRX",
-   "weight": 7236744.91,
+   "weight": 7337828.19,
    "commission": 0.05,
    "jailed": false
   },
@@ -36,7 +36,7 @@
   },
   {
    "moniker": "Realio Italy \ud83c\uddee\ud83c\uddf9 \ud83c\udf0f",
-   "weight": 7014751.8,
+   "weight": 7014946.8,
    "commission": 0.05,
    "jailed": false
   },
@@ -48,7 +48,7 @@
   },
   {
    "moniker": "Reallionaires Club | RIO",
-   "weight": 6695387.13,
+   "weight": 6635387.13,
    "commission": 0.05,
    "jailed": false
   },
@@ -60,19 +60,19 @@
   },
   {
    "moniker": "min fee\ud83c\udf84 \ud835\udc25\ud835\udc1e\ud835\udc2c\ud835\udc27\ud835\udc22\ud835\udc24 | \ud835\udc14\ud835\udc13\ud835\udc12\ud835\udc00",
-   "weight": 5259052.12,
+   "weight": 5261253.03,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Teshy - DSTRX",
-   "weight": 4792193.42,
+   "weight": 4876926.76,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Realio Pro Max USA \ud83d\uddfd REStake\u2705",
-   "weight": 4295295.99,
+   "weight": 4375087.21,
    "commission": 0.05,
    "jailed": false
   },
@@ -83,8 +83,14 @@
    "jailed": false
   },
   {
+   "moniker": "Kynraze | DSTRX",
+   "weight": 3681313.5,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
    "moniker": "Indonode | DSTRX | Low Fees",
-   "weight": 3530592.6,
+   "weight": 3545096.66,
    "commission": 0.05,
    "jailed": false
   },
@@ -149,20 +155,14 @@
    "jailed": false
   },
   {
-   "moniker": "Kynraze | DSTRX",
-   "weight": 2928130.61,
-   "commission": 0.05,
-   "jailed": false
-  },
-  {
    "moniker": "Blockval",
-   "weight": 2580856.08,
+   "weight": 2589419.25,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "cryptobtcbuyer | Low fees \u26a1",
-   "weight": 1843852.4,
+   "weight": 1845663.7,
    "commission": 0.05,
    "jailed": false
   },
@@ -210,7 +210,7 @@
   },
   {
    "moniker": "[NODERS]",
-   "weight": 594855.88,
+   "weight": 597406.08,
    "commission": 0.05,
    "jailed": false
   },
@@ -246,7 +246,7 @@
   },
   {
    "moniker": "Indonode | RIO | Low Fees",
-   "weight": 312239.07,
+   "weight": 316004.73,
    "commission": 0.1,
    "jailed": false
   },
@@ -324,7 +324,7 @@
   },
   {
    "moniker": "GarageNodes",
-   "weight": 36224.63,
+   "weight": 36236.63,
    "commission": 0.05,
    "jailed": false
   },
