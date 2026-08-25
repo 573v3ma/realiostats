@@ -1,0 +1,59 @@
+name: BSC incident scan (one-off, manual)
+
+# Answers one question: did the 25 Aug 2026 incident have a BNB Chain leg?
+#
+# Public BSC RPCs cannot cover the window. They cap eth_getLogs, disable it, or
+# rate-limit, and a capped endpoint returns an EMPTY result rather than an error,
+# so a naive scan reports "nothing found" having actually seen nothing at all.
+# Alchemy's transfers API is not range-limited and fails loudly instead.
+#
+# The ALCHEMY_BNB_URL secret is already configured for evm-holders.yml. Running it
+# here means nobody has to handle the key: the runner reads it, the log never
+# prints it, and the committed output contains only addresses and totals.
+#
+# Run it from the Actions tab: "BSC incident scan" -> Run workflow.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fail early if the secret is missing
+        env:
+          ALCHEMY_BNB_URL: ${{ secrets.ALCHEMY_BNB_URL }}
+        run: |
+          if [ -z "$ALCHEMY_BNB_URL" ]; then
+            echo "ALCHEMY_BNB_URL is not set in repo secrets." >&2
+            echo "Settings -> Secrets and variables -> Actions." >&2
+            exit 1
+          fi
+          echo "secret present (value not printed)"
+
+      # Only stdlib is used, so there is nothing to install.
+      - name: Scan the incident window on BNB Chain
+        env:
+          ALCHEMY_BNB_URL: ${{ secrets.ALCHEMY_BNB_URL }}
+        run: python incident_scan_bsc.py
+
+      - name: Commit the result
+        run: |
+          git config user.name  "realiostats-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if ! git diff --quiet -- incident-scan-bsc.json; then
+            git add incident-scan-bsc.json
+            git commit -m "BSC incident scan $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push
+          else
+            echo "No change to the scan output."
+          fi
