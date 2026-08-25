@@ -27,13 +27,13 @@
 <div class="wrap page-lede">
   <div class="eyebrow">Independent · community-led · not affiliated with the Realio team</div>
   <h1>Incident report: 25 August 2026</h1>
-  <p class="lede">Between 03:31 and 08:57 UTC, roughly 115.8M RIO moved out of Realio-controlled wallets on Algorand and Stellar into two accounts created the same morning. This page records what the public chain data shows, with every address and transaction ID, so anyone can check it independently.</p>
+  <p class="lede">Between 03:31 and 08:57 UTC, roughly 115.8M RIO moved out of Realio-controlled wallets on Algorand and Stellar into two accounts created the same morning. The fastest cash-out route was closed within hours, after community members raised the alarm and MEXC and KuCoin suspended RIO deposits on Algorand. This page records what the public chain data shows, with every address and transaction ID, so anyone can check it independently.</p>
 </div>
 
 <section id="status"><div class="wrap">
   <div class="inc-status">
     <div class="inc-status-h"><span class="idot warn"></span> Situation is live and moving</div>
-    <p>All figures on this page are a point-in-time reading as at <b>25 August 2026, 11:05 UTC</b>. Balances were still changing when it was written. The Realio native chain stopped producing blocks at <b>10:38:05 UTC</b> at height <b>19,573,265</b>, verified independently against three separate public endpoints. Realio's lead developer requested the halt as a precautionary measure while the team investigates.</p>
+    <p>All figures on this page are a point-in-time reading as at <b>25 August 2026, 11:50 UTC</b>. No RIO has left either receiving account since 08:29 UTC, and no sale has been recorded since 09:47 UTC. The Realio native chain stopped producing blocks at <b>10:38:05 UTC</b> at height <b>19,573,265</b>, verified independently against three separate public endpoints. Realio's lead developer requested the halt as a precautionary measure while the team investigates.</p>
   </div>
 
   <h2>What moved</h2>
@@ -46,7 +46,7 @@
       <tr class="sum-row"><td><b>Total</b></td><td></td><td><b>115,843,022</b></td><td></td><td></td></tr>
     </tbody>
   </table></div>
-  <p class="cap">115.8M RIO is roughly 35% of the 327.3M multichain circulating supply recorded the previous day. Of that, 113.0M was still sitting in the two receiving accounts at 11:05 UTC; the remainder has been forwarded on or sold, detailed below. The rUSD and realio.fund USD figures are listed because they are on-chain facts, but neither asset is tradable, so neither represents a realised loss; the material exposure is the RIO. Ethereum, BNB Chain, Base, Solana and the Realio native chain show no comparable movement: their balances sit within normal daily drift.</p>
+  <p class="cap">115.8M RIO is roughly 35% of the 327.3M multichain circulating supply recorded the previous day. Of that, 113.0M was still sitting in the two receiving accounts at 11:50 UTC, unsold; the remainder has been forwarded on or sold, detailed below. The rUSD and realio.fund USD figures are listed because they are on-chain facts, but neither asset is tradable, so neither represents a realised loss; the material exposure is the RIO. Ethereum, BNB Chain, Base, Solana and the Realio native chain show no comparable movement: their balances sit within normal daily drift.</p>
 
   <div class="inc-ok">
     <div class="inc-status-h"><span class="idot ok"></span> RIO in your own wallet is not affected</div>
@@ -64,11 +64,14 @@
     <div class="tli"><div class="tlt">06:33</div><div class="tlb"><b>This site published a wrong number.</b> Our unattended daily job ran, saw the reserve at near zero, and reported Algorand float rising from 7.84M to 51.68M. No alert was raised. See <a href="#ourerror">what we got wrong</a>.</div></div>
     <div class="tli"><div class="tlt">06:44 onward</div><div class="tlb"><b>Algorand outbound routing starts.</b> RIO begins moving out through an intermediary account dormant since January 2025.</div></div>
     <div class="tli"><div class="tlt">07:25:19</div><div class="tlb"><b>Stellar treasury emptied.</b> 69,869,351.74 RIO, the entire balance, moves to <span class="mono">GBDMMICW…FLWXKZ</span> in one payment.</div></div>
+    <div class="tli"><div class="tlt">07:44:07</div><div class="tlb"><b>1,000,000 RIO reaches a MEXC deposit address</b> on Algorand, routed through the dormant pass-through account. This is the attempt to convert stolen RIO into something sellable.</div></div>
     <div class="tli"><div class="tlt">08:08:42</div><div class="tlb"><b>Selling begins</b> on the Stellar decentralised exchange.</div></div>
     <div class="tli"><div class="tlt">08:25 and 08:57</div><div class="tlb"><b>Second and third Stellar sweeps.</b> 120,200 and 356,485.17 RIO, collecting deposits that arrived <i>after</i> the main drain. Deposits were still flowing into a compromised address.</div></div>
     <div class="tli"><div class="tlt">08:39:30</div><div class="tlb"><b>Algorand sweeping stops</b> after 8,908 source accounts and 9,227 transactions.</div></div>
     <div class="tli"><div class="tlt">09:47:14</div><div class="tlb"><b>Last recorded DEX sale</b> at the time of writing. 491,636.87 RIO sold in total for 17,207.78 XLM.</div></div>
     <div class="tli"><div class="tlt">10:38:05</div><div class="tlb"><b>Realio native chain stops producing blocks</b> at height 19,573,265. Confirmed against three independent public endpoints.</div></div>
+    <div class="tli"><div class="tlt">during the morning</div><div class="tlb"><b>MEXC and KuCoin suspend RIO deposits on Algorand</b>, after community members raised the alarm and the exchanges acted quickly. Reported by the community and by Realio; exchange policy is not something on-chain data can show, but the effect below is.</div></div>
+    <div class="tli"><div class="tlt">08:29 onward</div><div class="tlb"><b>Movement stops.</b> No RIO has left the Algorand account since 08:29:02, and no Stellar sale has been recorded since 09:47:14. Verified at 11:50 UTC.</div></div>
   </div>
 </div></section>
 
@@ -86,7 +89,7 @@
 
 <section id="where"><div class="wrap">
   <h2>Where the funds are now</h2>
-  <p class="sec-lede">As at 11:05 UTC. Both receiving accounts are listed in full so anyone can follow them live.</p>
+  <p class="sec-lede">As at 11:50 UTC. Both receiving accounts are listed in full so anyone can follow them live.</p>
   <div class="excl">
     <div class="ex"><div class="exk">Algorand · receiving account</div><div class="exv">43.43M RIO</div>
       <div class="exa">RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A</div>
@@ -100,10 +103,16 @@
 
   <h3 class="inc-h3">Movement out</h3>
   <ul class="inc-list">
-    <li><b>Sold on the Stellar DEX.</b> 491,636.87 RIO sold for 17,207.78 XLM between 08:08:42 and 09:47:14, at roughly 0.035 XLM per RIO. Small against the holdings, but it was still running when this was written.</li>
-    <li><b>Routed off Algorand.</b> 2,066,161 RIO has left the Algorand account. 1,510,000 of it went through <span class="mono">OTJX45HK…MDQ724</span>, an account dormant since January 2025 that forwards its balance on within minutes, into an address holding 14.15M ALGO that receives continuous small deposits from thousands of unrelated addresses. That deposit pattern is characteristic of a centralised exchange hot wallet. We have not identified which exchange and are not naming one.</li>
-    <li><b>Still in place.</b> 113.0M RIO of the 115.8M has not moved.</li>
+    <li><b>Sold on the Stellar DEX.</b> 491,636.87 RIO sold for 17,207.78 XLM between 08:08:42 and 09:47:14, at roughly 0.035 XLM per RIO. Small against the holdings, and it stopped there.</li>
+    <li><b>Routed off Algorand.</b> 2,066,161 RIO has left the Algorand account. 1,510,000 of it went through <span class="mono">OTJX45HK…MDQ724</span>, an account dormant since January 2025 that forwards its balance on within minutes, into <span class="mono">ZEJPIFQF5M…BWQSLQ</span>: a MEXC deposit address, holding 14.15M ALGO and taking continuous small deposits from thousands of unrelated addresses. The largest single hop, 1,000,000 RIO, landed there at 07:44:07.</li>
+    <li><b>Still in place.</b> 113.0M RIO of the 115.8M has not moved, and none of it has been sold since 09:47 UTC.</li>
   </ul>
+  <div class="inc-ok">
+    <div class="inc-status-h"><span class="idot ok"></span> The cash-out route was closed</div>
+    <p><b>MEXC and KuCoin suspended RIO deposits on the Algorand network</b> after community members spotted the movement and raised it with the exchanges. That is reported by the community and by Realio rather than something on-chain data can show directly, but the effect is visible on-chain: no RIO has left the Algorand receiving account since <b>08:29:02 UTC</b>, and no sale has been recorded on the Stellar DEX since <b>09:47:14 UTC</b>. As at 11:50 UTC both accounts are static.</p>
+    <p style="margin-top:12px">Worth being precise about what this does and does not mean. Deposit suspensions on two exchanges and one network close the fastest exit, and on the evidence they closed it early: of 115.8M RIO taken, roughly 2.5M reached an exchange or a buyer. It is not a recovery and it is not a freeze. The attacker still controls 113.0M RIO, other venues and other networks exist, and the Stellar holding is untouched by an Algorand deposit suspension.</p>
+  </div>
+
   <p class="cap">Neither the Algorand asset nor the Stellar asset has clawback enabled. On Stellar the issuer carries <span class="mono">auth_clawback_enabled: false</span> and <span class="mono">auth_immutable: true</span>, so that cannot be changed later. There is no on-chain mechanism by which these transfers can be reversed.</p>
 </div></section>
 
@@ -172,7 +181,7 @@
     <a href="methodology.html#method">How it's calculated</a>
     <a href="index.html">Supply</a>
   </div>
-  <p class="foot-note">Figures on this page are a point-in-time reading as at 25 August 2026, 11:05 UTC, drawn from public blockchain endpoints. They are one on-chain measurement, not the Realio team's official numbers. Not affiliated with the Realio team. Not financial advice.</p>
+  <p class="foot-note">Figures on this page are a point-in-time reading as at 25 August 2026, 11:50 UTC, drawn from public blockchain endpoints. They are one on-chain measurement, not the Realio team's official numbers. Not affiliated with the Realio team. Not financial advice.</p>
 </div></footer>
 
 <script src="core.js?v=7"></script>
