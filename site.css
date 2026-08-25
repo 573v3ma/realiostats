@@ -353,6 +353,11 @@
   .inc-list li b{color:var(--ink)}
   .inc-h3{font-size:17px;margin:34px 0 2px;color:var(--ink)}
   .exn{margin-top:7px;font-size:12.8px;line-height:1.55;color:var(--muted)}
+  /* summary row INSIDE a .ptbl table. Distinct from .total-row, which is a
+     flex container meant for divs and collapses a <tr> if applied to one. */
+  .ptbl tr.sum-row td{border-top:2px solid var(--ink);border-bottom:none;
+    padding-top:14px;font-size:15px;color:var(--ink)}
+  .ptbl tr.sum-row td b{font-weight:600}
   @media (max-width:640px){
     .tli{flex-direction:column;gap:4px}
     .tlt{flex-basis:auto}
