@@ -320,3 +320,40 @@
   .nav nav{ display:flex; flex-wrap:wrap; width:100%; column-gap:12px; row-gap:4px; }
   .nav nav a{ font-size:12.5px; padding:4px 0; }
 }
+
+  /* ---- incident page + supply-page notice (added 25 Aug 2026) ---- */
+  .inc-banner{display:flex;gap:14px;align-items:flex-start;margin:0 0 26px;
+    padding:16px 18px;border:1px solid #f0c9c0;border-left:3px solid #c2410c;
+    background:#fdf6f3;border-radius:var(--radius-sm)}
+  .inc-banner .ib-i{flex:0 0 auto;width:9px;height:9px;margin-top:8px;border-radius:50%;
+    background:#c2410c;box-shadow:0 0 0 4px rgba(194,65,12,.13)}
+  .inc-banner .ib-t{font-size:14.5px;line-height:1.62;color:var(--body)}
+  .inc-banner .ib-t b{color:var(--ink)}
+  .inc-banner a{color:#9a3412;font-weight:500;text-decoration:underline;text-underline-offset:3px}
+  .inc-status{margin:0 0 34px;padding:18px 20px;border:1px solid var(--line);
+    border-left:3px solid #c2410c;background:var(--alt);border-radius:var(--radius-sm)}
+  .inc-status-h{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--ink);
+    font-family:"Space Grotesk",Inter,sans-serif;margin-bottom:8px}
+  .inc-status p{margin:0;font-size:14.5px;line-height:1.65;color:var(--body)}
+  .inc-tl{margin-top:22px;border-left:2px solid var(--line);padding-left:0}
+  .tli{display:flex;gap:18px;padding:0 0 20px 22px;position:relative}
+  .tli:last-child{padding-bottom:0}
+  .tli:before{content:"";position:absolute;left:-6px;top:7px;width:10px;height:10px;
+    border-radius:50%;background:#fff;border:2px solid var(--line-strong)}
+  .tli:nth-child(3):before,.tli:nth-child(7):before{border-color:#c2410c;background:#c2410c}
+  .tlt{flex:0 0 116px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:13px;color:var(--muted);padding-top:1px;font-variant-numeric:tabular-nums}
+  .tlb{flex:1;font-size:14.5px;line-height:1.65;color:var(--body)}
+  .tlb b{color:var(--ink)}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92em;
+    background:var(--alt);border:1px solid var(--line);border-radius:5px;padding:1px 5px;
+    word-break:break-all}
+  .inc-list{margin:14px 0 0;padding-left:20px;color:var(--body);font-size:15px;line-height:1.72}
+  .inc-list li{margin-bottom:11px}
+  .inc-list li b{color:var(--ink)}
+  .inc-h3{font-size:17px;margin:34px 0 2px;color:var(--ink)}
+  .exn{margin-top:7px;font-size:12.8px;line-height:1.55;color:var(--muted)}
+  @media (max-width:640px){
+    .tli{flex-direction:column;gap:4px}
+    .tlt{flex-basis:auto}
+  }

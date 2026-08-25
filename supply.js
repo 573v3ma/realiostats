@@ -59,10 +59,17 @@ const CHAINS = [
 // escrow. Evidence supports it (uniform 3,999 drips to one fixed address, not
 // user-shaped bridge withdrawals) but it is unconfirmed. If it is escrow, an
 // Algorand->EVM bridge would read as a false positive here.
+// 25 Aug 2026: the Algorand "compromised" bucket is added back here for exactly
+// the same reason reserve and bridge_wallet are. Those RIO were already in
+// existence and already excluded from float; they simply changed hands. Without
+// the add-back the emptied reserve reads as a 42.8M burn, which is nonsense.
+// The Stellar compromised bucket is deliberately NOT added back, mirroring the
+// Stellar treasury, which has never been added back either: doing so would
+// rebase the whole historical series by ~69.6M and manufacture a false spike.
 function teamHeld(s){
   const a = (s.chains && s.chains.algorand) || {};
   if(typeof a.reserve !== "number" || typeof a.bridge_wallet !== "number") return null;
-  return a.reserve + a.bridge_wallet;
+  return a.reserve + a.bridge_wallet + (typeof a.compromised === "number" ? a.compromised : 0);
 }
 function netNewSupply(s){
   const t = teamHeld(s);
@@ -451,7 +458,17 @@ function render(latest, liveSeries, fullArr){
     const obsDays = Math.round(obs.days);
     document.getElementById("emObservedNote").textContent = obsDays<=1 ? "measured over the last 24h" : "median day, last "+obsDays+" days";
     const pct = infl ? (infl*100).toFixed(0) : "8";
-    if(ed && obs.perDay <= ed*1.25){
+    const comp = latest.compromised_total || 0;
+    const halted = (latest.flags||[]).some(f=>String(f).indexOf("NATIVE_CHAIN_HALTED")===0);
+    if(comp > 0){
+      // An emission read is not meaningful across an incident window. Say so
+      // rather than publishing a tidy sentence over a distorted measurement.
+      dot.className="idot warn";
+      it.innerHTML="Emission cannot be measured cleanly across this window. On 25 August 2026 roughly 115.8M RIO left Realio-controlled wallets on Algorand and Stellar; "
+        +fmtInt(comp)+" RIO is currently held in a separate compromised bucket and excluded from float"
+        +(halted ? ", and the native chain has stopped producing blocks, so its supply reading is frozen" : "")
+        +". No RIO was minted on either chain. <a href=\"incident.html\">See the incident report</a>.";
+    } else if(ed && obs.perDay <= ed*1.25){
       dot.className="idot ok";
       it.textContent="Circulating RIO supply is growing within the scheduled ~"+pct+"% emission. No unexplained minting detected over the measured window.";
     } else if(ed){
@@ -475,7 +492,19 @@ function render(latest, liveSeries, fullArr){
   }).join("");
 
   const a = latest.chains.algorand, s = latest.chains.stellar;
-  document.getElementById("exclGrid").innerHTML = `
+  const compCards = [
+    {k:"Algorand · compromised (25 Aug 2026)", v:a.compromised,
+     addr:"RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A",
+     url:"https://allo.info/account/RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A"},
+    {k:"Stellar · compromised (25 Aug 2026)", v:s.compromised,
+     addr:"GBDMMICWFVSSU5YIKIVWG6EP3U65R2GIF7BICN3JIBES5NVGFZFLWXKZ",
+     url:"https://stellar.expert/explorer/public/account/GBDMMICWFVSSU5YIKIVWG6EP3U65R2GIF7BICN3JIBES5NVGFZFLWXKZ"}
+  ].filter(c=>typeof c.v==="number" && c.v>0).map(c=>`
+    <div class="ex"><div class="exk">${c.k}</div><div class="exv">${fmtM(M(c.v))}</div>
+      <div class="exa">${c.addr}</div>
+      <div class="exn">Outside Realio's control, but not holder float. Excluded from circulating and reported separately. <a href="incident.html">Incident report</a>.</div>
+      <div style="margin-top:8px"><a href="${c.url}" target="_blank" rel="noopener">Verify ↗</a></div></div>`).join("");
+  document.getElementById("exclGrid").innerHTML = compCards + `
     <div class="ex"><div class="exk">Algorand · reserve</div><div class="exv">${fmtM(M(a.reserve))}</div>
       <div class="exa">GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA</div>
       <div style="margin-top:8px"><a href="https://allo.info/account/GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA" target="_blank" rel="noopener">Verify ↗</a></div></div>

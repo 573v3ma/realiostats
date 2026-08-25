@@ -14,8 +14,8 @@ silently zeroed. Which endpoint served each chain is recorded in the snapshot.
 Run:  python3 fetch_supply.py           # summary + JSON
       python3 fetch_supply.py --json    # JSON only (daily append job)
 """
-import json, re, sys, urllib.request, urllib.parse
-from datetime import datetime, timezone
+import json, os, re, sys, urllib.request, urllib.parse
+from datetime import datetime, timezone  # noqa: F401 (used by fetch_native liveness)
 
 TIMEOUT = 20
 NATIVE_CAP = 175_000_000
@@ -77,8 +77,29 @@ SOL_MINT = "HELn8rSM1rp8vAjNH4NYXzX6FvCbwWMGqLfaMgiBnZFV"
 ALGO_ASA = 2751733
 ALGO_RESERVE = "GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA"
 ALGO_BRIDGE  = "M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM"
+# Balances that are provably OUTSIDE Realio's control but are NOT public float.
+# 25 Aug 2026: this account was created at round 64396365 and, between 04:52:50
+# and 08:39:30 UTC, received balances swept from 8,908 distinct Algorand
+# accounts together with the entire reserve holding (43,850,860 RIO, tx
+# WV3XE2N7BTBB, 05:24 UTC). Those RIO are not circulating in the sense this site
+# measures (a holder deciding whether to hold or sell), and they are equally not
+# Realio-controlled, so folding them into either bucket would be wrong. They get
+# their own line and are never silently absorbed into float. See incident.html.
+ALGO_COMPROMISED = {
+    "RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A":
+        "2026-08-25 Algorand custodial sweep",
+}
 STELLAR_ISSUER = "GBNLJIYH34UWO5YZFA3A3HD3N76R6DOI33N4JONUOHEEYZYCAYTEJ5AK"
 STELLAR_TREASURY = "GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L"
+# Same 25 Aug 2026 incident, Stellar leg. This account was created at 03:31:47
+# UTC by the treasury itself, then received the treasury's entire RIO balance
+# (69,869,351.74) at 07:25:19 UTC plus two later sweeps of deposits that arrived
+# after the drain. Excluded from float on the same reasoning as the Algorand
+# wallet: outside Realio's control, but not a holder's float either.
+STELLAR_COMPROMISED = {
+    "GBDMMICWFVSSU5YIKIVWG6EP3U65R2GIF7BICN3JIBES5NVGFZFLWXKZ":
+        "2026-08-25 Stellar treasury drain",
+}
 NATIVE_DENOM = "ario"
 NATIVE_BRIDGE_MODULE = "realio1zlefkpe3g0vvm9a4h0jf9000lmqutlh9jzcavp"
 
@@ -128,8 +149,12 @@ def fetch_algorand(url):
         except Exception:
             return 0.0
     reserve = held(ALGO_RESERVE); bridge = held(ALGO_BRIDGE)
+    comp = {a: round(held(a), 4) for a in ALGO_COMPROMISED}
+    comp_total = round(sum(comp.values()), 4)
     return {"total_supply": round(total, 4), "reserve": round(reserve, 4),
-            "bridge_wallet": round(bridge, 4), "circulating": round(total - reserve - bridge, 4)}
+            "bridge_wallet": round(bridge, 4),
+            "compromised": comp_total, "compromised_detail": comp,
+            "circulating": round(total - reserve - bridge - comp_total, 4)}
 
 def fetch_stellar(url):
     r = _get(f"{url}/assets?asset_code=RIO&asset_issuer={STELLAR_ISSUER}")["_embedded"]["records"][0]
@@ -138,13 +163,27 @@ def fetch_stellar(url):
              + float(r.get("claimable_balances_amount", 0))
              + float(r.get("liquidity_pools_amount", 0))
              + float(r.get("contracts_amount", 0)))
-    treasury = 0.0
-    acct = _get(f"{url}/accounts/{STELLAR_TREASURY}")
-    for bal in acct.get("balances", []):
-        if bal.get("asset_code") == "RIO" and bal.get("asset_issuer") == STELLAR_ISSUER:
-            treasury = float(bal["balance"]); break
+    def rio_balance(addr):
+        try:
+            acct = _get(f"{url}/accounts/{addr}")
+        except Exception:
+            return 0.0
+        for bal in acct.get("balances", []):
+            if bal.get("asset_code") == "RIO" and bal.get("asset_issuer") == STELLAR_ISSUER:
+                return float(bal["balance"])
+        return 0.0
+    treasury = rio_balance(STELLAR_TREASURY)
+    comp = {a: round(rio_balance(a), 4) for a in STELLAR_COMPROMISED}
+    comp_total = round(sum(comp.values()), 4)
     return {"total_supply": round(total, 4), "treasury": round(treasury, 4),
-            "circulating": round(total - treasury, 4)}
+            "compromised": comp_total, "compromised_detail": comp,
+            "circulating": round(total - treasury - comp_total, 4)}
+
+# A halted chain keeps serving its last committed state, so every supply figure
+# below still returns a number and nothing looks wrong. The Realio native chain
+# stopped producing blocks at 10:38:05 UTC on 25 Aug 2026, so the reading is now
+# explicitly timestamped and staleness is flagged rather than assumed away.
+NATIVE_STALE_S = 600
 
 def fetch_native(url):
     s = _get(f"{url}/cosmos/bank/v1beta1/supply/by_denom?denom={NATIVE_DENOM}")
@@ -153,7 +192,18 @@ def fetch_native(url):
     escrow = 0.0
     for c in esc.get("balances", []):
         if c["denom"] == NATIVE_DENOM: escrow = int(c["amount"]) / 10**18
-    return {"total": round(total, 4), "bridge_escrow": round(escrow, 4), "circulating": round(total, 4)}
+    out = {"total": round(total, 4), "bridge_escrow": round(escrow, 4),
+           "circulating": round(total, 4)}
+    try:
+        hdr = _get(f"{url}/cosmos/base/tendermint/v1beta1/blocks/latest")["block"]["header"]
+        age = datetime.now(timezone.utc).timestamp() - _parse_cosmos_ts(hdr["time"])
+        out["height"] = int(hdr["height"])
+        out["block_time_utc"] = hdr["time"]
+        out["block_age_s"] = round(age, 1)
+        out["chain_live"] = age <= NATIVE_STALE_S
+    except Exception:
+        pass
+    return out
 
 # ---- Realio emission (custom mint module; soft-fail, never blocks the snapshot) --
 def fetch_mint_params(flags):
@@ -347,6 +397,58 @@ def fetch_price(flags):
     flags.append("price_failed:"+"|".join(errs))
     return {"price_usd":None,"price_source":None,"volume_24h_usd":None,"volume_source":None}
 
+# ---- excluded-wallet movement assertion ------------------------------------
+# A wallet we exclude going to zero must never pass silently: the arithmetic
+# would simply reclassify the balance as public float and publish a supply jump
+# that never happened. That is exactly what occurred on 25 Aug 2026, when the
+# Algorand reserve was drained at 05:24 UTC and the 06:33 UTC run reported
+# Algorand float rising 7.84M -> 51.68M with no flag raised. Every excluded
+# balance is now compared against the previous snapshot and any material move is
+# flagged loudly. Soft-fail: a missing or unreadable history must never block a
+# snapshot from being taken.
+EXCL_MOVE_PCT = 0.02      # flag a move of more than 2% of the balance
+EXCL_MOVE_ABS = 25_000    # ...but ignore noise below this many RIO
+
+def _excluded_balances(chains):
+    """Every balance the method subtracts from circulating, flattened."""
+    out = {}
+    a = chains.get("algorand") or {}
+    if isinstance(a.get("reserve"), (int, float)):       out["algorand.reserve"] = a["reserve"]
+    if isinstance(a.get("bridge_wallet"), (int, float)): out["algorand.bridge_wallet"] = a["bridge_wallet"]
+    if isinstance(a.get("compromised"), (int, float)):   out["algorand.compromised"] = a["compromised"]
+    x = chains.get("stellar") or {}
+    if isinstance(x.get("treasury"), (int, float)):      out["stellar.treasury"] = x["treasury"]
+    if isinstance(x.get("compromised"), (int, float)):  out["stellar.compromised"] = x["compromised"]
+    n = chains.get("realio_native") or {}
+    if isinstance(n.get("bridge_escrow"), (int, float)): out["native.bridge_escrow"] = n["bridge_escrow"]
+    return out
+
+def check_excluded_movement(chains, flags, history_path=None):
+    if history_path is None:
+        history_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                    "supply-history.json")
+    try:
+        with open(history_path) as fh:
+            hist = json.load(fh)
+        prev = next((r for r in reversed(hist) if isinstance(r, dict) and r.get("chains")), None)
+        if not prev:
+            return
+    except Exception:
+        flags.append("excluded_movement_check_skipped")
+        return
+    before = _excluded_balances(prev.get("chains") or {})
+    after  = _excluded_balances(chains)
+    for k, was in before.items():
+        now = after.get(k)
+        if now is None:
+            continue
+        delta = now - was
+        if abs(delta) < EXCL_MOVE_ABS:
+            continue
+        if was > 0 and abs(delta) / was < EXCL_MOVE_PCT:
+            continue
+        flags.append(f"EXCLUDED_WALLET_MOVED:{k}:{was:,.0f}->{now:,.0f}")
+
 def build_snapshot():
     flags = []
     eth  = with_fallback("ethereum", lambda u: fetch_evm(u, ETH_CONTRACT, BASE_L1_BRIDGE), flags)
@@ -361,6 +463,9 @@ def build_snapshot():
     base_circ = 0
     sol_circ  = sol.get("total_supply", 0)
     algo_circ, xlm_circ, nat_circ = algo.get("circulating", 0), xlm.get("circulating", 0), nat.get("circulating", 0)
+    compromised_total = round(
+        (algo.get("compromised", 0) if isinstance(algo, dict) else 0)
+        + (xlm.get("compromised", 0) if isinstance(xlm, dict) else 0), 2)
 
     chains = {
         "realio_native": {**nat},
@@ -381,6 +486,12 @@ def build_snapshot():
             flags.append(f"base_lock_mismatch:lock={lock},base={btot}")
     if isinstance(nat.get("total"), (int, float)) and nat["total"] > NATIVE_CAP:
         flags.append(f"native_above_cap:{nat['total']}")
+    if isinstance(nat, dict) and nat.get("chain_live") is False:
+        flags.append(f"NATIVE_CHAIN_HALTED:height={nat.get('height')}:"
+                     f"last_block={nat.get('block_time_utc')}:age_s={nat.get('block_age_s')}")
+    check_excluded_movement(chains, flags)
+    if compromised_total:
+        flags.append(f"compromised_balance:{compromised_total:,.0f}")
     # if any chain failed entirely, the total is incomplete - make it loud
     if any(f.startswith("fetch_failed") for f in flags):
         flags.append("TOTAL_INCOMPLETE")
@@ -391,8 +502,9 @@ def build_snapshot():
     infl = mint.get("inflation_rate")
     native_supply = nat.get("total", 0) if isinstance(nat, dict) else 0
     excluded = 0.0
-    if isinstance(algo, dict): excluded += algo.get("reserve", 0) + algo.get("bridge_wallet", 0)
-    if isinstance(xlm, dict):  excluded += xlm.get("treasury", 0)
+    if isinstance(algo, dict):
+        excluded += algo.get("reserve", 0) + algo.get("bridge_wallet", 0) + algo.get("compromised", 0)
+    if isinstance(xlm, dict):  excluded += xlm.get("treasury", 0) + xlm.get("compromised", 0)
     global_total = round(tradable + excluded, 2)
     # 8% is charged on the UNMINTED native supply (gap to the cap). Prefer the
     # chain's own annual_provisions; fall back to infl x (cap - native supply).
@@ -427,6 +539,7 @@ def build_snapshot():
     mcap = round(tradable * price["price_usd"], 2) if price["price_usd"] else None
     return {"ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "chains": chains, "tradable_total": tradable, "native_cap": NATIVE_CAP,
+            "compromised_total": compromised_total,
             "price_usd": price["price_usd"], "price_source": price["price_source"],
             "market_cap_usd": mcap,
             "volume_24h_usd": price["volume_24h_usd"], "volume_source": price["volume_source"],
@@ -451,6 +564,8 @@ def print_summary(s):
         print(f"  {name:16s} {str(circ):>18}   via {src}")
     print("-" * 66)
     print(f"  TRADABLE TOTAL   {s['tradable_total']:>18,.0f}   (headline)")
+    if s.get("compromised_total"):
+        print(f"  compromised      {s['compromised_total']:>18,.0f}   (attacker-held, excluded from float)")
     print(f"  native cap       {s['native_cap']:>18,.0f}   (context)")
     p = s.get("price_usd"); mc = s.get("market_cap_usd")
     print("-" * 66)

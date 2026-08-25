@@ -3058,64 +3058,77 @@
     ]
   },
   {
-    "ts": "2026-08-25T06:33:06Z",
+    "ts": "2026-08-25T11:03:26Z",
     "chains": {
       "realio_native": {
-        "total": 88572115.5407,
+        "total": 88529794.9301,
         "bridge_escrow": 0.0,
-        "circulating": 88572115.5407,
+        "circulating": 88529794.9301,
+        "height": 19573265,
+        "block_time_utc": "2026-08-25T10:38:05.936946805Z",
+        "block_age_s": 1519.7,
+        "chain_live": false,
         "_source": "https://realio-api.noders.services"
       },
       "bnb": {
-        "total_supply": 151594748.1417,
+        "total_supply": 151833570.1515,
         "_source": "https://bsc-rpc.publicnode.com",
-        "circulating": 151594748.1417
+        "circulating": 151833570.1515
       },
       "ethereum": {
-        "total_supply": 73010180.2446,
-        "base_bridge_lock": 2069925.5268,
+        "total_supply": 73230958.1467,
+        "base_bridge_lock": 2073586.3384,
         "_source": "https://ethereum-rpc.publicnode.com",
-        "circulating": 73010180.2446
+        "circulating": 73230958.1467
       },
       "algorand": {
         "total_supply": 100000000.0,
-        "reserve": 34840.0,
-        "bridge_wallet": 48287800.3445,
-        "circulating": 51677359.6555,
+        "reserve": 94230.0,
+        "bridge_wallet": 48274696.7745,
+        "compromised": 43430824.4045,
+        "compromised_detail": {
+          "RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A": 43430824.4045
+        },
+        "circulating": 8200248.821,
         "_source": "https://mainnet-api.algonode.cloud"
       },
       "stellar": {
         "total_supply": 74999848.3882,
-        "treasury": 69869351.7401,
-        "circulating": 5130496.6482,
+        "treasury": 0.0,
+        "compromised": 69581774.3914,
+        "compromised_detail": {
+          "GBDMMICWFVSSU5YIKIVWG6EP3U65R2GIF7BICN3JIBES5NVGFZFLWXKZ": 69581774.3914
+        },
+        "circulating": 5418073.9968,
         "_source": "https://horizon.stellar.org"
       },
       "solana": {
-        "total_supply": 1069645.1704,
+        "total_supply": 1061145.1704,
         "_source": "https://api.mainnet-beta.solana.com",
-        "circulating": 1069645.1704
+        "circulating": 1061145.1704
       },
       "base": {
-        "total_supply": 2068924.5268,
+        "total_supply": 2072524.1049,
         "_source": "https://base-rpc.publicnode.com",
         "circulating": 0
       }
     },
-    "tradable_total": 371054545.4,
+    "tradable_total": 328273791.22,
     "native_cap": 175000000,
-    "price_usd": 0.053292,
+    "compromised_total": 113012598.8,
+    "price_usd": 0.057457,
     "price_source": "coingecko",
-    "market_cap_usd": 19774238.83,
-    "volume_24h_usd": 997342.27,
+    "market_cap_usd": 18861627.22,
+    "volume_24h_usd": 1943721.41,
     "volume_source": "coingecko",
     "mint": {
       "inflation_rate": 0.08,
       "blocks_per_year": 6311520
     },
-    "global_total_rio": 489246537.48,
-    "expected_annual_emission_rio": 6914230.84,
-    "expected_daily_emission_rio": 18943.1,
-    "expected_daily_emission_nominal_rio": 18943.1,
+    "global_total_rio": 489655316.79,
+    "expected_annual_emission_rio": 6917616.49,
+    "expected_daily_emission_rio": 18952.37,
+    "expected_daily_emission_nominal_rio": 18952.37,
     "block_time_s": null,
     "emission_block_adjusted": false,
     "bridge_caps": {
@@ -3124,13 +3137,15 @@
       "native_bridge_ratelimit": 1750000.0
     },
     "native_holders": {
-      "total": 4356,
-      "gte_100": 1236,
-      "gte_1k": 879,
-      "gte_10k": 429,
-      "gte_100k": 136
+      "total": 4329,
+      "gte_100": 1018,
+      "gte_1k": 716,
+      "gte_10k": 367,
+      "gte_100k": 133
     },
     "flags": [
+      "NATIVE_CHAIN_HALTED:height=19573265:last_block=2026-08-25T10:38:05.936946805Z:age_s=1519.7",
+      "compromised_balance:113,012,599",
       "emission_block_time_unavailable"
     ]
   }
