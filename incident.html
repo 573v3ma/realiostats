@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css?v=6">
+<link rel="stylesheet" href="site.css?v=7">
 </head>
 <body>
 <header><div class="wrap nav">
@@ -33,7 +33,7 @@
 <section id="status"><div class="wrap">
   <div class="inc-status">
     <div class="inc-status-h"><span class="idot warn"></span> Situation is live and moving</div>
-    <p>All figures on this page are a point-in-time reading as at <b>25 August 2026, 11:05 UTC</b>. Balances were still changing when it was written. The Realio native chain stopped producing blocks at <b>10:38:05 UTC</b> at height <b>19,573,265</b>, verified independently against three separate public endpoints, and the team has indicated it is investigating. We have not verified the reason for the halt and are not attributing one.</p>
+    <p>All figures on this page are a point-in-time reading as at <b>25 August 2026, 11:05 UTC</b>. Balances were still changing when it was written. The Realio native chain stopped producing blocks at <b>10:38:05 UTC</b> at height <b>19,573,265</b>, verified independently against three separate public endpoints. Realio's lead developer requested the halt as a precautionary measure while the team investigates.</p>
   </div>
 
   <h2>What moved</h2>
@@ -46,7 +46,12 @@
       <tr class="sum-row"><td><b>Total</b></td><td></td><td><b>115,843,022</b></td><td></td><td></td></tr>
     </tbody>
   </table></div>
-  <p class="cap">115.8M RIO is roughly 35% of the 327.3M multichain circulating supply recorded the previous day. Of that, 113.0M was still sitting in the two receiving accounts at 11:05 UTC; the remainder has been forwarded on or sold, detailed below. Ethereum, BNB Chain, Base, Solana and the Realio native chain show no comparable movement: their balances sit within normal daily drift.</p>
+  <p class="cap">115.8M RIO is roughly 35% of the 327.3M multichain circulating supply recorded the previous day. Of that, 113.0M was still sitting in the two receiving accounts at 11:05 UTC; the remainder has been forwarded on or sold, detailed below. The rUSD and realio.fund USD figures are listed because they are on-chain facts, but neither asset is tradable, so neither represents a realised loss; the material exposure is the RIO. Ethereum, BNB Chain, Base, Solana and the Realio native chain show no comparable movement: their balances sit within normal daily drift.</p>
+
+  <div class="inc-ok">
+    <div class="inc-status-h"><span class="idot ok"></span> RIO in your own wallet is not affected</div>
+    <p>The dividing line here is custody, not chain. What was drained were balances held <b>inside realio.fund</b>: the platform's own reserve and treasury, and thousands of custodial sub-accounts it created for users. <b>RIO you hold in a wallet whose keys you control was not touched.</b> That includes RIO on BNB Chain, Ethereum and the Realio native chain, where contract totals and native supply sit within normal daily drift in our 11:03 UTC reading, and it includes self-custodied RIO on Algorand and Stellar, which was not swept. If your RIO sits inside realio.fund rather than in a wallet you control, treat it as exposed until the team says otherwise. This describes what the chain data shows at 11:03 UTC on 25 August, not a guarantee about what happens next.</p>
+  </div>
 </div></section>
 
 <section id="timeline"><div class="wrap">
@@ -76,7 +81,7 @@
     <div class="rule"><h3>Both chains, one operation</h3><p>The Stellar receiving account was created by the treasury at 03:31, the Algorand one at 04:52, and the last sweeps on both chains land 18 minutes apart. Two separate chains with separate key systems were drained inside the same window.</p></div>
     <div class="rule"><h3>Deposits kept arriving during the drain</h3><p>Both drained wallets continued receiving inbound transfers after they were emptied, and those later deposits were swept too. Whatever front end feeds those addresses was still accepting funds while the drain was in progress.</p></div>
   </div>
-  <p class="cap">Taken together this is consistent with compromise of signing keys held by the platform rather than an exploit of a smart contract or a campaign against individual users. It is not proof of one, and other explanations may exist. Only Realio can confirm what happened.</p>
+  <p class="cap">Taken together this points to compromise of signing keys held by the platform, rather than an exploit of a smart contract or a campaign against individual users. Realio has since indicated that realio.fund wallets were drained, which is consistent with what the chain data shows. The precise route in has not been made public, and we are not speculating about it.</p>
 </div></section>
 
 <section id="where"><div class="wrap">
@@ -138,10 +143,10 @@
   <h2>What we cannot say</h2>
   <div class="faq">
     <details><summary>Whether user funds are lost</summary><div class="a">We can see balances leave addresses. We cannot see what obligations Realio holds towards the people those balances belonged to, what insurance or reserves exist, or what any recovery might look like. Nothing here should be read as a statement about whether individual users will be made whole.</div></details>
-    <details><summary>What the roughly 100M rUSD and 100bn realio.fund USD are worth</summary><div class="a">Both are assets issued by realio.fund. We do not know what backs either of them, whether they are redeemable, or against what. The USD asset on Stellar shows 14,667 authorised accounts. Until the backing is public, we will not put a dollar figure on either, and neither should anyone else.</div></details>
-    <details><summary>Why the native chain halted</summary><div class="a">We verified that it stopped producing blocks at 10:38:05 UTC and that the team has indicated it is investigating. We have not verified a cause, and a halt during an incident is not by itself evidence of one. It could equally be a deliberate protective measure.</div></details>
+    <details><summary>What the rUSD and realio.fund USD balances are worth</summary><div class="a">Far less than the headline numbers suggest, and we want to be clear about that rather than let a big figure do unearned work. rUSD is not tradable, so the roughly 100M of it sitting in the Algorand receiving account cannot be sold and represents no realised loss. The same reasoning applies to the roughly 100bn realio.fund-issued USD on Stellar, which has no market either. We publish the amounts because they are on-chain facts and someone reading a block explorer will see them, but a token with no market is not a hundred million dollars, and reporting it as if it were would be misleading. The material exposure here is the RIO.</div></details>
+    <details><summary>Why the native chain halted</summary><div class="a">We verified independently that it stopped producing blocks at 10:38:05 UTC at height 19,573,265. Realio's lead developer requested the halt as a precautionary measure while the team investigates. That is the team's account of their own decision, relayed to us rather than something on-chain data can confirm, and we report it as such. A deliberate protective halt is a containment step, not evidence of further compromise.</div></details>
     <details><summary>Who is responsible</summary><div class="a">We do not know and we are not speculating. We publish addresses and transactions because they are public facts. Attribution is a matter for Realio and, if they choose, law enforcement.</div></details>
-    <details><summary>Whether other chains are affected</summary><div class="a">Ethereum, BNB Chain, Base, Solana and the native chain showed no comparable movement in our 11:03 UTC reading. That is one reading of contract totals and known wallets, not an exhaustive audit, and the native chain is halted so its state is frozen at 10:38.</div></details>
+    <details><summary>Whether other chains are affected</summary><div class="a">Ethereum, BNB Chain, Base, Solana and the Realio native chain showed no comparable movement in our 11:03 UTC reading, so RIO held on those chains outside realio.fund does not appear to be affected. Two caveats we will not paper over: that is one reading of contract totals and known wallets rather than an exhaustive audit of every holder, and the native chain is halted, so its state is frozen at block 19,573,265 and cannot change while the halt lasts. The exposure that matters is custodial, not chain-specific, so the question to ask is not which chain your RIO is on but who holds the keys.</div></details>
   </div>
 </div></section>
 

@@ -335,6 +335,10 @@
   .inc-status-h{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--ink);
     font-family:"Space Grotesk",Inter,sans-serif;margin-bottom:8px}
   .inc-status p{margin:0;font-size:14.5px;line-height:1.65;color:var(--body)}
+  .inc-ok{margin:26px 0 0;padding:18px 20px;border:1px solid var(--line);
+    border-left:3px solid var(--green-ink);background:var(--mint-soft);border-radius:var(--radius-sm)}
+  .inc-ok p{margin:0;font-size:14.5px;line-height:1.65;color:var(--body)}
+  .inc-ok .inc-status-h{margin-bottom:8px}
   .inc-tl{margin-top:22px;border-left:2px solid var(--line);padding-left:0}
   .tli{display:flex;gap:18px;padding:0 0 20px 22px;position:relative}
   .tli:last-child{padding-bottom:0}
