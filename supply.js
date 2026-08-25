@@ -66,10 +66,17 @@ const CHAINS = [
 // The Stellar compromised bucket is deliberately NOT added back, mirroring the
 // Stellar treasury, which has never been added back either: doing so would
 // rebase the whole historical series by ~69.6M and manufacture a false spike.
+// 25 Aug 2026, second revision: add back only the EXCLUDED portion of the
+// compromised bucket. The rest came out of holder wallets, is counted as float
+// again, and adding it here would double-count it. Older rows have no
+// compromised_excluded field, so fall back to the full figure, which is what the
+// split was before any of it was reclassified.
 function teamHeld(s){
   const a = (s.chains && s.chains.algorand) || {};
   if(typeof a.reserve !== "number" || typeof a.bridge_wallet !== "number") return null;
-  return a.reserve + a.bridge_wallet + (typeof a.compromised === "number" ? a.compromised : 0);
+  const comp = (typeof a.compromised_excluded === "number") ? a.compromised_excluded
+             : (typeof a.compromised === "number" ? a.compromised : 0);
+  return a.reserve + a.bridge_wallet + comp;
 }
 function netNewSupply(s){
   const t = teamHeld(s);
@@ -464,10 +471,13 @@ function render(latest, liveSeries, fullArr){
       // An emission read is not meaningful across an incident window. Say so
       // rather than publishing a tidy sentence over a distorted measurement.
       dot.className="idot warn";
-      it.innerHTML="Emission cannot be measured cleanly across this window. On 25 August 2026 roughly 115.8M RIO left Realio-controlled wallets on Algorand and Stellar; "
-        +fmtInt(comp)+" RIO is currently held in a separate compromised bucket and excluded from float"
-        +(halted ? ", and the native chain has stopped producing blocks, so its supply reading is frozen" : "")
-        +". No RIO was minted on either chain. <a href=\"incident.html\">See the incident report</a>.";
+      const compExcl = (typeof latest.compromised_excluded === "number") ? latest.compromised_excluded : comp;
+      const compFloat = (typeof latest.compromised_in_float === "number") ? latest.compromised_in_float : 0;
+      it.innerHTML="Emission cannot be measured cleanly across this window. On 25 August 2026 roughly 124.4M RIO moved out of Realio-controlled wallets and holder accounts across five chains. "
+        +fmtInt(comp)+" RIO is still attacker-held: "+fmtInt(compExcl)+" of it was already excluded from float before the sweep and stays excluded, while "
+        +fmtInt(compFloat)+" came out of holder wallets and is still counted as circulating, because being stolen does not take a token out of public hands"
+        +(halted ? ". The native chain has stopped producing blocks, so its supply reading is frozen" : "")
+        +". No RIO was minted on any chain. <a href=\"incident.html\">See the incident report</a>.";
     } else if(ed && obs.perDay <= ed*1.25){
       dot.className="idot ok";
       it.textContent="Circulating RIO supply is growing within the scheduled ~"+pct+"% emission. No unexplained minting detected over the measured window.";
@@ -493,16 +503,23 @@ function render(latest, liveSeries, fullArr){
 
   const a = latest.chains.algorand, s = latest.chains.stellar;
   const compCards = [
-    {k:"Algorand · compromised (25 Aug 2026)", v:a.compromised,
+    // The card shows only the portion that stays OUT of circulating. Anything the
+    // attacker took from holder wallets is still counted as float, so showing the
+    // full balance here would imply it had been removed from the headline figure.
+    {k:"Algorand · compromised (25 Aug 2026)", v:(typeof a.compromised_excluded==="number"?a.compromised_excluded:a.compromised),
+     inFloat:(typeof a.compromised_in_float==="number"?a.compromised_in_float:0),
      addr:"RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A",
      url:"https://allo.info/account/RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A"},
-    {k:"Stellar · compromised (25 Aug 2026)", v:s.compromised,
+    {k:"Stellar · compromised (25 Aug 2026)", v:(typeof s.compromised_excluded==="number"?s.compromised_excluded:s.compromised),
+     inFloat:(typeof s.compromised_in_float==="number"?s.compromised_in_float:0),
      addr:"GBDMMICWFVSSU5YIKIVWG6EP3U65R2GIF7BICN3JIBES5NVGFZFLWXKZ",
      url:"https://stellar.expert/explorer/public/account/GBDMMICWFVSSU5YIKIVWG6EP3U65R2GIF7BICN3JIBES5NVGFZFLWXKZ"}
   ].filter(c=>typeof c.v==="number" && c.v>0).map(c=>`
     <div class="ex"><div class="exk">${c.k}</div><div class="exv">${fmtM(M(c.v))}</div>
       <div class="exa">${c.addr}</div>
-      <div class="exn">Outside Realio's control, but not holder float. Excluded from circulating and reported separately. <a href="incident.html">Incident report</a>.</div>
+      <div class="exn">Attacker-held reserve or treasury RIO. It was outside circulating before the sweep and stays outside it.${
+        c.inFloat>0 ? " A further "+fmtInt(c.inFloat)+" RIO at this address came out of holder wallets and <b>is still counted as circulating</b>, because being stolen does not take a token out of public hands." : ""
+      } <a href="incident.html">Incident report</a>.</div>
       <div style="margin-top:8px"><a href="${c.url}" target="_blank" rel="noopener">Verify ↗</a></div></div>`).join("");
   document.getElementById("exclGrid").innerHTML = compCards + `
     <div class="ex"><div class="exk">Algorand · reserve</div><div class="exv">${fmtM(M(a.reserve))}</div>

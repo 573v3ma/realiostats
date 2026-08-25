@@ -3067,12 +3067,14 @@
         "compromised_detail": {
           "realio1uzkdrfnjv53rt0cf4ltszffpd7mvkpd2cv794j": 5732040.9057
         },
-        "circulating": 82797754.0244,
+        "circulating": 88529794.9301,
         "height": 19573265,
         "block_time_utc": "2026-08-25T10:38:05.936946805Z",
         "block_age_s": 8883.7,
         "chain_live": false,
-        "_source": "https://realio.api.m.stavr.tech"
+        "_source": "https://realio.api.m.stavr.tech",
+        "compromised_in_float": 5732040.9057,
+        "compromised_excluded": 0.0
       },
       "bnb": {
         "total_supply": 151833570.1515,
@@ -3093,8 +3095,10 @@
         "compromised_detail": {
           "RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A": 43409824.4045
         },
-        "circulating": 8221248.821,
-        "_source": "https://mainnet-api.algonode.cloud"
+        "circulating": 9867373.561,
+        "_source": "https://mainnet-api.algonode.cloud",
+        "compromised_in_float": 1646124.74,
+        "compromised_excluded": 41763699.6645
       },
       "stellar": {
         "total_supply": 74999848.3882,
@@ -3103,8 +3107,10 @@
         "compromised_detail": {
           "GBDMMICWFVSSU5YIKIVWG6EP3U65R2GIF7BICN3JIBES5NVGFZFLWXKZ": 69547784.1258
         },
-        "circulating": 5452064.2624,
-        "_source": "https://horizon.stellar.org"
+        "circulating": 5928749.2624,
+        "_source": "https://horizon.stellar.org",
+        "compromised_in_float": 476685.0,
+        "compromised_excluded": 69071099.1258
       },
       "solana": {
         "total_supply": 1061145.1704,
@@ -3117,19 +3123,19 @@
         "circulating": 0
       }
     },
-    "tradable_total": 322596740.58,
+    "tradable_total": 330451591.23,
     "native_cap": 175000000,
     "compromised_total": 118689649.44,
     "price_usd": 0.055583,
     "price_source": "coingecko",
-    "market_cap_usd": 17930894.63,
+    "market_cap_usd": 18367490.8,
     "volume_24h_usd": 1911325.63,
     "volume_source": "coingecko",
     "mint": {
       "inflation_rate": 0.08,
       "blocks_per_year": 6311520
     },
-    "global_total_rio": 483923275.88,
+    "global_total_rio": 489655316.79,
     "expected_annual_emission_rio": 6114998.3,
     "expected_daily_emission_rio": 16753.42,
     "expected_daily_emission_nominal_rio": 18952.37,
@@ -3150,7 +3156,10 @@
     "flags": [
       "fallback_used:native:https://realio.api.m.stavr.tech",
       "NATIVE_CHAIN_HALTED:height=19573265:last_block=2026-08-25T10:38:05.936946805Z:age_s=8883.7",
-      "compromised_balance:118,689,649"
-    ]
+      "compromised_balance:118,689,649",
+      "method_revised:compromised_holder_tokens_counted_as_circulating"
+    ],
+    "compromised_in_float": 7854850.65,
+    "compromised_excluded": 110834798.79
   }
 ]
