@@ -102,6 +102,18 @@ STELLAR_COMPROMISED = {
 }
 NATIVE_DENOM = "ario"
 NATIVE_BRIDGE_MODULE = "realio1zlefkpe3g0vvm9a4h0jf9000lmqutlh9jzcavp"
+# Third leg of the 25 Aug 2026 incident, on the native chain. Between 09:29:23 and
+# 10:15:22 UTC this account received 5,732,040.91 ario from 2,374 distinct accounts,
+# one transfer each, and has never sent a transaction. 2,349 of those 2,374 accounts
+# now hold exactly 0.001 RIO, the residue of the sweep. Unlike the Algorand and
+# Stellar legs this came out of ordinary holder balances, which ARE counted in
+# circulating supply, so it must be subtracted rather than left in float.
+# A same-chain sweep does not change total supply by a single token, which is why
+# the supply-level checks did not see it.
+NATIVE_COMPROMISED = {
+    "realio1uzkdrfnjv53rt0cf4ltszffpd7mvkpd2cv794j":
+        "2026-08-25 native holder sweep",
+}
 
 def _get(url):
     req = urllib.request.Request(url, headers={"User-Agent": "realiostats/0.1"})
@@ -192,8 +204,17 @@ def fetch_native(url):
     escrow = 0.0
     for c in esc.get("balances", []):
         if c["denom"] == NATIVE_DENOM: escrow = int(c["amount"]) / 10**18
+    comp = {}
+    for addr in NATIVE_COMPROMISED:
+        try:
+            b = _get(f"{url}/cosmos/bank/v1beta1/balances/{addr}/by_denom?denom={NATIVE_DENOM}")
+            comp[addr] = round(int(b["balance"]["amount"]) / 10**18, 4)
+        except Exception:
+            comp[addr] = 0.0
+    comp_total = round(sum(comp.values()), 4)
     out = {"total": round(total, 4), "bridge_escrow": round(escrow, 4),
-           "circulating": round(total, 4)}
+           "compromised": comp_total, "compromised_detail": comp,
+           "circulating": round(total - comp_total, 4)}
     try:
         hdr = _get(f"{url}/cosmos/base/tendermint/v1beta1/blocks/latest")["block"]["header"]
         age = datetime.now(timezone.utc).timestamp() - _parse_cosmos_ts(hdr["time"])
@@ -421,6 +442,7 @@ def _excluded_balances(chains):
     if isinstance(x.get("compromised"), (int, float)):  out["stellar.compromised"] = x["compromised"]
     n = chains.get("realio_native") or {}
     if isinstance(n.get("bridge_escrow"), (int, float)): out["native.bridge_escrow"] = n["bridge_escrow"]
+    if isinstance(n.get("compromised"), (int, float)):   out["native.compromised"] = n["compromised"]
     return out
 
 def check_excluded_movement(chains, flags, history_path=None):
@@ -465,7 +487,8 @@ def build_snapshot():
     algo_circ, xlm_circ, nat_circ = algo.get("circulating", 0), xlm.get("circulating", 0), nat.get("circulating", 0)
     compromised_total = round(
         (algo.get("compromised", 0) if isinstance(algo, dict) else 0)
-        + (xlm.get("compromised", 0) if isinstance(xlm, dict) else 0), 2)
+        + (xlm.get("compromised", 0) if isinstance(xlm, dict) else 0)
+        + (nat.get("compromised", 0) if isinstance(nat, dict) else 0), 2)
 
     chains = {
         "realio_native": {**nat},
@@ -505,6 +528,8 @@ def build_snapshot():
     if isinstance(algo, dict):
         excluded += algo.get("reserve", 0) + algo.get("bridge_wallet", 0) + algo.get("compromised", 0)
     if isinstance(xlm, dict):  excluded += xlm.get("treasury", 0) + xlm.get("compromised", 0)
+    # NOTE: native compromised is already inside nat["total"], so it is deliberately
+    # NOT added here. Adding it would double-count it in the global figure.
     global_total = round(tradable + excluded, 2)
     # 8% is charged on the UNMINTED native supply (gap to the cap). Prefer the
     # chain's own annual_provisions; fall back to infl x (cap - native supply).
