@@ -59,12 +59,11 @@ function loadSupply(){
 
 /* Tradable float, shared.
 
-   Lives here rather than in holders.js because BOTH pages need it: /holders
-   renders the full four-rung ladder, and the supply page quotes the bottom rung
-   inside the market-cap clarifier. One definition, one computation, so the two
-   pages can never drift into quoting different numbers for the same thing.
+   Used by supply.js for the liquid-float ladder and the venue tables. Kept in
+   core.js rather than supply.js so any future page can quote the same numbers
+   without a second definition drifting away from this one.
 
-   Two deliberate choices, explained on /holders rather than hidden:
+   Two deliberate choices, stated on the page rather than hidden:
    - onVenues / withMarket are a FLOOR, not a total. Only wallets identifiable
      from public explorer name tags are counted.
    - Bridges are excluded from the venue rungs. Bridge balances are lock-and-mint
@@ -91,7 +90,7 @@ function computeFloat(latest, h){
    cannot fix this; it has to happen in the browser. Sections still on the home
    page (#emissions, #chains, #chart, #provenance) are left alone. */
 (function(){
-  var moved = { liquidity:"holders.html", holders:"holders.html",
+  var moved = { holders:"holders.html",
                 method:"methodology.html", faq:"methodology.html",
                 contribute:"methodology.html" };
   var here = location.pathname.replace(/\/index\.html$/, "/");

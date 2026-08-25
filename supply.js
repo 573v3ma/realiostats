@@ -557,6 +557,169 @@ const perChain = s => ({
   solana:+M(s.chains.solana.circulating).toFixed(2)
 });
 
+/* Tradable float ladder. computeFloat() lives in core.js because the supply
+   page quotes the bottom rung too; one definition, one computation, so the two
+   pages cannot drift into different numbers for the same thing. */
+/* What actually constrains selling is not where the coins sit, it is how thin
+   the market is. The old wording here claimed the venue-held float explained
+   price impact, which it does not: an exchange's hot wallet is customer custody,
+   not depth on the order book. Daily traded volume is the honest anchor, and it
+   is already published in volume-history.json. */
+let FLOAT_F = null, FLOAT_VOL = null;
+function renderFloatRead(){
+  const el = document.getElementById("floatRead");
+  if(!el || !FLOAT_F) return;
+  const f = FLOAT_F, v = FLOAT_VOL;
+  const usd = v && v.latest_usd, px = v && v.price_latest_usd;
+  const rioPerDay = (usd && px) ? usd/px : null;
+
+  let t = "What limits selling is not where the coins sit, it is how thin the market is. ";
+  if(rioPerDay > 0){
+    t += "Reported volume across every venue is about <b>"+fmtUsd(usd)+" a day</b>, roughly <b>"
+       + fmtM(M(rioPerDay))+" RIO</b>. Even the bottom rung above is around <b>"
+       + Math.round(f.withMarket/rioPerDay)+" days</b> of total global trading, and circulating supply is "
+       + "about <b>"+Math.round(f.circ/rioPerDay)+" days</b> of it. ";
+  } else {
+    t += "Daily traded volume is a small fraction of any rung above. ";
+  }
+  t += "That is why a relatively modest amount of buying or selling moves the price more than the headline "
+     + "market cap implies, and it cuts both ways: sharp rallies on light volume, and equally sharp falls. "
+     + "None of this is fixed. Supply can bridge between chains and reach a venue in minutes, so today's "
+     + "picture is a snapshot, not a permanent floor.";
+  el.innerHTML = t;
+}
+
+function renderFloatLadder(latest, h){
+  const el = document.getElementById("floatLadder");
+  if(!el || !h || !latest) return;
+  const f = computeFloat(latest, h);
+  const pc = n => f.circ ? (100*n/f.circ).toFixed(1)+"%" : "—";
+
+  const rungs = [
+    {v:fmtM(M(f.circ)), sub:"circulating", cls:"",
+     k:"Every RIO that exists and can be traded",
+     x:"Summed once across all seven chains, net of Realio-controlled reserve, treasury and bridge "
+      +'wallets. This is the <a href="#top">headline figure at the top of this page</a> and the correct '
+      +"denominator "
+      +"for market cap. It is not a claim that all of it could be sold."},
+
+    {v:fmtM(M(f.liquidChains)), sub:pc(f.liquidChains)+" of circ.", cls:"",
+     k:"Sitting where the volume is",
+     x:"RIO on BNB Chain and Ethereum, where essentially all real exchange and DEX volume settles. Fully "
+      +"on-chain with no labelling judgement, but most of it sits in ordinary wallets rather than on a "
+      +"venue, so it overstates what is sellable today."},
+
+    {v:fmtM(M(f.onVenues)), sub:pc(f.onVenues)+" of circ.", cls:"",
+     k:'Identified on a venue <span class="rtag grey">a floor</span>',
+     x:"Exchange wallets plus DEX pool liquidity we could identify from public explorer name tags. Bridge "
+      +"escrow is excluded: it backs wrapped RIO elsewhere and cannot be traded. Smaller labelled wallets "
+      +"sit below the top holders, so the true figure is somewhat higher."},
+
+    {v:fmtM(M(f.withMarket)), sub:"already on a venue", cls:"is-final",
+     k:'Sitting on a venue with a live market <span class="rtag">inventory in place</span>',
+     x:"The rung above, less the <b>"+fmtM(M(f.dead))+"</b> parked on venues that list RIO but show no "
+      +"functioning market. <b>This is not a ceiling on what could be sold.</b> Anything on the liquid "
+      +"chains is minutes from an exchange deposit, and a swap into a DEX pool needs no deposit at all. "
+      +"It measures inventory already in position, not permission to trade."}
+  ];
+
+  el.innerHTML = rungs.map(r =>
+    `<div class="rung ${r.cls}">
+       <div><div class="rv">${r.v}</div><span class="rvsub">${r.sub}</span></div>
+       <div><div class="rk">${r.k}</div><div class="rx">${r.x}</div></div>
+     </div>`).join("");
+
+  FLOAT_F = f;
+  renderFloatRead();
+
+  document.getElementById("floatCap").innerHTML =
+    "Rungs 1 and 2 are read live on-chain each day. Rungs 3 and 4 come from <code>holders.json</code>, a "
+    +"dated snapshot of public explorer name tags"
+    +(h.as_of ? " last refreshed <b>"+h.as_of+"</b>" : "")
+    +", because wallet labels are not in any free API and balances drift as venues rotate wallets. "
+    +"Percentages are computed against the current live supply, so a dated numerator is divided by a live "
+    +"denominator. Treat the bottom two rungs as a well-sourced lower bound rather than an exact total: they count only venues whose wallets we could label, and several smaller markets are not yet included. "
+    +"Circulating supply is unchanged by any of this: this section describes where that supply sits, not a "
+    +"different supply figure.";
+}
+
+function renderHolders(latest, h){
+  if(!h || !latest) return;
+  renderFloatLadder(latest, h);
+  const lq = document.getElementById("lqRead");
+  if(lq){
+    const f = computeFloat(latest, h);
+    lq.innerHTML = "Circulating supply remains <b>"+fmtM(M(f.circ))+"</b>. Of that, <b>"
+      +fmtM(M(f.liquidChains))+"</b> sits on the two liquid chains and <b>"+fmtM(M(f.withMarket))
+      +"</b> is identifiably on a venue with an active market. Three different questions, three different "
+      +"answers, and none of them changes the supply count.";
+  }
+  const bnb = (latest.chains && latest.chains.bnb &&
+    (latest.chains.bnb.circulating ?? latest.chains.bnb.total_supply)) || 0;
+  const circ = latest.tradable_total || 0;
+  const body = document.getElementById("bscHoldersBody");
+  if(body && Array.isArray(h.bsc_exchanges)){
+    let tot = 0, wtot = 0;
+    const rows = h.bsc_exchanges.slice().sort((a,b)=>b.rio-a.rio).map(x=>{
+      tot += x.rio; wtot += x.wallets;
+      const pB = bnb ? (100*x.rio/bnb).toFixed(1)+"%" : "—";
+      const pC = circ ? (100*x.rio/circ).toFixed(1)+"%" : "—";
+      const tag = x.note ? ` <span class="lq-tag">${x.note}</span>` : "";
+      return `<tr><td>${x.entity}${tag}</td><td>${x.wallets}</td><td>${fmtM(M(x.rio))}</td><td>${pB}</td><td>${pC}</td></tr>`;
+    }).join("");
+    const tB = bnb ? (100*tot/bnb).toFixed(0)+"%" : "—";
+    const tC = circ ? (100*tot/circ).toFixed(1)+"%" : "—";
+    body.innerHTML = rows +
+      `<tr class="lq-total"><td>Identified exchanges</td><td>${wtot}</td><td>${fmtM(M(tot))}</td><td>${tB}</td><td>${tC}</td></tr>`;
+    document.getElementById("bscHoldersSub").innerHTML =
+      `Held in exchange wallets, which custody user funds. Not exhaustive: smaller labelled wallets sit below the top holders, so the real exchange-held total is a little higher.`;
+  }
+  const eth = (latest.chains && latest.chains.ethereum &&
+    (latest.chains.ethereum.circulating ?? latest.chains.ethereum.total_supply)) || 0;
+  const ebody = document.getElementById("ethHoldersBody");
+  if(ebody && Array.isArray(h.eth_holders)){
+    let etot = 0;
+    const rows = h.eth_holders.slice().sort((a,b)=>b.rio-a.rio).map(x=>{
+      etot += x.rio;
+      const pE = eth ? (100*x.rio/eth).toFixed(1)+"%" : "—";
+      const pC = circ ? (100*x.rio/circ).toFixed(1)+"%" : "—";
+      // Same "no active market" tag the BNB table shows, so the two are consistent.
+      const tag = x.note ? ` <span class="lq-tag">${x.note}</span>` : "";
+      return `<tr><td>${x.holder}${tag}</td><td>${x.type}</td><td>${fmtM(M(x.rio))}</td><td>${pE}</td><td>${pC}</td></tr>`;
+    }).join("");
+    const tE = eth ? (100*etot/eth).toFixed(1)+"%" : "—";
+    const tC = circ ? (100*etot/circ).toFixed(1)+"%" : "—";
+    ebody.innerHTML = rows +
+      `<tr class="lq-total"><td>Identified</td><td></td><td>${fmtM(M(etot))}</td><td>${tE}</td><td>${tC}</td></tr>`;
+    document.getElementById("ethHoldersSub").textContent = h.eth_dispersed_note || "";
+  }
+  // Bridge throttles, read live from the snapshot. Two directions, stated
+  // neutrally: the EVM mint cap is the gate for off-venue RIO reaching a
+  // sellable venue; the native ratelimit governs the reverse flow.
+  const bc = latest.bridge_caps || {};
+  const capsEl = document.getElementById("lqCaps");
+  const capM = v => { const m=v/1e6; return (m%1===0 ? m.toFixed(0) : m.toFixed(2).replace(/0+$/,"")) + "M"; };
+  const evmB = bc.evm_daily_mint_cap_bnb, evmE = bc.evm_daily_mint_cap_eth, nat = bc.native_bridge_ratelimit;
+  if(capsEl && (evmB || evmE)){
+    const evmTxt = (evmB && evmE && evmB === evmE)
+      ? "<b>"+capM(evmB)+" per day</b> onto each chain"
+      : "<b>"+(evmB?capM(evmB):"n/a")+"/day</b> onto BNB Chain and <b>"+(evmE?capM(evmE):"n/a")+"/day</b> onto Ethereum";
+    let t = "Getting off-venue RIO onto the liquid chains is throttled on-chain. Minting onto the EVM chains is capped at "+evmTxt+
+            " (a mutable limit set by the bridge admin), so that is the real speed limit on supply reaching a major venue.";
+    if(nat) t += " A separate <b>"+capM(nat)+" per day</b> limit governs the opposite flow, RIO bridging onto the native chain.";
+    t += " Both are read live from the contracts and the bridge module.";
+    capsEl.innerHTML = t;
+    capsEl.hidden = false;
+  }
+  if(h.as_of){
+    document.getElementById("lqCap").innerHTML =
+      "Holdings as of "+h.as_of+", from "+(h.source||"public explorers")+". Balances drift as wallets rotate; verify live on "+
+      '<a href="https://bscscan.com/token/0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0#balances" target="_blank" rel="noopener">BscScan</a> and '+
+      '<a href="https://etherscan.io/token/0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0#balances" target="_blank" rel="noopener">Etherscan</a>. '+
+      "Percentages are computed against the current live supply. Circulating supply is unchanged by any of this; the section describes distribution, not a different total.";
+  }
+}
+
 loadSupply().then(({arr, latest})=>{
   render(latest, arr.map(perChain), arr);
   // Projector uses our multichain supply and today's price as its anchor.
@@ -569,19 +732,12 @@ loadSupply().then(({arr, latest})=>{
   // The market-cap clarifier is the site's most load-bearing caveat, so it
   // states the actual liquid figure inline rather than only linking to it.
   // Same computeFloat() the holders page uses, so the two can never disagree.
+  // Liquid float: dated venue snapshot, percentages computed live. Silent if absent.
   fetch("./holders.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
-    .then(h=>{
-      const el = document.getElementById("projFloat");
-      if(!el || !h) return;
-      const f = computeFloat(latest, h);
-      if(!(f.withMarket > 0)) return;
-      el.innerHTML = " Today only about <b>"+fmtM(M(f.withMarket))+"</b> of the "
-        + fmtM(M(f.circ))+" circulating sits on a venue with an active market, roughly "
-        + (f.circ/f.withMarket).toFixed(1)+"x less than the supply the cap is priced on.";
-    }).catch(()=>{});
+    .then(h=>renderHolders(latest,h)).catch(()=>{});
   return fetch("./volume-history.json",{cache:"no-store"})
     .then(r=>r.ok?r.json():null)
-    .then(v=>{ VOLHIST = v; renderVolumeTrend(v); })
+    .then(v=>{ VOLHIST = v; renderVolumeTrend(v); FLOAT_VOL = v; renderFloatRead(); })
     .catch(()=>{})
     .then(()=>applyLiveMarket(latest));
 });

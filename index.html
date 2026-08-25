@@ -17,14 +17,14 @@
   <a class="brand" href="index.html"><span class="dot"></span> realiostats</a>
   <nav>
     <a href="index.html" class="is-active">Supply</a>
-    <a href="holders.html">Float &amp; holders</a>
+    <a href="holders.html">Holders</a>
     <a href="network.html">Network</a>
     <a href="methodology.html">Methodology</a>
     <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">Source</a>
   </nav>
 </div></header>
 
-<div class="wrap hero">
+<div class="wrap hero" id="top">
   <div class="eyebrow">Independent · community-led · not affiliated with the Realio team</div>
   <h1>RIO circulating supply, counted across every chain</h1>
   <p class="lede">Every RIO token that exists in a public wallet and can be traded, summed once across all seven chains it lives on, net of Realio-controlled reserve, treasury and bridge wallets.</p>
@@ -61,7 +61,7 @@
       <div class="proj-inwrap proj-holdin"><input id="projHold" type="text" inputmode="decimal" placeholder="amount you hold" aria-label="Your RIO holdings"></div>
       <span class="proj-holdout" id="projHoldOut"></span>
     </div>
-    <p class="proj-clarify"><b class="imp">Important</b>A market cap is a valuation, price times supply, not the capital needed to reach that price. Because only a fraction of the supply is actively liquid, price can move on far less than the market cap implies, in either direction.<span id="projFloat"></span> <a href="holders.html#liquidity">See where the liquidity sits</a> for the full breakdown.</p>
+    <p class="proj-clarify"><b class="imp">Important</b>A market cap is a valuation, price times supply, not the capital needed to reach that price. Because only a fraction of the supply is actively liquid, price can move on far less than the market cap implies, in either direction. <a href="#liquidity">See how much of it is actually liquid</a>, just below.</p>
     <p class="proj-cap">Arithmetic, price times supply, not a forecast. Uses realiostats' full multichain circulating supply. Anything you enter stays in your browser.</p>
   </div>
 
@@ -74,6 +74,35 @@
     </ul>
   </div>
 </div>
+
+<section id="liquidity"><div class="wrap">
+  <h2>Where the liquidity sits <span class="h2-note">liquid float</span></h2>
+  <p class="sec-lede">Circulating supply says how much RIO exists. It does not say how much can be sold right now. Almost all real exchange and DEX volume settles on BNB Chain and Ethereum, so that is where the tradable float actually lives. Here is who holds it.</p>
+  <div class="ladder" id="floatLadder"></div>
+  <p class="lq-read" id="floatRead"></p>
+  <p class="cap" id="floatCap"></p>
+  <div class="lq-grid">
+    <div class="lq-card">
+      <div class="lq-h">BNB Chain, held in exchange wallets</div>
+      <div class="ptbl-wrap"><table class="ptbl">
+        <thead><tr><th>Exchange</th><th>Wallets</th><th>RIO</th><th>% of BNB</th><th>% of circ.</th></tr></thead>
+        <tbody id="bscHoldersBody"></tbody>
+      </table></div>
+      <p class="lq-sub" id="bscHoldersSub"></p>
+    </div>
+    <div class="lq-card">
+      <div class="lq-h">Ethereum, main identified holders</div>
+      <div class="ptbl-wrap"><table class="ptbl">
+        <thead><tr><th>Holder</th><th>Type</th><th>RIO</th><th>% of ETH</th><th>% of circ.</th></tr></thead>
+        <tbody id="ethHoldersBody"></tbody>
+      </table></div>
+      <p class="lq-sub" id="ethHoldersSub"></p>
+    </div>
+  </div>
+  <p class="lq-read" id="lqRead"></p>
+  <p class="lq-read" id="lqCaps" hidden></p>
+  <p class="cap" id="lqCap"></p>
+</div></section>
 
 <section id="emissions"><div class="wrap">
   <h2>Emissions &amp; supply integrity</h2>
@@ -186,7 +215,7 @@
   <p class="foot-note">Data is drawn from public blockchain endpoints and updated daily. Figures are one on-chain measurement, not the Realio team's official numbers, and should be read as a transparent starting point pending an official reconciliation. Not affiliated with the Realio team. Not financial advice.</p>
 </div></footer>
 
-<script src="core.js?v=6"></script>
-<script src="supply.js?v=5"></script>
+<script src="core.js?v=7"></script>
+<script src="supply.js?v=6"></script>
 </body>
 </html>

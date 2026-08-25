@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Holder base &amp; liquid float · realiostats</title>
-<meta name="description" content="Where RIO's tradable float actually sits, and how many wallets hold RIO on each chain. Holder counts at the 100, 1,000, 10,000 and 100,000 RIO tiers, with monthly evolution since the 2024 migration." />
+<title>Holder base · realiostats</title>
+<meta name="description" content="How many wallets hold RIO on each of the seven chains, at the 100, 1,000, 10,000 and 100,000 RIO tiers, with monthly evolution since the 2024 migration." />
 <link rel="canonical" href="https://realiostats.com/holders.html" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +17,7 @@
   <a class="brand" href="index.html"><span class="dot"></span> realiostats</a>
   <nav>
     <a href="index.html">Supply</a>
-    <a href="holders.html" class="is-active">Float &amp; holders</a>
+    <a href="holders.html" class="is-active">Holders</a>
     <a href="network.html">Network</a>
     <a href="methodology.html">Methodology</a>
     <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">Source</a>
@@ -26,38 +26,10 @@
 
 <div class="wrap page-lede">
   <div class="eyebrow">Independent · community-led · not affiliated with the Realio team</div>
-  <h1>Who holds RIO, and how much of it can actually be sold</h1>
-  <p class="lede">Circulating supply says how much RIO exists. These two sections say where it sits: which venues hold the tradable float today, and how many wallets hold RIO on each of the seven chains.</p>
+  <h1>Who holds RIO, chain by chain</h1>
+  <p class="lede">How many wallets hold RIO, how many hold a meaningful amount, and how that base has changed since the 2024 migration. For where the tradable float sits by venue, see <a href="index.html#liquidity">the supply page</a>.</p>
 </div>
 
-<section id="liquidity"><div class="wrap">
-  <h2>Where the liquidity sits <span class="h2-note">liquid float</span></h2>
-  <p class="sec-lede">Circulating supply says how much RIO exists. It does not say how much can be sold right now. Almost all real exchange and DEX volume settles on BNB Chain and Ethereum, so that is where the tradable float actually lives. Here is who holds it.</p>
-  <div class="ladder" id="floatLadder"></div>
-  <p class="lq-read" id="floatRead"></p>
-  <p class="cap" id="floatCap"></p>
-  <div class="lq-grid">
-    <div class="lq-card">
-      <div class="lq-h">BNB Chain, held in exchange wallets</div>
-      <div class="ptbl-wrap"><table class="ptbl">
-        <thead><tr><th>Exchange</th><th>Wallets</th><th>RIO</th><th>% of BNB</th><th>% of circ.</th></tr></thead>
-        <tbody id="bscHoldersBody"></tbody>
-      </table></div>
-      <p class="lq-sub" id="bscHoldersSub"></p>
-    </div>
-    <div class="lq-card">
-      <div class="lq-h">Ethereum, main identified holders</div>
-      <div class="ptbl-wrap"><table class="ptbl">
-        <thead><tr><th>Holder</th><th>Type</th><th>RIO</th><th>% of ETH</th><th>% of circ.</th></tr></thead>
-        <tbody id="ethHoldersBody"></tbody>
-      </table></div>
-      <p class="lq-sub" id="ethHoldersSub"></p>
-    </div>
-  </div>
-  <p class="lq-read" id="lqRead"></p>
-  <p class="lq-read" id="lqCaps" hidden></p>
-  <p class="cap" id="lqCap"></p>
-</div></section>
 
 <section id="holders"><div class="wrap">
   <h2>Holder base</h2>
@@ -116,7 +88,7 @@
   <p class="foot-note">Data is drawn from public blockchain endpoints and updated daily. Figures are one on-chain measurement, not the Realio team's official numbers, and should be read as a transparent starting point pending an official reconciliation. Not affiliated with the Realio team. Not financial advice.</p>
 </div></footer>
 
-<script src="core.js?v=6"></script>
-<script src="holders.js?v=7"></script>
+<script src="core.js?v=7"></script>
+<script src="holders.js?v=8"></script>
 </body>
 </html>
