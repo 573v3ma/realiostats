@@ -115,6 +115,44 @@ NATIVE_COMPROMISED = {
         "2026-08-25 native holder sweep",
 }
 
+# ---- how much of a compromised balance may stay OUT of circulating ------------
+# Being stolen does not remove a token from circulating supply. Circulating asks
+# whether a token is in public hands, not whose hands. Realio-controlled reserve
+# and treasury are excluded because Realio has undertaken not to sell them; an
+# attacker has made no such undertaking, and those tokens are sellable the moment
+# a venue is open to them. So a compromised balance may only stay excluded up to
+# the amount that was ALREADY excluded before the sweep. Anything above that came
+# out of ordinary holder wallets and is still float, in different hands.
+#
+# The 25 Aug legs on Ethereum and BNB Chain settle the point by example: the same
+# attacker took 638,286 and 2,203,982 from holder wallets there and sold both into
+# the market the same morning. Nobody would call those tokens non-circulating.
+# Treating the native and Algorand/Stellar user balances differently, purely
+# because that attacker has not sold yet, would make our headline figure depend on
+# an attacker's trading decisions. It also runs one way only: it always flatters
+# the number. Hold the line until Realio states what happens to these tokens.
+# Per chain: how much of the attacker's holding came OUT OF HOLDER WALLETS. These
+# are fixed historical facts about 25 Aug 2026, not live readings.
+ALGO_USER_ORIGIN    = 1_646_124.74   # 45,496,985 swept on Algorand, less the 43,850,860.26 reserve
+STELLAR_USER_ORIGIN =   476_685.00   # deposits swept after the main treasury drain
+NATIVE_USER_ORIGIN  = 5_732_040.91   # the entire native leg came from ordinary holders
+
+def _split_compromised(comp_total, user_origin):
+    """Return (stays_excluded, counted_as_float).
+
+    The user-origin claim is held CONSTANT as the attacker sells, so sales are
+    presumed to come out of the reserve/treasury portion first. That direction is
+    deliberate: the opposite presumption would let the float figure shrink every
+    time the attacker moved, which flatters the number for the worst reason.
+
+    It still cannot reclassify reserve as float, because what stays excluded is
+    derived from the balance actually observed at the address, never from the
+    reserve wallet going to zero. That inversion is what produced the wrong 371M
+    headline at 06:33 on 25 Aug.
+    """
+    in_float = round(min(comp_total, user_origin), 4)
+    return round(comp_total - in_float, 4), in_float
+
 def _get(url):
     req = urllib.request.Request(url, headers={"User-Agent": "realiostats/0.1"})
     with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
@@ -163,10 +201,12 @@ def fetch_algorand(url):
     reserve = held(ALGO_RESERVE); bridge = held(ALGO_BRIDGE)
     comp = {a: round(held(a), 4) for a in ALGO_COMPROMISED}
     comp_total = round(sum(comp.values()), 4)
+    comp_excl, comp_float = _split_compromised(comp_total, ALGO_USER_ORIGIN)
     return {"total_supply": round(total, 4), "reserve": round(reserve, 4),
             "bridge_wallet": round(bridge, 4),
             "compromised": comp_total, "compromised_detail": comp,
-            "circulating": round(total - reserve - bridge - comp_total, 4)}
+            "compromised_excluded": comp_excl, "compromised_in_float": comp_float,
+            "circulating": round(total - reserve - bridge - comp_excl, 4)}
 
 def fetch_stellar(url):
     r = _get(f"{url}/assets?asset_code=RIO&asset_issuer={STELLAR_ISSUER}")["_embedded"]["records"][0]
@@ -187,9 +227,11 @@ def fetch_stellar(url):
     treasury = rio_balance(STELLAR_TREASURY)
     comp = {a: round(rio_balance(a), 4) for a in STELLAR_COMPROMISED}
     comp_total = round(sum(comp.values()), 4)
+    comp_excl, comp_float = _split_compromised(comp_total, STELLAR_USER_ORIGIN)
     return {"total_supply": round(total, 4), "treasury": round(treasury, 4),
             "compromised": comp_total, "compromised_detail": comp,
-            "circulating": round(total - treasury - comp_total, 4)}
+            "compromised_excluded": comp_excl, "compromised_in_float": comp_float,
+            "circulating": round(total - treasury - comp_excl, 4)}
 
 # A halted chain keeps serving its last committed state, so every supply figure
 # below still returns a number and nothing looks wrong. The Realio native chain
@@ -212,9 +254,11 @@ def fetch_native(url):
         except Exception:
             comp[addr] = 0.0
     comp_total = round(sum(comp.values()), 4)
+    comp_excl, comp_float = _split_compromised(comp_total, NATIVE_USER_ORIGIN)
     out = {"total": round(total, 4), "bridge_escrow": round(escrow, 4),
            "compromised": comp_total, "compromised_detail": comp,
-           "circulating": round(total - comp_total, 4)}
+           "compromised_excluded": comp_excl, "compromised_in_float": comp_float,
+           "circulating": round(total - comp_excl, 4)}
     try:
         hdr = _get(f"{url}/cosmos/base/tendermint/v1beta1/blocks/latest")["block"]["header"]
         age = datetime.now(timezone.utc).timestamp() - _parse_cosmos_ts(hdr["time"])
@@ -489,6 +533,12 @@ def build_snapshot():
         (algo.get("compromised", 0) if isinstance(algo, dict) else 0)
         + (xlm.get("compromised", 0) if isinstance(xlm, dict) else 0)
         + (nat.get("compromised", 0) if isinstance(nat, dict) else 0), 2)
+    # Of that attacker-held total, how much is still counted as circulating because
+    # it came out of holder wallets rather than out of reserve or treasury.
+    compromised_in_float = round(
+        (algo.get("compromised_in_float", 0) if isinstance(algo, dict) else 0)
+        + (xlm.get("compromised_in_float", 0) if isinstance(xlm, dict) else 0)
+        + (nat.get("compromised_in_float", 0) if isinstance(nat, dict) else 0), 2)
 
     chains = {
         "realio_native": {**nat},
@@ -525,9 +575,12 @@ def build_snapshot():
     infl = mint.get("inflation_rate")
     native_supply = nat.get("total", 0) if isinstance(nat, dict) else 0
     excluded = 0.0
+    # Only the previously excluded portion of a compromised balance counts as
+    # excluded. The rest is inside `tradable` already, so adding it here would
+    # double-count it in global_total.
     if isinstance(algo, dict):
-        excluded += algo.get("reserve", 0) + algo.get("bridge_wallet", 0) + algo.get("compromised", 0)
-    if isinstance(xlm, dict):  excluded += xlm.get("treasury", 0) + xlm.get("compromised", 0)
+        excluded += algo.get("reserve", 0) + algo.get("bridge_wallet", 0) + algo.get("compromised_excluded", 0)
+    if isinstance(xlm, dict):  excluded += xlm.get("treasury", 0) + xlm.get("compromised_excluded", 0)
     # NOTE: native compromised is already inside nat["total"], so it is deliberately
     # NOT added here. Adding it would double-count it in the global figure.
     global_total = round(tradable + excluded, 2)
@@ -565,6 +618,8 @@ def build_snapshot():
     return {"ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "chains": chains, "tradable_total": tradable, "native_cap": NATIVE_CAP,
             "compromised_total": compromised_total,
+            "compromised_in_float": compromised_in_float,
+            "compromised_excluded": round(compromised_total - compromised_in_float, 2),
             "price_usd": price["price_usd"], "price_source": price["price_source"],
             "market_cap_usd": mcap,
             "volume_24h_usd": price["volume_24h_usd"], "volume_source": price["volume_source"],
@@ -590,7 +645,9 @@ def print_summary(s):
     print("-" * 66)
     print(f"  TRADABLE TOTAL   {s['tradable_total']:>18,.0f}   (headline)")
     if s.get("compromised_total"):
-        print(f"  compromised      {s['compromised_total']:>18,.0f}   (attacker-held, excluded from float)")
+        print(f"  compromised      {s['compromised_total']:>18,.0f}   (attacker-held, total)")
+        print(f"    of which excluded {s.get('compromised_excluded', 0):>15,.0f}   (was reserve/treasury before the sweep)")
+        print(f"    of which in float {s.get('compromised_in_float', 0):>15,.0f}   (came from holder wallets, still counted)")
     print(f"  native cap       {s['native_cap']:>18,.0f}   (context)")
     p = s.get("price_usd"); mc = s.get("market_cap_usd")
     print("-" * 66)
