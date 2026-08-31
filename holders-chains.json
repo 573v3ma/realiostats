@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-08-24",
+  "as_of": "2026-08-31",
   "source": "Read from public keyless endpoints: Algorand indexer asset balances, Stellar Horizon accounts by asset, Solana getProgramAccounts on the Token-2022 mint aggregated by owner, and Base ERC-20 Transfer logs netted per address and reconciled against on-chain total supply.",
   "notes": {
     "counting": "total counts addresses with a balance above zero, the same definition used for every other chain.",
@@ -10,34 +10,34 @@
   },
   "chains": {
     "algorand": {
-      "total": 4599,
-      "gte_100": 1545,
-      "gte_1k": 866,
-      "gte_10k": 166,
-      "gte_100k": 11,
-      "opted_in": 27812
+      "total": 4378,
+      "gte_100": 1359,
+      "gte_1k": 766,
+      "gte_10k": 151,
+      "gte_100k": 12,
+      "opted_in": 27855
     },
     "stellar": {
-      "total": 4509,
-      "gte_100": 1294,
-      "gte_1k": 507,
-      "gte_10k": 158,
-      "gte_100k": 7,
-      "trustlines": 22741
+      "total": 3216,
+      "gte_100": 1089,
+      "gte_1k": 477,
+      "gte_10k": 202,
+      "gte_100k": 76,
+      "trustlines": 15105
     },
     "solana": {
       "total": 1002,
-      "gte_100": 409,
-      "gte_1k": 160,
-      "gte_10k": 31,
+      "gte_100": 407,
+      "gte_1k": 159,
+      "gte_10k": 32,
       "gte_100k": 0,
-      "token_accounts": 2312
+      "token_accounts": 2309
     },
     "base": {
-      "total": 317,
-      "gte_100": 92,
-      "gte_1k": 49,
-      "gte_10k": 7,
+      "total": 329,
+      "gte_100": 101,
+      "gte_1k": 57,
+      "gte_10k": 9,
       "gte_100k": 1,
       "history": [
         {
@@ -130,14 +130,14 @@
         },
         {
           "month": "2026-08",
-          "total": 317,
-          "gte_100": 92,
-          "gte_1k": 49,
-          "gte_10k": 7,
+          "total": 329,
+          "gte_100": 101,
+          "gte_1k": 57,
+          "gte_10k": 9,
           "gte_100k": 1
         }
       ],
-      "transfers": 5477,
+      "transfers": 5869,
       "supply_delta_pct": 0.0
     }
   }
