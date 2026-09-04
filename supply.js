@@ -1,45 +1,20 @@
 /* realiostats — supply page. Hero, projector, emissions & integrity,
    per-chain grid, exclusions, evolution chart. Requires assets/core.js. */
 
-/* ---- per-chain history, read from archive nodes (Sep 2026 rebuild) ----------
-   Two eras, two measures, deliberately kept in separate charts.
-
-   PRE = supply ISSUED on each chain before the 30 Oct 2024 migration. In that
-   era each chain's RIO was minted directly and independently (Ethereum,
-   Algorand and Stellar at 100M each in 2020; BNB Chain 75M in Oct 2023; native
-   genesis 45.02M in Apr 2023), so the chains add up without double counting.
-   Every value is an archive read: totalSupply() at the block for that date on
-   the pre-migration contracts (ETH 0xf216…4097, BNB 0x8c49…da1c), the fixed
-   Algorand ASA, and the native chain's own supply endpoint at that height.
-
-   HISTORY = public float per chain AFTER the migration, when the bridge became
-   burn-and-mint and per-chain supply stopped being independent. Ethereum and
-   BNB read the new contract 0x94a8…1aa0; Algorand is 100M less the archive-read
-   reserve and bridge-wallet balances at each date; native is supply less the
-   community pool. Stellar float is held flat at its live value: public Horizon
-   keeps roughly a year of history, so the treasury's balance on earlier dates
-   cannot be read. Solana points are carried from the earlier reconstruction.  */
-const PRE = [
-  {label:"Dec 2020", ethereum:92.76, bnb:0,  algorand:100, stellar:100, native:0},
-  {label:"Jun 2021", ethereum:92.76, bnb:0,  algorand:100, stellar:100, native:0},
-  {label:"Dec 2021", ethereum:92.76, bnb:0,  algorand:100, stellar:100, native:0},
-  {label:"Jun 2022", ethereum:92.14, bnb:0,  algorand:100, stellar:100, native:0},
-  {label:"Dec 2022", ethereum:74.49, bnb:0,  algorand:100, stellar:75,  native:0},
-  {label:"Jun 2023", ethereum:74.49, bnb:0,  algorand:100, stellar:75,  native:45.47},
-  {label:"Dec 2023", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:47.11},
-  {label:"Mar 2024", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:48.12},
-  {label:"Jun 2024", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:48.67},
-  {label:"Sep 2024", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:49.43},
-  {label:"Oct 2024", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:49.88}
-];
+/* ---- reconstructed per-chain circulating history (millions of RIO) ----
+   From rio_supply_history.csv + the project's evolution analysis. Each field is
+   that chain's public float. Stellar & Algorand float held flat pre-live (the
+   history of their Realio-controlled wallets was not reconstructed). Base = 0
+   (counted on Ethereum). Bands sum to the multichain total.                     */
 const HISTORY = [
-  {label:"Dec 2024", bnb:118.65, native:58.09, ethereum:56.81, algorand:56.36, stellar:5.86, solana:0},
-  {label:"Mar 2025", bnb:143.00, native:66.14, ethereum:59.63, algorand:55.59, stellar:5.86, solana:0.5},
-  {label:"Jun 2025", bnb:163.25, native:73.65, ethereum:65.83, algorand:49.47, stellar:5.86, solana:1.0},
-  {label:"Sep 2025", bnb:162.24, native:74.29, ethereum:66.47, algorand:48.93, stellar:5.86, solana:1.0},
-  {label:"Dec 2025", bnb:143.96, native:92.96, ethereum:64.40, algorand:48.21, stellar:5.86, solana:1.0},
-  {label:"Mar 2026", bnb:143.80, native:92.16, ethereum:66.88, algorand:47.88, stellar:5.86, solana:1.04},
-  {label:"Jun 2026", bnb:156.44, native:83.97, ethereum:69.54, algorand:7.73,  stellar:5.86, solana:1.07}
+  {label:"2024 Q4",  bnb:118.76, native:77.05, ethereum:56.76, algorand:7.76, stellar:5.86, solana:0},
+  {label:"2025 Q1",  bnb:144.79, native:81.60, ethereum:59.68, algorand:7.76, stellar:5.86, solana:0.5},
+  {label:"2025 Q2",  bnb:163.25, native:86.20, ethereum:65.90, algorand:7.76, stellar:5.86, solana:1.0},
+  {label:"2025 Q3",  bnb:161.72, native:90.85, ethereum:66.10, algorand:7.76, stellar:5.86, solana:1.0},
+  {label:"2025 Q4",  bnb:143.81, native:95.50, ethereum:64.56, algorand:7.76, stellar:5.86, solana:1.0},
+  {label:"2026 Q1",  bnb:143.81, native:92.47, ethereum:66.86, algorand:7.76, stellar:5.86, solana:1.04},
+  {label:"2026 Q2",  bnb:156.63, native:84.27, ethereum:69.80, algorand:7.76, stellar:5.86, solana:1.07},
+  {label:"Jul 5 '26",bnb:156.61, native:84.97, ethereum:70.16, algorand:7.76, stellar:5.86, solana:1.08}
 ];
 const STACK = [
   {key:"native",   name:"Realio Native", color:"#10b981"},
@@ -557,61 +532,7 @@ function render(latest, liveSeries, fullArr){
       <div class="exa">GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L</div>
       <div style="margin-top:8px"><a href="https://stellar.expert/explorer/public/account/GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L" target="_blank" rel="noopener">Verify ↗</a></div></div>`;
 
-  drawPreChart();
   drawChart(liveSeries);
-}
-
-function drawPreChart(){
-  const el = document.getElementById("evoPre");
-  if(!el) return;
-  const labels = PRE.map(r=>r.label);
-  const order = [
-    {key:"native",   name:"Realio Native", color:"#10b981"},
-    {key:"bnb",      name:"BNB Chain",     color:"#f59e0b"},
-    {key:"ethereum", name:"Ethereum",      color:"#4f46e5"},
-    {key:"algorand", name:"Algorand",      color:"#0ea5e9"},
-    {key:"stellar",  name:"Stellar",       color:"#64748b"}
-  ];
-  const datasets = order.map((s,i)=>({
-    label:s.name, data:PRE.map(r=>r[s.key] ?? 0),
-    borderColor:s.color, backgroundColor:s.color+"cc",
-    fill:i===0?"origin":"-1", stack:"s", borderWidth:1, tension:.2, pointRadius:0
-  }));
-  datasets.push({label:"100M whitepaper maximum (reference)", data:labels.map(()=>100),
-    borderColor:"#9aa7b2", borderWidth:1.4, borderDash:[6,5], pointRadius:0, fill:false, stack:"ref"});
-  const athIdx = PRE.findIndex(r=>r.label==="Mar 2024");
-  const athPlugin = {
-    id:"ath",
-    afterDatasetsDraw(chart){
-      const {ctx,chartArea,scales}=chart;
-      const x=scales.x.getPixelForValue(athIdx);
-      ctx.save();
-      ctx.strokeStyle="rgba(15,23,42,0.45)";ctx.setLineDash([4,4]);ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x,chartArea.top);ctx.lineTo(x,chartArea.bottom);ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle="#0b1015";ctx.font="600 11px Inter,system-ui,sans-serif";ctx.textAlign="right";
-      ctx.fillText("All-time high, 28 Mar 2024", x-6, chartArea.top+13);
-      ctx.restore();
-    }
-  };
-  new Chart(el,{
-    type:"line", data:{labels,datasets}, plugins:[athPlugin, watermarkPlugin],
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
-      scales:{
-        y:{stacked:true,beginAtZero:true,suggestedMax:400,grid:{color:"#eef1f4"},
-           ticks:{callback:v=>v+"M",color:"#69747f",font:{family:"Inter"}}},
-        x:{grid:{display:false},ticks:{color:"#69747f",font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
-      },
-      plugins:{
-        legend:{labels:{color:"#0b1015",font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}},
-        tooltip:{callbacks:{
-          label:c=>` ${c.dataset.label}: ${(+c.parsed.y).toFixed(2)}M`,
-          footer:items=>{const t=items.filter(i=>i.dataset.stack==="s").reduce((a,i)=>a+(+i.parsed.y||0),0);
-                         return "Total issued on-chain: "+t.toFixed(1)+"M";}
-        }}
-      }
-    }
-  });
 }
 
 function drawChart(liveSeries){

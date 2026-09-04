@@ -152,24 +152,11 @@
 
 <section id="chart"><div class="wrap">
   <h2>How circulating supply has evolved</h2>
-  <p class="sec-lede">RIO has had two supply regimes, and they cannot be measured the same way, so they get a chart each. Before 30 October 2024 every chain minted its own RIO independently, so what matters is how much was <b>issued</b> on each one. After that date the bridge became burn-and-mint and the chains stopped being independent, so what matters is each chain's <b>public float</b>. Both charts are archive reads, block by block, and values are in millions of RIO.</p>
-
-  <div class="ptbl-label">Before the migration: issued supply, 2020 to October 2024</div>
-  <div class="chartcard">
-    <div class="chartwrap"><canvas id="evoPre"></canvas></div>
-    <p class="cap">RIO was minted directly and independently on three chains in 2020, at 100M each on Ethereum, Algorand and Stellar, three years before the native chain existed. Ethereum was cut to 92.76M in November 2020 and to 74.49M through 2022, and Stellar to 75M in the third quarter of 2022. BNB Chain added a further 75M direct mint in October 2023, and the native chain opened at 45.02M in April 2023. Nothing here is bridged: in this era no burn-and-mint bridge existed, so the bands add up rather than double count. Total issued at the all-time high on 28 March 2024 was <b>372.6M</b>. Holder-ledger reconstructions for that date put roughly <b>247M</b> of it in public hands, the rest sitting in the Algorand reserve, the BNB team wallet and an Ethereum rewards contract. The dashed line is the 100M maximum supply stated in Realio's March 2020 whitepaper, shown for scale.</p>
-  </div>
-
-  <div class="ptbl-label" style="margin-top:26px">After the migration: public float, October 2024 to today</div>
-  <p class="sec-lede" style="margin-top:8px"><b>Note on 25 August 2026.</b> The Algorand and Stellar lines do not step up on this date, and that is deliberate. Balances taken from Realio-controlled wallets that morning are held in a separate compromised bucket rather than reclassified as public float, so the series stays comparable with the days before it. Nothing was minted on either chain. <a href="incident.html">The full incident report is here</a>.</p>
+  <p class="sec-lede">From the 30 October 2024 migration, when the Ethereum and BNB tokens were re-issued and the bridge switched from a reserve/lock model to burn-and-mint. Each colour is one chain's circulating float; stacked together they make up the multichain total. Values in millions of RIO.</p>
+  <p class="sec-lede" style="margin-top:-8px"><b>Note on 25 August 2026.</b> The Algorand and Stellar lines do not step up on this date, and that is deliberate. Balances taken from Realio-controlled wallets that morning are held in a separate compromised bucket rather than reclassified as public float, so the series stays comparable with the days before it. Nothing was minted on either chain. <a href="incident.html">The full incident report is here</a>.</p>
   <div class="chartcard">
     <div class="chartwrap"><canvas id="evo"></canvas></div>
-    <p class="cap">From the 30 October 2024 migration, when the Ethereum and BNB tokens were re-issued and the bridge switched from a reserve/lock model to burn-and-mint. Each colour is one chain's circulating float; stacked together they make up the multichain total. The shaded period marks the one-time post-migration bridge ramp, as the burn-and-mint system was populated (BSC alone went ~119M to ~163M). Solid points are live daily readings from this project. Earlier points are archive reads at the date shown: contract <code>totalSupply</code> for Ethereum and BNB Chain, native supply less the community pool, and Algorand's fixed 100M less the reserve and bridge-wallet balances read at that block. Algorand's float falls away through 2026 because RIO moved into the bridge wallet, not because tokens were destroyed. Stellar float is held flat at its live value: public Horizon retains about a year of history, so the treasury's balance on earlier dates cannot be read. The dashed 175M line is the network's long-term emission cap, shown only as a reference for scale.</p>
-  </div>
-
-  <div class="assume" style="margin-top:22px">
-    <div class="ah">What changed in this section, September 2026</div>
-    <p>This section used to begin at the October 2024 migration, and its pre-live points were interpolated rather than read. Both charts are now rebuilt from archive nodes, which corrected two things worth stating plainly. The native line was materially overstated: December 2024 was carried at 77.05M and the chain's own archive says <b>58.09M</b>. Algorand float was carried flat at 7.76M for the whole period, when the archive shows it was <b>56.36M</b> in December 2024, falling to 7.73M only by mid-2026 as RIO moved into the bridge wallet. The two errors ran in opposite directions and largely cancelled in the total, which is exactly why neither was visible before.</p>
+    <p class="cap">The shaded period marks the one-time post-migration bridge ramp: as the burn-and-mint system was populated, supply expanded across chains (BSC alone went ~119M to ~163M, verified on-chain via archival reads). Supply has been roughly flat since. Bands stack to the total circulating supply. Solid points are live daily readings from this project; earlier points are reconstructed from on-chain archival data (<a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">rio_supply_history.csv</a>). Stellar and Algorand public float is held flat before the live period, as the history of their Realio-controlled wallets was not reconstructed. The dashed 175M line is the network's long-term emission cap, shown only as a reference for scale.</p>
   </div>
 </div></section>
 
@@ -238,6 +225,6 @@
 </div></footer>
 
 <script src="core.js?v=7"></script>
-<script src="supply.js?v=7"></script>
+<script src="supply.js?v=6"></script>
 </body>
 </html>
