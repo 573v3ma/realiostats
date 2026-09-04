@@ -1,20 +1,41 @@
 /* realiostats — supply page. Hero, projector, emissions & integrity,
    per-chain grid, exclusions, evolution chart. Requires assets/core.js. */
 
-/* ---- reconstructed per-chain circulating history (millions of RIO) ----
-   From rio_supply_history.csv + the project's evolution analysis. Each field is
-   that chain's public float. Stellar & Algorand float held flat pre-live (the
-   history of their Realio-controlled wallets was not reconstructed). Base = 0
-   (counted on Ethereum). Bands sum to the multichain total.                     */
+/* ---- per-chain history, read from archive nodes (Sep 2026) -----------------
+   HISTORY is public float per chain since the migration, the default view.
+   Points before the live daily series used to be interpolated; they are now
+   read at the date shown (contract totalSupply for Ethereum and BNB Chain,
+   native supply less the community pool, Algorand's fixed 100M less the
+   reserve and bridge wallet balances at that block). Stellar float is held
+   flat at its live value because public Horizon keeps only about a year of
+   history. Solana points are carried from the earlier reconstruction.
+
+   PRE is the era before the migration, shown only when the reader asks for it.
+   It is a different measure and is labelled as one: supply ISSUED per chain.
+   Back then each chain minted its own RIO independently, with no burn-and-mint
+   bridge, so the chains add up without double counting, but the Realio-held
+   share cannot be reconstructed for every chain on every date.               */
+const PRE = [
+  {label:"Dec 2020", ethereum:92.76, bnb:0,  algorand:100, stellar:100, native:0,     solana:0},
+  {label:"Jun 2021", ethereum:92.76, bnb:0,  algorand:100, stellar:100, native:0,     solana:0},
+  {label:"Dec 2021", ethereum:92.76, bnb:0,  algorand:100, stellar:100, native:0,     solana:0},
+  {label:"Jun 2022", ethereum:92.14, bnb:0,  algorand:100, stellar:100, native:0,     solana:0},
+  {label:"Dec 2022", ethereum:74.49, bnb:0,  algorand:100, stellar:75,  native:0,     solana:0},
+  {label:"Jun 2023", ethereum:74.49, bnb:0,  algorand:100, stellar:75,  native:45.47, solana:0},
+  {label:"Dec 2023", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:47.11, solana:0},
+  {label:"Mar 2024", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:48.12, solana:0},
+  {label:"Jun 2024", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:48.67, solana:0},
+  {label:"Sep 2024", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:49.43, solana:0},
+  {label:"Oct 2024", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:49.88, solana:0}
+];
 const HISTORY = [
-  {label:"2024 Q4",  bnb:118.76, native:77.05, ethereum:56.76, algorand:7.76, stellar:5.86, solana:0},
-  {label:"2025 Q1",  bnb:144.79, native:81.60, ethereum:59.68, algorand:7.76, stellar:5.86, solana:0.5},
-  {label:"2025 Q2",  bnb:163.25, native:86.20, ethereum:65.90, algorand:7.76, stellar:5.86, solana:1.0},
-  {label:"2025 Q3",  bnb:161.72, native:90.85, ethereum:66.10, algorand:7.76, stellar:5.86, solana:1.0},
-  {label:"2025 Q4",  bnb:143.81, native:95.50, ethereum:64.56, algorand:7.76, stellar:5.86, solana:1.0},
-  {label:"2026 Q1",  bnb:143.81, native:92.47, ethereum:66.86, algorand:7.76, stellar:5.86, solana:1.04},
-  {label:"2026 Q2",  bnb:156.63, native:84.27, ethereum:69.80, algorand:7.76, stellar:5.86, solana:1.07},
-  {label:"Jul 5 '26",bnb:156.61, native:84.97, ethereum:70.16, algorand:7.76, stellar:5.86, solana:1.08}
+  {label:"Dec 2024", bnb:118.65, native:58.09, ethereum:56.81, algorand:56.36, stellar:5.86, solana:0},
+  {label:"Mar 2025", bnb:143.00, native:66.14, ethereum:59.63, algorand:55.59, stellar:5.86, solana:0.5},
+  {label:"Jun 2025", bnb:163.25, native:73.65, ethereum:65.83, algorand:49.47, stellar:5.86, solana:1.0},
+  {label:"Sep 2025", bnb:162.24, native:74.29, ethereum:66.47, algorand:48.93, stellar:5.86, solana:1.0},
+  {label:"Dec 2025", bnb:143.96, native:92.96, ethereum:64.40, algorand:48.21, stellar:5.86, solana:1.0},
+  {label:"Mar 2026", bnb:143.80, native:92.16, ethereum:66.88, algorand:47.88, stellar:5.86, solana:1.04},
+  {label:"Jun 2026", bnb:156.44, native:83.97, ethereum:69.54, algorand:7.73,  stellar:5.86, solana:1.07}
 ];
 const STACK = [
   {key:"native",   name:"Realio Native", color:"#10b981"},
@@ -535,49 +556,112 @@ function render(latest, liveSeries, fullArr){
   drawChart(liveSeries);
 }
 
+let EVO_CHART = null, EVO_LIVE = [], EVO_RANGE = "mig";
+
+function setEvoRange(r){
+  EVO_RANGE = r;
+  document.querySelectorAll("#evoRange button").forEach(b=>{
+    const on = b.dataset.range === r;
+    b.classList.toggle("on", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  const note = document.getElementById("evoNote");
+  if(note) note.hidden = (r !== "all");
+  drawChart(EVO_LIVE);
+}
+
 function drawChart(liveSeries){
-  const rows = HISTORY.concat(liveSeries);
+  EVO_LIVE = liveSeries || EVO_LIVE;
+  const all = EVO_RANGE === "all";
+  /* Full history is a quarterly view: 46 daily points would squeeze five years
+     of history into the left edge. The daily detail is the default view. */
+  const live = all ? EVO_LIVE.slice(-1) : EVO_LIVE;
+  const rows = (all ? PRE : []).concat(HISTORY, live);
+  const nPre = all ? PRE.length : 0;
+  const nRecon = nPre + HISTORY.length;
   const labels = rows.map(r=>r.label);
-  const nHist = HISTORY.length;
-  const liveRadius = labels.map((_,i)=> i>=nHist ? 3 : 0);
+  const liveRadius = labels.map((_,i)=> i>=nRecon ? 3 : 0);
+  void live;
   const datasets = STACK.map((s,i)=>({
     label:s.name, data:rows.map(r=> r[s.key] ?? 0),
     borderColor:s.color, backgroundColor:s.color+"cc",
     fill: i===0 ? "origin" : "-1", stack:"s", borderWidth:1, tension:.2,
     pointRadius:liveRadius, pointBackgroundColor:s.color, pointBorderColor:"#fff", pointBorderWidth:1
   }));
-  datasets.push({label:"175M native emission cap (reference)", data:labels.map(()=>175),
-    borderColor:"#9aa7b2", borderWidth:1.4, borderDash:[6,5], pointRadius:0, fill:false, stack:"ref"});
-  const rampEnd = 2; // index of 2025 Q2 (end of migration ramp)
-  const rampPlugin = {
-    id:"ramp",
+  if(!all){
+    datasets.push({label:"175M native emission cap (reference)", data:labels.map(()=>175),
+      borderColor:"#9aa7b2", borderWidth:1.4, borderDash:[6,5], pointRadius:0, fill:false, stack:"ref"});
+  }
+
+  /* Era divider: everything left of it is issued supply, everything right of it
+     is public float. The step at the line is the change of measure, not a burn. */
+  const eraPlugin = {
+    id:"era",
     beforeDatasetsDraw(chart){
+      if(!all) return;
       const {ctx,chartArea,scales}=chart;
-      const x2=scales.x.getPixelForValue(rampEnd);
+      const x=(scales.x.getPixelForValue(nPre-1)+scales.x.getPixelForValue(nPre))/2;
       ctx.save();
-      ctx.fillStyle="rgba(100,116,139,0.14)";
-      ctx.fillRect(chartArea.left,chartArea.top,x2-chartArea.left,chartArea.bottom-chartArea.top);
+      ctx.fillStyle="rgba(100,116,139,0.07)";
+      ctx.fillRect(chartArea.left,chartArea.top,x-chartArea.left,chartArea.bottom-chartArea.top);
       ctx.restore();
     },
     afterDatasetsDraw(chart){
       const {ctx,chartArea,scales}=chart;
-      const x2=scales.x.getPixelForValue(rampEnd);
       ctx.save();
-      ctx.strokeStyle="rgba(100,116,139,0.45)";ctx.setLineDash([4,4]);ctx.lineWidth=1;
-      ctx.beginPath();ctx.moveTo(x2,chartArea.top);ctx.lineTo(x2,chartArea.bottom);ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle="#64748b";ctx.font="600 11px Inter,system-ui,sans-serif";ctx.textAlign="left";
-      ctx.fillText("Migration & bridge ramp (Oct 2024 to mid 2025)", chartArea.left+8, chartArea.top+13);
+      ctx.font="600 11px Inter,system-ui,sans-serif";
+      if(all){
+        const x=(scales.x.getPixelForValue(nPre-1)+scales.x.getPixelForValue(nPre))/2;
+        const yv=v=>scales.y.getPixelForValue(v);
+        /* reference levels, each drawn only across the era it belongs to */
+        ctx.setLineDash([6,5]);ctx.lineWidth=1.4;
+        ctx.strokeStyle="rgba(192,86,63,0.75)";
+        ctx.beginPath();ctx.moveTo(chartArea.left,yv(100));ctx.lineTo(x,yv(100));ctx.stroke();
+        ctx.strokeStyle="rgba(154,167,178,0.95)";
+        ctx.beginPath();ctx.moveTo(x,yv(175));ctx.lineTo(chartArea.right,yv(175));ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle="#c0563f";ctx.textAlign="left";
+        ctx.fillText("100M whitepaper maximum", chartArea.left+8, yv(100)-6);
+        ctx.fillStyle="#8b97a3";ctx.textAlign="right";
+        ctx.fillText("175M native emission cap", chartArea.right-8, yv(175)-6);
+        /* era divider */
+        ctx.strokeStyle="rgba(15,23,42,0.4)";ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(x,chartArea.top);ctx.lineTo(x,chartArea.bottom);ctx.stroke();
+        ctx.fillStyle="#475569";
+        ctx.textAlign="right";ctx.fillText("Issued supply", x-8, chartArea.top+13);
+        ctx.textAlign="left"; ctx.fillText("Public float", x+8, chartArea.top+13);
+        const ath=PRE.findIndex(r=>r.label==="Mar 2024");
+        if(ath>=0){
+          const xa=scales.x.getPixelForValue(ath);
+          ctx.strokeStyle="rgba(15,23,42,0.28)";ctx.setLineDash([3,4]);
+          ctx.beginPath();ctx.moveTo(xa,chartArea.top+30);ctx.lineTo(xa,chartArea.bottom);ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle="#0b1015";ctx.textAlign="right";
+          ctx.fillText("All-time high", xa-6, chartArea.top+28);
+        }
+      } else {
+        const x2=scales.x.getPixelForValue(2);
+        ctx.fillStyle="rgba(100,116,139,0.14)";
+        ctx.fillRect(chartArea.left,chartArea.top,x2-chartArea.left,chartArea.bottom-chartArea.top);
+        ctx.strokeStyle="rgba(100,116,139,0.45)";ctx.setLineDash([4,4]);ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(x2,chartArea.top);ctx.lineTo(x2,chartArea.bottom);ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle="#64748b";ctx.textAlign="left";
+        ctx.fillText("Migration & bridge ramp (Oct 2024 to mid 2025)", chartArea.left+8, chartArea.top+13);
+      }
       ctx.restore();
     }
   };
-  new Chart(document.getElementById("evo"),{
+
+  if(EVO_CHART) EVO_CHART.destroy();
+  EVO_CHART = new Chart(document.getElementById("evo"),{
     type:"line",
     data:{labels,datasets},
-    plugins:[rampPlugin, watermarkPlugin],
-    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+    plugins:[eraPlugin, watermarkPlugin],
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},
+      interaction:{mode:"index",intersect:false},
       scales:{
-        y:{stacked:true,beginAtZero:true,suggestedMax:360,grid:{color:"#eef1f4"},
+        y:{stacked:true,beginAtZero:true,suggestedMax:all?400:360,grid:{color:"#eef1f4"},
            ticks:{callback:v=>v+"M",color:"#69747f",font:{family:"Inter"}}},
         x:{grid:{display:false},ticks:{color:"#69747f",font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
       },
@@ -585,8 +669,10 @@ function drawChart(liveSeries){
         legend:{labels:{color:"#0b1015",font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}},
         tooltip:{callbacks:{
           label:c=>` ${c.dataset.label}: ${(+c.parsed.y).toFixed(1)}M`,
-          footer:items=>{const t=items.filter(i=>i.dataset.stack==="s").reduce((a,i)=>a+(+i.parsed.y||0),0);
-                         return "Total circulating: "+t.toFixed(1)+"M";}
+          footer:items=>{
+            const t=items.filter(i=>i.dataset.stack==="s").reduce((a,i)=>a+(+i.parsed.y||0),0);
+            const pre = all && items.length && items[0].dataIndex < nPre;
+            return (pre ? "Total issued on-chain: " : "Total circulating: ")+t.toFixed(1)+"M";}
         }}
       }
     }

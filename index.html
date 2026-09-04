@@ -152,11 +152,16 @@
 
 <section id="chart"><div class="wrap">
   <h2>How circulating supply has evolved</h2>
-  <p class="sec-lede">From the 30 October 2024 migration, when the Ethereum and BNB tokens were re-issued and the bridge switched from a reserve/lock model to burn-and-mint. Each colour is one chain's circulating float; stacked together they make up the multichain total. Values in millions of RIO.</p>
+  <p class="sec-lede">From the 30 October 2024 migration, when the Ethereum and BNB tokens were re-issued and the bridge switched from a reserve/lock model to burn-and-mint. Each colour is one chain's circulating float; stacked together they make up the multichain total. Values in millions of RIO. Switch the range to see the years before the migration, back to 2020.</p>
   <p class="sec-lede" style="margin-top:-8px"><b>Note on 25 August 2026.</b> The Algorand and Stellar lines do not step up on this date, and that is deliberate. Balances taken from Realio-controlled wallets that morning are held in a separate compromised bucket rather than reclassified as public float, so the series stays comparable with the days before it. Nothing was minted on either chain. <a href="incident.html">The full incident report is here</a>.</p>
   <div class="chartcard">
+    <div class="rangebar" id="evoRange" role="group" aria-label="Chart range">
+      <button type="button" class="on" data-range="mig" aria-pressed="true" onclick="setEvoRange('mig')">Since the migration</button>
+      <button type="button" data-range="all" aria-pressed="false" onclick="setEvoRange('all')">Full history, from 2020</button>
+    </div>
+    <p class="erahint" id="evoNote" hidden>Left of the divider is <b>supply issued</b> on each chain, when every chain minted its own RIO and no bridge existed. Right of it is <b>public float</b>. The step at the line is the change of measure, not a burn.</p>
     <div class="chartwrap"><canvas id="evo"></canvas></div>
-    <p class="cap">The shaded period marks the one-time post-migration bridge ramp: as the burn-and-mint system was populated, supply expanded across chains (BSC alone went ~119M to ~163M, verified on-chain via archival reads). Supply has been roughly flat since. Bands stack to the total circulating supply. Solid points are live daily readings from this project; earlier points are reconstructed from on-chain archival data (<a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">rio_supply_history.csv</a>). Stellar and Algorand public float is held flat before the live period, as the history of their Realio-controlled wallets was not reconstructed. The dashed 175M line is the network's long-term emission cap, shown only as a reference for scale.</p>
+    <p class="cap">Bands stack to the total. Solid points are live daily readings from this project; earlier points are archive reads at the date shown. In the default view the shaded band is the one-time post-migration bridge ramp, when BSC alone went from about 119M to about 163M, and supply has been roughly flat since. Full history switches to a quarterly view ending at the latest live reading, and there the shaded half is the pre-bridge era. Those older points replaced an interpolated series: native had been carried about 19M too high and Algorand float about 48M too low, two errors running in opposite directions that largely cancelled in the total. Stellar float is held flat throughout, because public Horizon retains only about a year of history and the treasury's balance on earlier dates cannot be read. Before 2024 the Algorand and Stellar bands are issued supply rather than float, since the Realio-held share of each cannot be reconstructed for every date. The dashed lines are reference levels only: 100M from the March 2020 whitepaper, and the 175M native emission cap set in October 2024.</p>
   </div>
 </div></section>
 
@@ -225,6 +230,6 @@
 </div></footer>
 
 <script src="core.js?v=7"></script>
-<script src="supply.js?v=6"></script>
+<script src="supply.js?v=8"></script>
 </body>
 </html>

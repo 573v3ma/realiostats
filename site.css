@@ -375,3 +375,12 @@
     .tli{flex-direction:column;gap:4px}
     .tlt{flex-basis:auto}
   }
+
+/* range switch on the supply-evolution chart */
+.rangebar{display:flex;gap:6px;margin:0 0 14px;flex-wrap:wrap}
+.rangebar button{font:600 12px Inter,system-ui,sans-serif;color:var(--muted);background:transparent;
+  border:1px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer;transition:.15s}
+.rangebar button:hover{color:var(--ink);border-color:#c8d0d8}
+.rangebar button.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.erahint{font-size:12.5px;color:var(--muted);line-height:1.6;margin:0 0 14px}
+@media (max-width:560px){.rangebar button{padding:6px 10px;font-size:11.5px}}
