@@ -10,23 +10,26 @@
    flat at its live value because public Horizon keeps only about a year of
    history. Solana points are carried from the earlier reconstruction.
 
-   PRE is the era before the migration, shown only when the reader asks for it.
-   It is a different measure and is labelled as one: supply ISSUED per chain.
-   Back then each chain minted its own RIO independently, with no burn-and-mint
-   bridge, so the chains add up without double counting, but the Realio-held
-   share cannot be reconstructed for every chain on every date.               */
+   PRE extends the SAME measure, public float, back to December 2020, so the
+   whole series is comparable. Ethereum float there is totalSupply less the
+   staking-reward contract and less the nine wallets that held the 2020
+   issuance in near-identical ~10M blocks (89.3M of 92.8M at the end of 2020;
+   empty from mid-2023, after which they no longer affect the figure), all read
+   from a full replay of the contract's Transfer log. Algorand is its fixed
+   100M less the reserve and bridge wallets at that round. Native is supply
+   less the community pool, from genesis in April 2023. Stellar is held flat
+   throughout, the one estimate in the series.                                */
 const PRE = [
-  {label:"Dec 2020", ethereum:92.76, bnb:0,  algorand:100, stellar:100, native:0,     solana:0},
-  {label:"Jun 2021", ethereum:92.76, bnb:0,  algorand:100, stellar:100, native:0,     solana:0},
-  {label:"Dec 2021", ethereum:92.76, bnb:0,  algorand:100, stellar:100, native:0,     solana:0},
-  {label:"Jun 2022", ethereum:92.14, bnb:0,  algorand:100, stellar:100, native:0,     solana:0},
-  {label:"Dec 2022", ethereum:74.49, bnb:0,  algorand:100, stellar:75,  native:0,     solana:0},
-  {label:"Jun 2023", ethereum:74.49, bnb:0,  algorand:100, stellar:75,  native:45.47, solana:0},
-  {label:"Dec 2023", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:47.11, solana:0},
-  {label:"Mar 2024", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:48.12, solana:0},
-  {label:"Jun 2024", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:48.67, solana:0},
-  {label:"Sep 2024", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:49.43, solana:0},
-  {label:"Oct 2024", ethereum:74.49, bnb:75, algorand:100, stellar:75,  native:49.88, solana:0}
+  {label:"Dec 2020", ethereum:3.30,  bnb:0,     algorand:0.00,  stellar:5.86, native:0,     solana:0},
+  {label:"Jun 2021", ethereum:4.64,  bnb:0,     algorand:0.16,  stellar:5.86, native:0,     solana:0},
+  {label:"Dec 2021", ethereum:4.20,  bnb:0,     algorand:1.24,  stellar:5.86, native:0,     solana:0},
+  {label:"Jun 2022", ethereum:8.23,  bnb:0,     algorand:0.85,  stellar:5.86, native:0,     solana:0},
+  {label:"Dec 2022", ethereum:52.07, bnb:0,     algorand:0.78,  stellar:5.86, native:0,     solana:0},
+  {label:"Jun 2023", ethereum:59.10, bnb:0,     algorand:40.10, stellar:5.86, native:45.69, solana:0},
+  {label:"Dec 2023", ethereum:60.40, bnb:64.76, algorand:69.50, stellar:5.86, native:47.32, solana:0},
+  {label:"Mar 2024", ethereum:61.06, bnb:55.52, algorand:77.70, stellar:5.86, native:48.06, solana:0},
+  {label:"Jun 2024", ethereum:61.74, bnb:60.62, algorand:73.92, stellar:5.86, native:48.83, solana:0},
+  {label:"Sep 2024", ethereum:62.36, bnb:73.30, algorand:68.71, stellar:5.86, native:49.56, solana:0}
 ];
 const HISTORY = [
   {label:"Dec 2024", bnb:118.65, native:58.09, ethereum:56.81, algorand:56.36, stellar:5.86, solana:0},
@@ -556,6 +559,29 @@ function render(latest, liveSeries, fullArr){
   drawChart(liveSeries);
 }
 
+/* Float against price, then versus now. The question this section gets asked is
+   whether today's price is cheap relative to 2024 once you allow for the extra
+   RIO in public hands, so the comparison is float, price and float market cap
+   at the March 2024 high against the same three today. The 2024 figures are
+   fixed history: 248.2M float, and CoinGecko's daily close of $2.7769 on 28
+   March 2024 (it touched $3.11 intraday). Today's are live. */
+const ATH_FLOAT_M = 248.2, ATH_PRICE = 2.7769;
+function renderFloatVsPrice(latest){
+  const el = document.getElementById("fvpNow"); if(!el) return;
+  const px = (FLOAT_VOL && FLOAT_VOL.price_latest_usd) || (latest && latest.price_usd);
+  const floatM = latest ? M(latest.tradable_total) : null;
+  if(!px || !floatM) return;
+  const capNow = floatM*px, capAth = ATH_FLOAT_M*ATH_PRICE;
+  const pct = (a,b)=>{const v=(a/b-1)*100; return (v>=0?"+":"")+v.toFixed(0)+"%";};
+  document.getElementById("fvpAthV").textContent = "$"+capAth.toFixed(0)+"M";
+  document.getElementById("fvpAthX").textContent = fmtM(ATH_FLOAT_M)+" RIO in public hands at $"+ATH_PRICE.toFixed(2);
+  el.textContent = "$"+(capNow<10 ? capNow.toFixed(1) : capNow.toFixed(0))+"M";
+  document.getElementById("fvpNowX").textContent = fmtM(floatM)+" RIO at $"+px.toFixed(4);
+  document.getElementById("fvpChgV").textContent = pct(capNow,capAth);
+  document.getElementById("fvpChgX").textContent = "float "+pct(floatM,ATH_FLOAT_M)+", price "+pct(px,ATH_PRICE)
+    +" since the 2024 high";
+}
+
 let EVO_CHART = null, EVO_LIVE = [], EVO_RANGE = "mig";
 
 function setEvoRange(r){
@@ -597,48 +623,29 @@ function drawChart(liveSeries){
      is public float. The step at the line is the change of measure, not a burn. */
   const eraPlugin = {
     id:"era",
-    beforeDatasetsDraw(chart){
-      if(!all) return;
-      const {ctx,chartArea,scales}=chart;
-      const x=(scales.x.getPixelForValue(nPre-1)+scales.x.getPixelForValue(nPre))/2;
-      ctx.save();
-      ctx.fillStyle="rgba(100,116,139,0.07)";
-      ctx.fillRect(chartArea.left,chartArea.top,x-chartArea.left,chartArea.bottom-chartArea.top);
-      ctx.restore();
-    },
+
     afterDatasetsDraw(chart){
       const {ctx,chartArea,scales}=chart;
       ctx.save();
       ctx.font="600 11px Inter,system-ui,sans-serif";
       if(all){
-        const x=(scales.x.getPixelForValue(nPre-1)+scales.x.getPixelForValue(nPre))/2;
         const yv=v=>scales.y.getPixelForValue(v);
-        /* reference levels, each drawn only across the era it belongs to */
-        ctx.setLineDash([6,5]);ctx.lineWidth=1.4;
-        ctx.strokeStyle="rgba(192,86,63,0.75)";
-        ctx.beginPath();ctx.moveTo(chartArea.left,yv(100));ctx.lineTo(x,yv(100));ctx.stroke();
-        ctx.strokeStyle="rgba(154,167,178,0.95)";
-        ctx.beginPath();ctx.moveTo(x,yv(175));ctx.lineTo(chartArea.right,yv(175));ctx.stroke();
+        const mark=(xp,label,align)=>{
+          ctx.strokeStyle="rgba(15,23,42,0.3)";ctx.setLineDash([3,4]);ctx.lineWidth=1;
+          ctx.beginPath();ctx.moveTo(xp,chartArea.top+18);ctx.lineTo(xp,chartArea.bottom);ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle="#0b1015";ctx.textAlign=align;
+          ctx.fillText(label, align==="right" ? xp-6 : xp+6, chartArea.top+14);
+        };
+        /* 175M native emission cap, for scale */
+        ctx.setLineDash([6,5]);ctx.lineWidth=1.4;ctx.strokeStyle="rgba(154,167,178,0.95)";
+        ctx.beginPath();ctx.moveTo(chartArea.left,yv(175));ctx.lineTo(chartArea.right,yv(175));ctx.stroke();
         ctx.setLineDash([]);
-        ctx.fillStyle="#c0563f";ctx.textAlign="left";
-        ctx.fillText("100M whitepaper maximum", chartArea.left+8, yv(100)-6);
         ctx.fillStyle="#8b97a3";ctx.textAlign="right";
         ctx.fillText("175M native emission cap", chartArea.right-8, yv(175)-6);
-        /* era divider */
-        ctx.strokeStyle="rgba(15,23,42,0.4)";ctx.lineWidth=1;
-        ctx.beginPath();ctx.moveTo(x,chartArea.top);ctx.lineTo(x,chartArea.bottom);ctx.stroke();
-        ctx.fillStyle="#475569";
-        ctx.textAlign="right";ctx.fillText("Issued supply", x-8, chartArea.top+13);
-        ctx.textAlign="left"; ctx.fillText("Public float", x+8, chartArea.top+13);
         const ath=PRE.findIndex(r=>r.label==="Mar 2024");
-        if(ath>=0){
-          const xa=scales.x.getPixelForValue(ath);
-          ctx.strokeStyle="rgba(15,23,42,0.28)";ctx.setLineDash([3,4]);
-          ctx.beginPath();ctx.moveTo(xa,chartArea.top+30);ctx.lineTo(xa,chartArea.bottom);ctx.stroke();
-          ctx.setLineDash([]);
-          ctx.fillStyle="#0b1015";ctx.textAlign="right";
-          ctx.fillText("All-time high", xa-6, chartArea.top+28);
-        }
+        if(ath>=0) mark(scales.x.getPixelForValue(ath), "All-time high", "right");
+        mark((scales.x.getPixelForValue(nPre-1)+scales.x.getPixelForValue(nPre))/2, "Migration", "left");
       } else {
         const x2=scales.x.getPixelForValue(2);
         ctx.fillStyle="rgba(100,116,139,0.14)";
@@ -671,8 +678,7 @@ function drawChart(liveSeries){
           label:c=>` ${c.dataset.label}: ${(+c.parsed.y).toFixed(1)}M`,
           footer:items=>{
             const t=items.filter(i=>i.dataset.stack==="s").reduce((a,i)=>a+(+i.parsed.y||0),0);
-            const pre = all && items.length && items[0].dataIndex < nPre;
-            return (pre ? "Total issued on-chain: " : "Total circulating: ")+t.toFixed(1)+"M";}
+            return "Total circulating: "+t.toFixed(1)+"M";}
         }}
       }
     }
@@ -871,5 +877,5 @@ loadSupply().then(({arr, latest})=>{
     .then(r=>r.ok?r.json():null)
     .then(v=>{ VOLHIST = v; renderVolumeTrend(v); FLOAT_VOL = v; renderFloatRead(); })
     .catch(()=>{})
-    .then(()=>applyLiveMarket(latest));
+    .then(()=>{ applyLiveMarket(latest); renderFloatVsPrice(latest); });
 });

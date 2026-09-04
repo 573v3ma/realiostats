@@ -384,3 +384,6 @@
 .rangebar button.on{background:var(--ink);border-color:var(--ink);color:#fff}
 .erahint{font-size:12.5px;color:var(--muted);line-height:1.6;margin:0 0 14px}
 @media (max-width:560px){.rangebar button{padding:6px 10px;font-size:11.5px}}
+.fvp{margin-top:18px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.fvp .chip{padding:16px 18px 14px}
+.fvp .chip .cv{font-size:23px;margin:8px 0 3px}

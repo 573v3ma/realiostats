@@ -152,16 +152,21 @@
 
 <section id="chart"><div class="wrap">
   <h2>How circulating supply has evolved</h2>
-  <p class="sec-lede">From the 30 October 2024 migration, when the Ethereum and BNB tokens were re-issued and the bridge switched from a reserve/lock model to burn-and-mint. Each colour is one chain's circulating float; stacked together they make up the multichain total. Values in millions of RIO. Switch the range to see the years before the migration, back to 2020.</p>
+  <p class="sec-lede">One measure throughout: RIO in public hands, chain by chain, with Realio-controlled and protocol-held balances taken out at every date. Stacked together the bands make the multichain total, in millions of RIO. The default view runs from the 30 October 2024 migration, when the Ethereum and BNB tokens were re-issued and the bridge switched from a reserve/lock model to burn-and-mint. Switch the range for the whole history, back to December 2020.</p>
   <p class="sec-lede" style="margin-top:-8px"><b>Note on 25 August 2026.</b> The Algorand and Stellar lines do not step up on this date, and that is deliberate. Balances taken from Realio-controlled wallets that morning are held in a separate compromised bucket rather than reclassified as public float, so the series stays comparable with the days before it. Nothing was minted on either chain. <a href="incident.html">The full incident report is here</a>.</p>
   <div class="chartcard">
     <div class="rangebar" id="evoRange" role="group" aria-label="Chart range">
       <button type="button" class="on" data-range="mig" aria-pressed="true" onclick="setEvoRange('mig')">Since the migration</button>
       <button type="button" data-range="all" aria-pressed="false" onclick="setEvoRange('all')">Full history, from 2020</button>
     </div>
-    <p class="erahint" id="evoNote" hidden>Left of the divider is <b>supply issued</b> on each chain, when every chain minted its own RIO and no bridge existed. Right of it is <b>public float</b>. The step at the line is the change of measure, not a burn.</p>
+    <p class="erahint" id="evoNote" hidden>Before 2023, most RIO sat in wallets that were not in public hands: nine Ethereum wallets held the 2020 issuance in near-identical 10M blocks, and Algorand's 100M sat almost entirely in its reserve. Those are excluded here, which is why float starts near 9M rather than near 300M.</p>
     <div class="chartwrap"><canvas id="evo"></canvas></div>
-    <p class="cap">Bands stack to the total. Solid points are live daily readings from this project; earlier points are archive reads at the date shown. In the default view the shaded band is the one-time post-migration bridge ramp, when BSC alone went from about 119M to about 163M, and supply has been roughly flat since. Full history switches to a quarterly view ending at the latest live reading, and there the shaded half is the pre-bridge era. Those older points replaced an interpolated series: native had been carried about 19M too high and Algorand float about 48M too low, two errors running in opposite directions that largely cancelled in the total. Stellar float is held flat throughout, because public Horizon retains only about a year of history and the treasury's balance on earlier dates cannot be read. Before 2024 the Algorand and Stellar bands are issued supply rather than float, since the Realio-held share of each cannot be reconstructed for every date. The dashed lines are reference levels only: 100M from the March 2020 whitepaper, and the 175M native emission cap set in October 2024.</p>
+    <div class="emit fvp">
+      <div class="chip"><div class="cn">At the March 2024 high</div><div class="cv" id="fvpAthV">&mdash;</div><div class="cx" id="fvpAthX">float market cap</div></div>
+      <div class="chip"><div class="cn">Today</div><div class="cv" id="fvpNow">&mdash;</div><div class="cx" id="fvpNowX">float market cap</div></div>
+      <div class="chip"><div class="cn">Change in float market cap</div><div class="cv" id="fvpChgV">&mdash;</div><div class="cx" id="fvpChgX">&nbsp;</div></div>
+    </div>
+    <p class="cap">Bands stack to the total. Solid points are live daily readings from this project; earlier points are archive reads at the date shown. In the default view the shaded band is the one-time post-migration bridge ramp, when BSC alone went from about 119M to about 163M, and float has been roughly flat since. Full history switches to a quarterly view ending at the latest live reading, with the March 2024 high and the migration marked. Because it is the same measure end to end, the two ends are comparable: about 9M RIO in public hands at the end of 2020, about 248M at the March 2024 high, and roughly 325M now. Excluded at every date are the balances we can identify as Realio-controlled or protocol-held: the Algorand reserve and bridge wallets, the Stellar treasury, the native community pool, the BNB team wallet before the migration, the Ethereum staking-reward contract, and, for 2020 to 2022 only, the nine Ethereum wallets that held the 2020 issuance in near-identical 10M blocks and were empty by mid-2023. Stellar float is the one estimate in the series, held flat at its live value, because public Horizon retains only about a year of history. Two earlier points were also corrected here: native had been carried about 19M too high and Algorand float about 48M too low, errors running in opposite directions that largely cancelled in the total. The dashed line is the 175M native emission cap, a reference level only.</p>
   </div>
 </div></section>
 
@@ -230,6 +235,6 @@
 </div></footer>
 
 <script src="core.js?v=7"></script>
-<script src="supply.js?v=8"></script>
+<script src="supply.js?v=9"></script>
 </body>
 </html>
