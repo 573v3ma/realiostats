@@ -329,6 +329,8 @@
     background:#c2410c;box-shadow:0 0 0 4px rgba(194,65,12,.13)}
   .inc-banner .ib-t{font-size:14.5px;line-height:1.62;color:var(--body)}
   .inc-banner .ib-t b{color:var(--ink)}
+  .inc-banner .ib-t p{margin:0 0 10px}
+  .inc-banner .ib-t p:last-child{margin-bottom:0}
   .inc-banner a{color:#9a3412;font-weight:500;text-decoration:underline;text-underline-offset:3px}
   .inc-status{margin:0 0 34px;padding:18px 20px;border:1px solid var(--line);
     border-left:3px solid #c2410c;background:var(--alt);border-radius:var(--radius-sm)}

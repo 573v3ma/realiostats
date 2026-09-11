@@ -525,26 +525,49 @@ function render(latest, liveSeries, fullArr){
     </div>`;
   }).join("");
 
-  const a = latest.chains.algorand, s = latest.chains.stellar;
+  const a = latest.chains.algorand, s = latest.chains.stellar, n = latest.chains.realio_native;
   const compCards = [
-    // The card shows only the portion that stays OUT of circulating. Anything the
-    // attacker took from holder wallets is still counted as float, so showing the
-    // full balance here would imply it had been removed from the headline figure.
-    {k:"Algorand · compromised (25 Aug 2026)", v:(typeof a.compromised_excluded==="number"?a.compromised_excluded:a.compromised),
+    // The card shows only the portion that stays OUT of circulating. Two different
+    // policies apply, see fetch_supply.py:
+    // - "dead-reserve" (Algorand, Stellar, since 11 Sep 2026): the reserve/treasury-
+    //   origin share of what the attacker took is excluded permanently, on Realio's
+    //   27 Aug tweet calling RIO on these two chains a dead asset, regardless of
+    //   whether the attacker has since sold it. The user-origin share is excluded
+    //   only while it sits unsold at the attacker's address; once actually sold to
+    //   a third party it is counted, same as ever.
+    // - "blacklisted" (native, since 11 Sep 2026): the whole balance is excluded on
+    //   Realio's unverified validator-channel claim that the address was frozen.
+    {k:"Algorand · compromised (25 Aug 2026)",
+     v:(typeof a.compromised_excluded==="number"?a.compromised_excluded:a.compromised),
      inFloat:(typeof a.compromised_in_float==="number"?a.compromised_in_float:0),
+     liveBalance:(typeof a.compromised==="number"?a.compromised:0),
      addr:"RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A",
-     url:"https://allo.info/account/RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A"},
-    {k:"Stellar · compromised (25 Aug 2026)", v:(typeof s.compromised_excluded==="number"?s.compromised_excluded:s.compromised),
+     url:"https://allo.info/account/RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A",
+     type:"dead-reserve"},
+    {k:"Stellar · compromised (25 Aug 2026)",
+     v:(typeof s.compromised_excluded==="number"?s.compromised_excluded:s.compromised),
      inFloat:(typeof s.compromised_in_float==="number"?s.compromised_in_float:0),
+     liveBalance:(typeof s.compromised==="number"?s.compromised:0),
      addr:"GBDMMICWFVSSU5YIKIVWG6EP3U65R2GIF7BICN3JIBES5NVGFZFLWXKZ",
-     url:"https://stellar.expert/explorer/public/account/GBDMMICWFVSSU5YIKIVWG6EP3U65R2GIF7BICN3JIBES5NVGFZFLWXKZ"}
+     url:"https://stellar.expert/explorer/public/account/GBDMMICWFVSSU5YIKIVWG6EP3U65R2GIF7BICN3JIBES5NVGFZFLWXKZ",
+     type:"dead-reserve"},
+    {k:"Realio native · compromised (25 Aug 2026)",
+     v:(typeof n.compromised_excluded==="number"?n.compromised_excluded:0),
+     inFloat:(typeof n.compromised_in_float==="number"?n.compromised_in_float:0),
+     liveBalance:(typeof n.compromised==="number"?n.compromised:0),
+     addr:"realio1uzkdrfnjv53rt0cf4ltszffpd7mvkpd2cv794j",
+     url:null,
+     type:"blacklisted"}
   ].filter(c=>typeof c.v==="number" && c.v>0).map(c=>`
     <div class="ex"><div class="exk">${c.k}</div><div class="exv">${fmtM(M(c.v))}</div>
-      <div class="exa">${c.addr}</div>
-      <div class="exn">Attacker-held reserve or treasury RIO. It was outside circulating before the sweep and stays outside it.${
-        c.inFloat>0 ? " A further "+fmtInt(c.inFloat)+" RIO at this address came out of holder wallets and <b>is still counted as circulating</b>, because being stolen does not take a token out of public hands." : ""
+      <div class="exa">${c.addr}${c.type==="dead-reserve" && c.liveBalance===0 ? " (now empty, attacker sold from here)" : ""}</div>
+      <div class="exn">${c.type==="blacklisted"
+        ? "Held by the attacker since the 25 August theft, all of it originally from ordinary holder wallets. Realio's validator channel reports this address has been blacklisted on-chain, and we exclude it on that basis while we monitor. We could not confirm the freeze ourselves as of 11 September: the address showed no active on-chain restriction on direct query. We will restore this balance to circulating if that does not hold up."
+        : "On 27 August 2026 Realio's own account posted that RIO on this chain is \"a dead asset,\" warning against buying it. The reserve or treasury share of what the attacker took here is treated as permanently excluded on that basis, whether or not the attacker has sold it. Realio's stated position, not something we can confirm independently: this is forward-looking, based on a plan to make pre-theft holders whole (likely via a migration to another chain), not a completed migration. We will keep watching how that plays out."
+      }${
+        c.inFloat>0 ? " A further "+fmtInt(c.inFloat)+" RIO taken here came from holder wallets rather than reserve or treasury; once actually sold to a third party it <b>is counted as circulating</b>, because being stolen does not take a token out of public hands." : ""
       } <a href="incident.html">Incident report</a>.</div>
-      <div style="margin-top:8px"><a href="${c.url}" target="_blank" rel="noopener">Verify ↗</a></div></div>`).join("");
+      ${c.url ? `<div style="margin-top:8px"><a href="${c.url}" target="_blank" rel="noopener">Verify ↗</a></div>` : ""}</div>`).join("");
   document.getElementById("exclGrid").innerHTML = compCards + `
     <div class="ex"><div class="exk">Algorand · reserve</div><div class="exv">${fmtM(M(a.reserve))}</div>
       <div class="exa">GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA</div>

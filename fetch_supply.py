@@ -137,19 +137,72 @@ ALGO_USER_ORIGIN    = 1_646_124.74   # 45,496,985 swept on Algorand, less the 43
 STELLAR_USER_ORIGIN =   476_685.00   # deposits swept after the main treasury drain
 NATIVE_USER_ORIGIN  = 5_732_040.91   # the entire native leg came from ordinary holders
 
-def _split_compromised(comp_total, user_origin):
+# 11 Sep 2026, native: Realio's validator channel states the attacker's
+# native-chain address has been blacklisted on-chain. We could not confirm
+# that ourselves: the account shows no visible restriction on direct query
+# (see incident.html, 12:20 UTC update). We are excluding it from float on
+# Realio's stated position while we monitor, by treating the whole compromised
+# amount as excluded rather than splitting by origin. Native has no
+# reserve/treasury-origin component (the entire leg came from ordinary
+# holders), so this is the whole policy for that chain. Revert by removing it
+# from this set the moment the on-chain data contradicts Realio's position or
+# Realio's position changes.
+BLACKLISTED_FULL_EXCLUDE = {"native"}
+
+# 11 Sep 2026, Algorand and Stellar: on 27 Aug 2026 Realio's own account
+# (@realio_network) posted that RIO on Algorand and Stellar "is a dead asset"
+# and warned against buying it. Per Steve, the understood plan is that holders
+# who had RIO on these chains BEFORE the 25 Aug theft will be made whole,
+# likely via a migration to another chain (the same treatment already applied
+# to the pre-2024-migration Ethereum contract, which this site excludes
+# entirely as a separate deprecated asset); anyone who acquired RIO on these
+# chains from the attacker or by trading there afterward will not be. So the
+# reserve/treasury-origin portion of what the attacker took, 43,850,860.26 on
+# Algorand and 69,071,099.13 on Stellar, is treated as permanently excluded
+# from float, wherever it ends up, sold to the market or not, rather than
+# flowing back into "circulating" once the attacker sells it as the old logic
+# did. The user-origin portion is treated the opposite way for as long as it
+# is unsold: excluded while it still sits at the known attacker address
+# (consistent with the native/blacklist policy above), but once actually sold
+# to a third party it counts as real circulating supply, same as ever, because
+# that portion came from real holders and being stolen does not remove real
+# tokens from public hands. This is a forward-looking policy based on Realio's
+# stated intent, not a completed migration (no replacement contract or
+# snapshot date exists yet), unlike the Ethereum precedent, which was only
+# excluded after that migration was actually completed. Revisit the moment
+# either happens: a real migration executes (extend the exclusion), or Realio
+# walks back the "dead asset" position (drop it).
+ALGO_TOTAL_TAKEN            = 45_496_985.00
+ALGO_DEAD_RESERVE_ORIGIN    = 43_850_860.26
+STELLAR_TOTAL_TAKEN         = 69_547_784.13
+STELLAR_DEAD_TREASURY_ORIGIN = 69_071_099.13
+
+def _split_compromised(comp_total, user_origin, total_taken=None, dead_reserve_origin=0.0):
     """Return (stays_excluded, counted_as_float).
 
-    The user-origin claim is held CONSTANT as the attacker sells, so sales are
-    presumed to come out of the reserve/treasury portion first. That direction is
-    deliberate: the opposite presumption would let the float figure shrink every
-    time the attacker moved, which flatters the number for the worst reason.
-
-    It still cannot reclassify reserve as float, because what stays excluded is
-    derived from the balance actually observed at the address, never from the
-    reserve wallet going to zero. That inversion is what produced the wrong 371M
+    Plain mode (dead_reserve_origin=0, e.g. native): the user-origin claim is
+    held CONSTANT as the attacker sells, so sales are presumed to come out of
+    the reserve/treasury portion first. That direction is deliberate: the
+    opposite presumption would let the float figure shrink every time the
+    attacker moved, which flatters the number for the worst reason. It still
+    cannot reclassify reserve as float, because what stays excluded is derived
+    from the balance actually observed at the address, never from the reserve
+    wallet going to zero. That inversion is what produced the wrong 371M
     headline at 06:33 on 25 Aug.
+
+    Dead-reserve mode (Algorand, Stellar, 11 Sep policy above): the
+    reserve/treasury-origin amount is excluded permanently regardless of the
+    live balance, so total_taken and dead_reserve_origin are both required.
+    Selling is still presumed to draw down the reserve-origin portion first;
+    only once cumulative sales exceed the entire reserve-origin amount does
+    further selling start reducing the still-excluded user-origin claim (and
+    correspondingly increase what counts as float).
     """
+    if dead_reserve_origin > 0 and total_taken is not None:
+        sold_so_far = max(total_taken - comp_total, 0.0)
+        user_origin_still_held = max(user_origin - max(sold_so_far - dead_reserve_origin, 0.0), 0.0)
+        excluded = round(dead_reserve_origin + user_origin_still_held, 4)
+        return excluded, round(total_taken - excluded, 4)
     in_float = round(min(comp_total, user_origin), 4)
     return round(comp_total - in_float, 4), in_float
 
@@ -201,7 +254,9 @@ def fetch_algorand(url):
     reserve = held(ALGO_RESERVE); bridge = held(ALGO_BRIDGE)
     comp = {a: round(held(a), 4) for a in ALGO_COMPROMISED}
     comp_total = round(sum(comp.values()), 4)
-    comp_excl, comp_float = _split_compromised(comp_total, ALGO_USER_ORIGIN)
+    comp_excl, comp_float = _split_compromised(
+        comp_total, ALGO_USER_ORIGIN,
+        total_taken=ALGO_TOTAL_TAKEN, dead_reserve_origin=ALGO_DEAD_RESERVE_ORIGIN)
     return {"total_supply": round(total, 4), "reserve": round(reserve, 4),
             "bridge_wallet": round(bridge, 4),
             "compromised": comp_total, "compromised_detail": comp,
@@ -227,7 +282,9 @@ def fetch_stellar(url):
     treasury = rio_balance(STELLAR_TREASURY)
     comp = {a: round(rio_balance(a), 4) for a in STELLAR_COMPROMISED}
     comp_total = round(sum(comp.values()), 4)
-    comp_excl, comp_float = _split_compromised(comp_total, STELLAR_USER_ORIGIN)
+    comp_excl, comp_float = _split_compromised(
+        comp_total, STELLAR_USER_ORIGIN,
+        total_taken=STELLAR_TOTAL_TAKEN, dead_reserve_origin=STELLAR_DEAD_TREASURY_ORIGIN)
     return {"total_supply": round(total, 4), "treasury": round(treasury, 4),
             "compromised": comp_total, "compromised_detail": comp,
             "compromised_excluded": comp_excl, "compromised_in_float": comp_float,
@@ -254,7 +311,8 @@ def fetch_native(url):
         except Exception:
             comp[addr] = 0.0
     comp_total = round(sum(comp.values()), 4)
-    comp_excl, comp_float = _split_compromised(comp_total, NATIVE_USER_ORIGIN)
+    comp_excl, comp_float = _split_compromised(
+        comp_total, 0 if "native" in BLACKLISTED_FULL_EXCLUDE else NATIVE_USER_ORIGIN)
     out = {"total": round(total, 4), "bridge_escrow": round(escrow, 4),
            "compromised": comp_total, "compromised_detail": comp,
            "compromised_excluded": comp_excl, "compromised_in_float": comp_float,
@@ -539,6 +597,18 @@ def build_snapshot():
         (algo.get("compromised_in_float", 0) if isinstance(algo, dict) else 0)
         + (xlm.get("compromised_in_float", 0) if isinstance(xlm, dict) else 0)
         + (nat.get("compromised_in_float", 0) if isinstance(nat, dict) else 0), 2)
+    # Summed directly from each chain's own compromised_excluded, NOT derived as
+    # compromised_total - compromised_in_float. Under the 11 Sep dead-reserve
+    # policy (Algorand, Stellar), the excluded amount is anchored to the fixed
+    # reserve/treasury-origin figure taken at the time of the theft, not to the
+    # live balance still sitting at the attacker's address - so once the
+    # attacker sells, compromised_total (a live-balance sum) falls while the
+    # true excluded amount does not. Deriving by subtraction would silently
+    # let sold reserve-origin tokens flow back into the headline figure.
+    compromised_excluded = round(
+        (algo.get("compromised_excluded", 0) if isinstance(algo, dict) else 0)
+        + (xlm.get("compromised_excluded", 0) if isinstance(xlm, dict) else 0)
+        + (nat.get("compromised_excluded", 0) if isinstance(nat, dict) else 0), 2)
 
     chains = {
         "realio_native": {**nat},
@@ -619,7 +689,7 @@ def build_snapshot():
             "chains": chains, "tradable_total": tradable, "native_cap": NATIVE_CAP,
             "compromised_total": compromised_total,
             "compromised_in_float": compromised_in_float,
-            "compromised_excluded": round(compromised_total - compromised_in_float, 2),
+            "compromised_excluded": compromised_excluded,
             "price_usd": price["price_usd"], "price_source": price["price_source"],
             "market_cap_usd": mcap,
             "volume_24h_usd": price["volume_24h_usd"], "volume_source": price["volume_source"],

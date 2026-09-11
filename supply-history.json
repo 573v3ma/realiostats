@@ -3172,9 +3172,9 @@
         "compromised_detail": {
           "realio1uzkdrfnjv53rt0cf4ltszffpd7mvkpd2cv794j": 5732040.9057
         },
-        "compromised_excluded": 0.0,
-        "compromised_in_float": 5732040.9057,
-        "circulating": 88484887.7708,
+        "compromised_excluded": 5732040.91,
+        "compromised_in_float": 0.0,
+        "circulating": 82752846.8651,
         "height": 19585218,
         "block_time_utc": "2026-09-11T10:20:18.703968433Z",
         "block_age_s": 11.5,
@@ -3200,9 +3200,9 @@
         "compromised_detail": {
           "RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A": 40349824.4045
         },
-        "compromised_excluded": 38703699.6645,
-        "compromised_in_float": 1646124.74,
-        "circulating": 12927166.5657,
+        "compromised_excluded": 45496985.0,
+        "compromised_in_float": 0.0,
+        "circulating": 6133881.2302,
         "_source": "https://mainnet-api.algonode.cloud"
       },
       "stellar": {
@@ -3212,9 +3212,9 @@
         "compromised_detail": {
           "GBDMMICWFVSSU5YIKIVWG6EP3U65R2GIF7BICN3JIBES5NVGFZFLWXKZ": 0.0
         },
-        "compromised_excluded": 0.0,
-        "compromised_in_float": 0.0,
-        "circulating": 74999843.3882,
+        "compromised_excluded": 69071099.13,
+        "compromised_in_float": 476685.0,
+        "circulating": 5928744.2582,
         "_source": "https://horizon.stellar.org"
       },
       "solana": {
@@ -3228,14 +3228,14 @@
         "circulating": 0
       }
     },
-    "tradable_total": 402493116.82,
+    "tradable_total": 320896691.45,
     "native_cap": 175000000,
     "compromised_total": 46081865.31,
-    "compromised_in_float": 7378165.65,
-    "compromised_excluded": 38703699.66,
+    "compromised_in_float": 476685.0,
+    "compromised_excluded": 120300125.04,
     "price_usd": 0.04965814,
     "price_source": "coingecko",
-    "market_cap_usd": 19987059.54,
+    "market_cap_usd": 15935132.83,
     "volume_24h_usd": 240415.12,
     "volume_source": "coingecko",
     "mint": {
@@ -3264,7 +3264,9 @@
       "EXCLUDED_WALLET_MOVED:algorand.compromised:43,409,824->40,349,824",
       "EXCLUDED_WALLET_MOVED:stellar.compromised:69,547,784->0",
       "compromised_balance:46,081,865",
-      "emission_block_time_unavailable"
+      "emission_block_time_unavailable",
+      "MANUAL_ADJUSTMENT:2026-09-11T12:20Z:algorand+native fully excluded per Realio-reported blacklist, unverified independently",
+      "MANUAL_ADJUSTMENT:2026-09-11T18:30Z:algorand+stellar reserve/treasury-origin (43,850,860.26 + 69,071,099.13) permanently excluded as dead per Realio's 27 Aug tweet, regardless of live attacker balance; user-origin portion still counted once actually sold"
     ]
   }
 ]
