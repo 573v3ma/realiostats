@@ -535,8 +535,12 @@ function render(latest, liveSeries, fullArr){
     //   whether the attacker has since sold it. The user-origin share is excluded
     //   only while it sits unsold at the attacker's address; once actually sold to
     //   a third party it is counted, same as ever.
-    // - "blacklisted" (native, since 11 Sep 2026): the whole balance is excluded on
-    //   Realio's unverified validator-channel claim that the address was frozen.
+    // - "blacklisted" (native): the whole balance would be excluded on Realio's
+    //   unverified validator-channel claim that the address was frozen. In force
+    //   11 Sep 2026 12:20-13:40 UTC only; reversed per Steve at 13:40 UTC because
+    //   Realio controls this chain and has said a recovery is coming for affected
+    //   holders, so the native card renders nothing while compromised_excluded is 0.
+    //   Kept in the code so it can be reinstated in one line if that changes.
     {k:"Algorand · compromised (25 Aug 2026)",
      v:(typeof a.compromised_excluded==="number"?a.compromised_excluded:a.compromised),
      inFloat:(typeof a.compromised_in_float==="number"?a.compromised_in_float:0),

@@ -137,17 +137,21 @@ ALGO_USER_ORIGIN    = 1_646_124.74   # 45,496,985 swept on Algorand, less the 43
 STELLAR_USER_ORIGIN =   476_685.00   # deposits swept after the main treasury drain
 NATIVE_USER_ORIGIN  = 5_732_040.91   # the entire native leg came from ordinary holders
 
-# 11 Sep 2026, native: Realio's validator channel states the attacker's
-# native-chain address has been blacklisted on-chain. We could not confirm
-# that ourselves: the account shows no visible restriction on direct query
-# (see incident.html, 12:20 UTC update). We are excluding it from float on
-# Realio's stated position while we monitor, by treating the whole compromised
-# amount as excluded rather than splitting by origin. Native has no
-# reserve/treasury-origin component (the entire leg came from ordinary
-# holders), so this is the whole policy for that chain. Revert by removing it
-# from this set the moment the on-chain data contradicts Realio's position or
-# Realio's position changes.
-BLACKLISTED_FULL_EXCLUDE = {"native"}
+# 11 Sep 2026, native, 12:20 UTC: Realio's validator channel stated the
+# attacker's native-chain address had been blacklisted on-chain. We could not
+# confirm that ourselves (see incident.html, 12:20 UTC update), and excluded
+# it from float on Realio's stated position while monitoring.
+#
+# 11 Sep 2026, native, reversed per Steve: the native leg is held back in
+# because Realio controls this chain directly and has said a future chain
+# update will allow recovery of funds for affected holders (Eduardo, 28 Aug,
+# see incident.html), unlike Algorand and Stellar, which Realio does not
+# control and has called a dead asset outright. Counting it now, rather than
+# waiting for that recovery to land and then adding it, avoids the token
+# either being missed once or counted twice. BLACKLISTED_FULL_EXCLUDE is kept,
+# empty, so a chain can be dropped back into it in one line if the blacklist
+# claim is ever independently confirmed or the recovery plan falls through.
+BLACKLISTED_FULL_EXCLUDE = set()
 
 # 11 Sep 2026, Algorand and Stellar: on 27 Aug 2026 Realio's own account
 # (@realio_network) posted that RIO on Algorand and Stellar "is a dead asset"

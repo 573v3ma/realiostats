@@ -3172,9 +3172,9 @@
         "compromised_detail": {
           "realio1uzkdrfnjv53rt0cf4ltszffpd7mvkpd2cv794j": 5732040.9057
         },
-        "compromised_excluded": 5732040.91,
-        "compromised_in_float": 0.0,
-        "circulating": 82752846.8651,
+        "compromised_excluded": 0.0,
+        "compromised_in_float": 5732040.9057,
+        "circulating": 88484887.7708,
         "height": 19585218,
         "block_time_utc": "2026-09-11T10:20:18.703968433Z",
         "block_age_s": 11.5,
@@ -3228,14 +3228,14 @@
         "circulating": 0
       }
     },
-    "tradable_total": 320896691.45,
+    "tradable_total": 326628732.36,
     "native_cap": 175000000,
     "compromised_total": 46081865.31,
-    "compromised_in_float": 476685.0,
-    "compromised_excluded": 120300125.04,
+    "compromised_in_float": 6208725.91,
+    "compromised_excluded": 114568084.13,
     "price_usd": 0.04965814,
     "price_source": "coingecko",
-    "market_cap_usd": 15935132.83,
+    "market_cap_usd": 16219775.32,
     "volume_24h_usd": 240415.12,
     "volume_source": "coingecko",
     "mint": {
@@ -3266,7 +3266,8 @@
       "compromised_balance:46,081,865",
       "emission_block_time_unavailable",
       "MANUAL_ADJUSTMENT:2026-09-11T12:20Z:algorand+native fully excluded per Realio-reported blacklist, unverified independently",
-      "MANUAL_ADJUSTMENT:2026-09-11T18:30Z:algorand+stellar reserve/treasury-origin (43,850,860.26 + 69,071,099.13) permanently excluded as dead per Realio's 27 Aug tweet, regardless of live attacker balance; user-origin portion still counted once actually sold"
+      "MANUAL_ADJUSTMENT:2026-09-11T13:10Z:algorand+stellar reserve/treasury-origin (43,850,860.26 + 69,071,099.13) permanently excluded as dead per Realio's 27 Aug tweet, regardless of live attacker balance; user-origin portion still counted once actually sold",
+      "MANUAL_ADJUSTMENT:2026-09-11T13:40Z:native-chain compromised balance (5,732,040.9057) restored to circulating, per Steve: Realio controls this chain directly and has said a future update will allow recovery of funds for affected holders, unlike Algorand/Stellar which are treated as a dead asset outright; reverses the 12:20Z exclusion"
     ]
   }
 ]
