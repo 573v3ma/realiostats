@@ -691,7 +691,18 @@ function drawChart(liveSeries){
         const ath=PRE.findIndex(r=>r.label==="Mar 2024");
         if(ath>=0) mark(scales.x.getPixelForValue(ath), "All-time high", "right");
         mark((scales.x.getPixelForValue(nPre-1)+scales.x.getPixelForValue(nPre))/2, "Migration", "left");
+        const rIdx = rows.findIndex(r=>r.reissued);
+        if(rIdx>0) mark((scales.x.getPixelForValue(rIdx-1)+scales.x.getPixelForValue(rIdx))/2, "MEXC moves to Ethereum", "right");
       } else {
+        const rIdx = rows.findIndex(r=>r.reissued);
+        if(rIdx>0){
+          const xr=(scales.x.getPixelForValue(rIdx-1)+scales.x.getPixelForValue(rIdx))/2;
+          ctx.strokeStyle="rgba(15,23,42,0.3)";ctx.setLineDash([3,4]);ctx.lineWidth=1;
+          ctx.beginPath();ctx.moveTo(xr,chartArea.top+18);ctx.lineTo(xr,chartArea.bottom);ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle="#0b1015";ctx.textAlign="right";
+          ctx.fillText("MEXC moves to Ethereum", xr-6, chartArea.top+14);
+        }
         const x2=scales.x.getPixelForValue(2);
         ctx.fillStyle="rgba(100,116,139,0.14)";
         ctx.fillRect(chartArea.left,chartArea.top,x2-chartArea.left,chartArea.bottom-chartArea.top);
@@ -737,7 +748,13 @@ const perChain = s => ({
   ethereum:+M(s.chains.ethereum.circulating).toFixed(2),
   algorand:+M(s.chains.algorand.circulating).toFixed(2),
   stellar:+M(s.chains.stellar.circulating).toFixed(2),
-  solana:+M(s.chains.solana.circulating).toFixed(2)
+  solana:+M(s.chains.solana.circulating).toFixed(2),
+  // True from the first reading after the 11 Sep 2026 MEXC reissuance. The
+  // Algorand band steps down and Ethereum steps up by the same 50.3M on that
+  // reading. Nothing left public hands, so the total is flat across it, but a
+  // stacked band with no marker reads as a collapse, which is exactly the
+  // misreading the pre-12-Sep chart invited. The chart marks it instead.
+  reissued: typeof s.chains.algorand.mexc_custody === "number"
 });
 
 /* Tradable float ladder. computeFloat() lives in core.js because the supply
