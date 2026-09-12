@@ -1,8 +1,8 @@
 {
- "as_of": "2026-09-11T10:21:50Z",
- "height": 19585232,
+ "as_of": "2026-09-12T09:53:20Z",
+ "height": 19600156,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 135858110.21,
+ "bonded_weight": 135458133.01,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
@@ -72,7 +72,7 @@
   },
   {
    "moniker": "Realio Pro Max USA \ud83d\uddfd REStake\u2705",
-   "weight": 4375087.21,
+   "weight": 3975087.21,
    "commission": 0.05,
    "jailed": false
   },
@@ -162,13 +162,13 @@
   },
   {
    "moniker": "cryptobtcbuyer | Low fees \u26a1",
-   "weight": 1829056.7,
+   "weight": 1829066.39,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "NodeStake",
-   "weight": 1262551.52,
+   "weight": 1262552.52,
    "commission": 0.1,
    "jailed": false
   },
@@ -228,13 +228,13 @@
   },
   {
    "moniker": "[NODERS]",
-   "weight": 470345.19,
+   "weight": 470345.4,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Kynraze | RIO",
-   "weight": 375428.64,
+   "weight": 375440.54,
    "commission": 0.05,
    "jailed": false
   },
