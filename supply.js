@@ -16,7 +16,10 @@
    issuance in near-identical ~10M blocks (89.3M of 92.8M at the end of 2020;
    empty from mid-2023, after which they no longer affect the figure), all read
    from a full replay of the contract's Transfer log. Algorand is its fixed
-   100M less the reserve and bridge wallets at that round. Native is supply
+   100M less the reserve at that round. It used to also deduct the wallet this
+   site called a bridge, which is really MEXC custody; that deduction was
+   removed on 12 Sep 2026 and every Algorand figure in this series was restated
+   upward accordingly. Native is supply
    less the community pool, from genesis in April 2023. Stellar is held flat
    throughout, the one estimate in the series.                                */
 const PRE = [
@@ -25,20 +28,20 @@ const PRE = [
   {label:"Dec 2021", ethereum:4.20,  bnb:0,     algorand:1.24,  stellar:5.86, native:0,     solana:0},
   {label:"Jun 2022", ethereum:8.23,  bnb:0,     algorand:0.85,  stellar:5.86, native:0,     solana:0},
   {label:"Dec 2022", ethereum:52.07, bnb:0,     algorand:0.78,  stellar:5.86, native:0,     solana:0},
-  {label:"Jun 2023", ethereum:59.10, bnb:0,     algorand:40.10, stellar:5.86, native:45.69, solana:0},
-  {label:"Dec 2023", ethereum:60.40, bnb:64.76, algorand:69.50, stellar:5.86, native:47.32, solana:0},
-  {label:"Mar 2024", ethereum:61.06, bnb:55.52, algorand:77.70, stellar:5.86, native:48.06, solana:0},
-  {label:"Jun 2024", ethereum:61.74, bnb:60.62, algorand:73.92, stellar:5.86, native:48.83, solana:0},
-  {label:"Sep 2024", ethereum:62.36, bnb:73.30, algorand:68.71, stellar:5.86, native:49.56, solana:0}
+  {label:"Jun 2023", ethereum:59.10, bnb:0,     algorand:59.70, stellar:5.86, native:45.69, solana:0},
+  {label:"Dec 2023", ethereum:60.40, bnb:64.76, algorand:69.94, stellar:5.86, native:47.32, solana:0},
+  {label:"Mar 2024", ethereum:61.06, bnb:55.52, algorand:78.08, stellar:5.86, native:48.06, solana:0},
+  {label:"Jun 2024", ethereum:61.74, bnb:60.62, algorand:76.45, stellar:5.86, native:48.83, solana:0},
+  {label:"Sep 2024", ethereum:62.36, bnb:73.30, algorand:70.19, stellar:5.86, native:49.56, solana:0}
 ];
 const HISTORY = [
-  {label:"Dec 2024", bnb:118.65, native:58.09, ethereum:56.81, algorand:56.36, stellar:5.86, solana:0},
-  {label:"Mar 2025", bnb:143.00, native:66.14, ethereum:59.63, algorand:55.59, stellar:5.86, solana:0.5},
-  {label:"Jun 2025", bnb:163.25, native:73.65, ethereum:65.83, algorand:49.47, stellar:5.86, solana:1.0},
-  {label:"Sep 2025", bnb:162.24, native:74.29, ethereum:66.47, algorand:48.93, stellar:5.86, solana:1.0},
-  {label:"Dec 2025", bnb:143.96, native:92.96, ethereum:64.40, algorand:48.21, stellar:5.86, solana:1.0},
-  {label:"Mar 2026", bnb:143.80, native:92.16, ethereum:66.88, algorand:47.88, stellar:5.86, solana:1.04},
-  {label:"Jun 2026", bnb:156.44, native:83.97, ethereum:69.54, algorand:7.73,  stellar:5.86, solana:1.07}
+  {label:"Dec 2024", bnb:118.65, native:58.09, ethereum:56.81, algorand:63.79, stellar:5.86, solana:0},
+  {label:"Mar 2025", bnb:143.00, native:66.14, ethereum:59.63, algorand:61.21, stellar:5.86, solana:0.5},
+  {label:"Jun 2025", bnb:163.25, native:73.65, ethereum:65.83, algorand:55.31, stellar:5.86, solana:1.0},
+  {label:"Sep 2025", bnb:162.24, native:74.29, ethereum:66.47, algorand:55.95, stellar:5.86, solana:1.0},
+  {label:"Dec 2025", bnb:143.96, native:92.96, ethereum:64.40, algorand:57.01, stellar:5.86, solana:1.0},
+  {label:"Mar 2026", bnb:143.80, native:92.16, ethereum:66.88, algorand:56.31, stellar:5.86, solana:1.04},
+  {label:"Jun 2026", bnb:156.44, native:83.97, ethereum:69.54, algorand:56.19,  stellar:5.86, solana:1.07}
 ];
 const STACK = [
   {key:"native",   name:"Realio Native", color:"#10b981"},
@@ -79,10 +82,16 @@ const CHAINS = [
 // NOT added back: it is proven bridge escrow, and its flows already net to zero
 // inside tradable_total, so adding it would reintroduce the bug inverted.
 //
-// Caveat: assumes the Algorand "bridge wallet" is a team wallet rather than
-// escrow. Evidence supports it (uniform 3,999 drips to one fixed address, not
-// user-shaped bridge withdrawals) but it is unconfirmed. If it is escrow, an
-// Algorand->EVM bridge would read as a false positive here.
+// 12 Sep 2026, RESOLVED: that wallet was never a bridge and was never a team
+// wallet. It is MEXC custody on Algorand. It was funded with 39,843,749.81 RIO
+// straight from the MEXC hot wallet on 24 Jun 2026, it shows exchange traffic
+// (151 distinct depositors, 78 distinct withdrawal destinations over its last
+// 1,000 RIO transactions), and its balance plus the MEXC hot wallet equals the
+// 50,292,275.94 RIO minted on Ethereum on 11 Sep 2026 to within 0.49 RIO, which
+// Realio confirmed is MEXC. Exchange-held customer RIO is float on this site, so
+// it is counted as float for every date up to the reissuance, and the Algorand
+// units are treated as retired from then on, the same way the deprecated
+// pre-2024 Ethereum contract is. Neither wallet belongs in teamHeld.
 // 25 Aug 2026: the Algorand "compromised" bucket is added back here for exactly
 // the same reason reserve and bridge_wallet are. Those RIO were already in
 // existence and already excluded from float; they simply changed hands. Without
@@ -97,10 +106,13 @@ const CHAINS = [
 // split was before any of it was reclassified.
 function teamHeld(s){
   const a = (s.chains && s.chains.algorand) || {};
-  if(typeof a.reserve !== "number" || typeof a.bridge_wallet !== "number") return null;
+  if(typeof a.reserve !== "number") return null;
   const comp = (typeof a.compromised_excluded === "number") ? a.compromised_excluded
              : (typeof a.compromised === "number" ? a.compromised : 0);
-  return a.reserve + a.bridge_wallet + comp;
+  // The MEXC wallets are deliberately absent: float before the 11 Sep 2026
+  // reissuance, retired after it. Including them would put a 50.3M step into
+  // net-new supply on a one-for-one replacement that moved nothing into public hands.
+  return a.reserve + comp;
 }
 function netNewSupply(s){
   const t = teamHeld(s);
@@ -171,8 +183,8 @@ function computeWhatMoved(arr, expectedDaily){
   const perChain = CHAINS.map(c=>{
     let d;
     if(c.key === "algorand"){
-      const teamA = (a.chains.algorand.reserve||0)+(a.chains.algorand.bridge_wallet||0);
-      const teamB = (b.chains.algorand.reserve||0)+(b.chains.algorand.bridge_wallet||0);
+      const teamA = (a.chains.algorand.reserve||0);
+      const teamB = (b.chains.algorand.reserve||0);
       d = (circOf(b,"algorand")+teamB) - (circOf(a,"algorand")+teamA);
     } else if(c.key === "base"){
       d = 0; // backing locked on Ethereum, always counts 0
@@ -497,11 +509,11 @@ function render(latest, liveSeries, fullArr){
       dot.className="idot warn";
       const compExcl = (typeof latest.compromised_excluded === "number") ? latest.compromised_excluded : comp;
       const compFloat = (typeof latest.compromised_in_float === "number") ? latest.compromised_in_float : 0;
-      it.innerHTML="Emission cannot be measured cleanly across this window. On 25 August 2026 roughly 124.4M RIO moved out of Realio-controlled wallets and holder accounts across five chains. "
-        +fmtInt(comp)+" RIO is still attacker-held: "+fmtInt(compExcl)+" of it was already excluded from float before the sweep and stays excluded, while "
-        +fmtInt(compFloat)+" came out of holder wallets and is still counted as circulating, because being stolen does not take a token out of public hands"
+      it.innerHTML="Emission cannot be measured cleanly across this window. On 25 August 2026 roughly 124.4M RIO moved out of Realio-controlled wallets and holder accounts across five chains, and "
+        +fmtInt(comp)+" RIO is still attacker-held today. Of what was taken, "+fmtInt(compExcl)+" came out of reserve and treasury wallets that were never counted as float and stays excluded whether or not it is sold, while "
+        +fmtInt(compFloat)+" came out of ordinary holder wallets and is counted as circulating, because those holders are to be allowed to claim their tokens back and being stolen does not take a token out of public hands"
         +(halted ? ". The native chain has stopped producing blocks, so its supply reading is frozen" : "")
-        +". No RIO was minted on any chain. <a href=\"incident.html\">See the incident report</a>.";
+        +". No RIO was minted on any chain in the theft itself. Separately, on 11 September 2026 Realio minted 50,292,276 RIO on Ethereum to reissue MEXC's Algorand holdings ahead of Algorand being retired. That is a one-for-one replacement, not new float: the matching Algorand units are treated as retired here, so the circulating figure is unchanged by it. <a href=\"incident.html\">See the incident report</a>.";
     } else if(ed && obs.perDay <= ed*1.25){
       dot.className="idot ok";
       it.textContent="Circulating RIO supply is growing within the scheduled ~"+pct+"% emission. No unexplained minting detected over the measured window.";
@@ -532,9 +544,10 @@ function render(latest, liveSeries, fullArr){
     // - "dead-reserve" (Algorand, Stellar, since 11 Sep 2026): the reserve/treasury-
     //   origin share of what the attacker took is excluded permanently, on Realio's
     //   27 Aug tweet calling RIO on these two chains a dead asset, regardless of
-    //   whether the attacker has since sold it. The user-origin share is excluded
-    //   only while it sits unsold at the attacker's address; once actually sold to
-    //   a third party it is counted, same as ever.
+    //   whether the attacker has since sold it. The user-origin share is counted
+    //   as circulating unconditionally from 12 Sep 2026: Realio intends to let
+    //   those holders claim their tokens back, so the claim is live whether or
+    //   not the attacker has sold the stolen units yet.
     // - "blacklisted" (native): the whole balance would be excluded on Realio's
     //   unverified validator-channel claim that the address was frozen. In force
     //   11 Sep 2026 12:20-13:40 UTC only; reversed per Steve at 13:40 UTC because
@@ -569,16 +582,21 @@ function render(latest, liveSeries, fullArr){
         ? "Held by the attacker since the 25 August theft, all of it originally from ordinary holder wallets. Realio's validator channel reports this address has been blacklisted on-chain, and we exclude it on that basis while we monitor. We could not confirm the freeze ourselves as of 11 September: the address showed no active on-chain restriction on direct query. We will restore this balance to circulating if that does not hold up."
         : "On 27 August 2026 Realio's own account posted that RIO on this chain is \"a dead asset,\" warning against buying it. The reserve or treasury share of what the attacker took here is treated as permanently excluded on that basis, whether or not the attacker has sold it. Realio's stated position, not something we can confirm independently: this is forward-looking, based on a plan to make pre-theft holders whole (likely via a migration to another chain), not a completed migration. We will keep watching how that plays out."
       }${
-        c.inFloat>0 ? " A further "+fmtInt(c.inFloat)+" RIO taken here came from holder wallets rather than reserve or treasury; once actually sold to a third party it <b>is counted as circulating</b>, because being stolen does not take a token out of public hands." : ""
+        c.inFloat>0 ? " A further "+fmtInt(c.inFloat)+" RIO taken here came from holder wallets rather than reserve or treasury, and <b>is counted as circulating</b>: those holders are to be allowed to claim their tokens back, so the claim is live, and being stolen does not take a token out of public hands in any case." : ""
       } <a href="incident.html">Incident report</a>.</div>
       ${c.url ? `<div style="margin-top:8px"><a href="${c.url}" target="_blank" rel="noopener">Verify ↗</a></div>` : ""}</div>`).join("");
   document.getElementById("exclGrid").innerHTML = compCards + `
     <div class="ex"><div class="exk">Algorand · reserve</div><div class="exv">${fmtM(M(a.reserve))}</div>
       <div class="exa">GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA</div>
       <div style="margin-top:8px"><a href="https://allo.info/account/GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA" target="_blank" rel="noopener">Verify ↗</a></div></div>
-    <div class="ex"><div class="exk">Algorand · bridge wallet</div><div class="exv">${fmtM(M(a.bridge_wallet))}</div>
+    ${typeof a.mexc_custody==="number" && a.mexc_custody>0 ? `<div class="ex"><div class="exk">Algorand · MEXC custody (retired)</div><div class="exv">${fmtM(M(a.mexc_custody))}</div>
       <div class="exa">M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM</div>
-      <div style="margin-top:8px"><a href="https://allo.info/account/M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM" target="_blank" rel="noopener">Verify ↗</a></div></div>
+      <div class="exn">This site called this a bridge wallet until 12 September 2026. It is not. It is MEXC custody, funded with 39,843,749.81 RIO from the MEXC hot wallet on 24 June 2026. Realio reissued this balance on Ethereum on 11 September 2026 because Algorand is being retired, so it is counted on Ethereum now and these Algorand units are treated as retired. They still exist on chain, and Realio has called RIO on Algorand a dead asset. Until the reissuance it was ordinary exchange float, and this site's history now counts it as float.</div>
+      <div style="margin-top:8px"><a href="https://allo.info/account/M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM" target="_blank" rel="noopener">Verify ↗</a></div></div>` : ""}
+    ${typeof a.mexc_hot_wallet==="number" && a.mexc_hot_wallet>0 ? `<div class="ex"><div class="exk">Algorand · MEXC hot wallet (retired)</div><div class="exv">${fmtM(M(a.mexc_hot_wallet))}</div>
+      <div class="exa">ZEJPIFQF5MSDOB3YA6OUG4S26FFX64SCTHKDMYCCB26JGG7DC4IPBWQSLQ</div>
+      <div class="exn">The second half of the same reissuance. These two wallets together held 50,292,275.45 RIO against the 50,292,275.94 minted on Ethereum, a difference of 0.49 RIO.</div>
+      <div style="margin-top:8px"><a href="https://allo.info/account/ZEJPIFQF5MSDOB3YA6OUG4S26FFX64SCTHKDMYCCB26JGG7DC4IPBWQSLQ" target="_blank" rel="noopener">Verify ↗</a></div></div>` : ""}
     <div class="ex"><div class="exk">Stellar · treasury (realio.fund)</div><div class="exv">${fmtM(M(s.treasury))}</div>
       <div class="exa">GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L</div>
       <div style="margin-top:8px"><a href="https://stellar.expert/explorer/public/account/GBRKMQ4IO5UURRRFLGLDIWBOWEF7ENC2BU5PB26ATAQRSWIZALE5EW2L" target="_blank" rel="noopener">Verify ↗</a></div></div>`;
@@ -592,7 +610,7 @@ function render(latest, liveSeries, fullArr){
    at the March 2024 high against the same three today. The 2024 figures are
    fixed history: 248.2M float, and CoinGecko's daily close of $2.7769 on 28
    March 2024 (it touched $3.11 intraday). Today's are live. */
-const ATH_FLOAT_M = 248.2, ATH_PRICE = 2.7769;
+const ATH_FLOAT_M = 248.6, ATH_PRICE = 2.7769;
 function renderFloatVsPrice(latest){
   const el = document.getElementById("fvpNow"); if(!el) return;
   const px = (FLOAT_VOL && FLOAT_VOL.price_latest_usd) || (latest && latest.price_usd);

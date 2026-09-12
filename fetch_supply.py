@@ -76,7 +76,23 @@ BASE_L1_BRIDGE = "0x3154cf16ccdb4c6d922629664174b904d80f2c35"
 SOL_MINT = "HELn8rSM1rp8vAjNH4NYXzX6FvCbwWMGqLfaMgiBnZFV"
 ALGO_ASA = 2751733
 ALGO_RESERVE = "GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA"
-ALGO_BRIDGE  = "M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM"
+# 12 Sep 2026: this wallet was labelled "bridge" here since the 5 Jul revision.
+# It is not a bridge. It is MEXC custody on Algorand, and excluding it is why
+# that revision cut the headline from ~376.9M to ~326.4M. Proof:
+#   * funded with 39,843,749.81 RIO straight from the MEXC hot wallet
+#     ZEJPIFQF5M... on 24 Jun 2026, the single largest transfer it has ever seen
+#   * exchange behaviour, not bridge behaviour: 151 distinct depositors and 78
+#     distinct withdrawal destinations across its last 1,000 RIO transactions
+#   * holds 5,335,358 ALGO, exchange scale
+#   * decisive: this balance plus the MEXC hot wallet equals the 50,292,275.94
+#     RIO minted on Ethereum at 21:10:23 UTC on 11 Sep 2026 to within 0.49 RIO,
+#     which Derek Boirun confirmed is MEXC
+# Both wallets stay excluded from here, but as DEAD-AND-REISSUED Algorand units
+# whose live counterpart is now the Ethereum ERC-20, not as a bridge escrow.
+# The Ethereum mint is where these tokens are counted now.
+ALGO_MEXC_CUSTODY = "M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM"
+ALGO_MEXC_HOT     = "ZEJPIFQF5MSDOB3YA6OUG4S26FFX64SCTHKDMYCCB26JGG7DC4IPBWQSLQ"
+ALGO_BRIDGE  = ALGO_MEXC_CUSTODY  # deprecated alias, kept so supply.js keeps rendering
 # Balances that are provably OUTSIDE Realio's control but are NOT public float.
 # 25 Aug 2026: this account was created at round 64396365 and, between 04:52:50
 # and 08:39:30 UTC, received balances swept from 8,908 distinct Algorand
@@ -178,8 +194,15 @@ BLACKLISTED_FULL_EXCLUDE = set()
 # walks back the "dead asset" position (drop it).
 ALGO_TOTAL_TAKEN            = 45_496_985.00
 ALGO_DEAD_RESERVE_ORIGIN    = 43_850_860.26
-STELLAR_TOTAL_TAKEN         = 69_547_784.13
-STELLAR_DEAD_TREASURY_ORIGIN = 69_071_099.13
+# 12 Sep 2026 correction: these two were derived by back-solving from the
+# attacker's LIVE Stellar balance at 13:06 on 25 Aug (69,547,784.13), by which
+# point 798,252.61 of treasury-origin RIO had already been sold on the Stellar
+# DEX. That understated both figures by that amount and is why Stellar's
+# circulating figure went UP after the theft. The documented historical facts
+# are the treasury balance actually swept, 69,869,351.74 (see STELLAR_COMPROMISED
+# above and the 24 Aug snapshot), plus the 476,685.00 of later deposits.
+STELLAR_TOTAL_TAKEN         = 70_346_036.74
+STELLAR_DEAD_TREASURY_ORIGIN = 69_869_351.74
 
 def _split_compromised(comp_total, user_origin, total_taken=None, dead_reserve_origin=0.0):
     """Return (stays_excluded, counted_as_float).
@@ -203,9 +226,15 @@ def _split_compromised(comp_total, user_origin, total_taken=None, dead_reserve_o
     correspondingly increase what counts as float).
     """
     if dead_reserve_origin > 0 and total_taken is not None:
-        sold_so_far = max(total_taken - comp_total, 0.0)
-        user_origin_still_held = max(user_origin - max(sold_so_far - dead_reserve_origin, 0.0), 0.0)
-        excluded = round(dead_reserve_origin + user_origin_still_held, 4)
+        # 12 Sep 2026, per Steve: legitimate holders whose RIO was swept on these
+        # chains will be allowed to claim their tokens back, so their claim is
+        # live and counts as circulating supply from now on, whether or not the
+        # attacker has sold the stolen units yet. Only the reserve/treasury-origin
+        # amount is dead. Both figures are fixed historical facts about 25 Aug
+        # 2026, so neither moves with the attacker's live balance any more, which
+        # also removes the last place where our headline could drift because of
+        # an attacker's trading decisions.
+        excluded = round(dead_reserve_origin, 4)
         return excluded, round(total_taken - excluded, 4)
     in_float = round(min(comp_total, user_origin), 4)
     return round(comp_total - in_float, 4), in_float
@@ -255,7 +284,9 @@ def fetch_algorand(url):
             return h["asset-holding"]["amount"] / 10**dec
         except Exception:
             return 0.0
-    reserve = held(ALGO_RESERVE); bridge = held(ALGO_BRIDGE)
+    reserve = held(ALGO_RESERVE)
+    mexc_custody = held(ALGO_MEXC_CUSTODY); mexc_hot = held(ALGO_MEXC_HOT)
+    bridge = mexc_custody  # deprecated key name, see ALGO_MEXC_CUSTODY above
     comp = {a: round(held(a), 4) for a in ALGO_COMPROMISED}
     comp_total = round(sum(comp.values()), 4)
     comp_excl, comp_float = _split_compromised(
@@ -263,9 +294,12 @@ def fetch_algorand(url):
         total_taken=ALGO_TOTAL_TAKEN, dead_reserve_origin=ALGO_DEAD_RESERVE_ORIGIN)
     return {"total_supply": round(total, 4), "reserve": round(reserve, 4),
             "bridge_wallet": round(bridge, 4),
+            "mexc_custody": round(mexc_custody, 4),
+            "mexc_hot_wallet": round(mexc_hot, 4),
+            "mexc_total": round(mexc_custody + mexc_hot, 4),
             "compromised": comp_total, "compromised_detail": comp,
             "compromised_excluded": comp_excl, "compromised_in_float": comp_float,
-            "circulating": round(total - reserve - bridge - comp_excl, 4)}
+            "circulating": round(total - reserve - mexc_custody - mexc_hot - comp_excl, 4)}
 
 def fetch_stellar(url):
     r = _get(f"{url}/assets?asset_code=RIO&asset_issuer={STELLAR_ISSUER}")["_embedded"]["records"][0]
@@ -653,7 +687,13 @@ def build_snapshot():
     # excluded. The rest is inside `tradable` already, so adding it here would
     # double-count it in global_total.
     if isinstance(algo, dict):
-        excluded += algo.get("reserve", 0) + algo.get("bridge_wallet", 0) + algo.get("compromised_excluded", 0)
+        # The MEXC Algorand wallets are deliberately NOT added here. Since the
+        # 11 Sep 2026 reissuance onto Ethereum those units are retired, the same
+        # treatment this site already gives the deprecated pre-2024 Ethereum
+        # contract: excluded from every count, noted as still existing on chain.
+        # Adding them would put a 50.3M step into the global figure for a
+        # one-for-one replacement and would double-count the same claim.
+        excluded += algo.get("reserve", 0) + algo.get("compromised_excluded", 0)
     if isinstance(xlm, dict):  excluded += xlm.get("treasury", 0) + xlm.get("compromised_excluded", 0)
     # NOTE: native compromised is already inside nat["total"], so it is deliberately
     # NOT added here. Adding it would double-count it in the global figure.
