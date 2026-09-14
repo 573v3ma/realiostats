@@ -1,8 +1,8 @@
 {
- "as_of": "2026-09-13T10:53:11Z",
- "height": 19615990,
+ "as_of": "2026-09-14T11:23:14Z",
+ "height": 19631491,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 135458158.17,
+ "bonded_weight": 135458859.75,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
@@ -24,7 +24,7 @@
   },
   {
    "moniker": "Rose Validators | $DSTRX",
-   "weight": 7236054.9,
+   "weight": 7236320.29,
    "commission": 0.05,
    "jailed": false
   },
@@ -54,7 +54,7 @@
   },
   {
    "moniker": "genznodes",
-   "weight": 6619217.98,
+   "weight": 6619632.94,
    "commission": 0.05,
    "jailed": false
   },
@@ -72,7 +72,7 @@
   },
   {
    "moniker": "Realio Pro Max USA \ud83d\uddfd REStake\u2705",
-   "weight": 3975087.21,
+   "weight": 3975088.33,
    "commission": 0.05,
    "jailed": false
   },
@@ -228,13 +228,13 @@
   },
   {
    "moniker": "[NODERS]",
-   "weight": 470345.61,
+   "weight": 470345.71,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Kynraze | RIO",
-   "weight": 375450.54,
+   "weight": 375451.54,
    "commission": 0.05,
    "jailed": false
   },
@@ -264,7 +264,7 @@
   },
   {
    "moniker": "Apollo",
-   "weight": 288678.96,
+   "weight": 288697.96,
    "commission": 0.05,
    "jailed": false
   },
