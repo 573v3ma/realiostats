@@ -1,8 +1,8 @@
 {
- "as_of": "2026-09-15T10:47:10Z",
- "height": 19646314,
+ "as_of": "2026-09-16T10:35:32Z",
+ "height": 19661345,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 135458728.83,
+ "bonded_weight": 135468746.15,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
@@ -36,7 +36,7 @@
   },
   {
    "moniker": "Realio Italy \ud83c\uddee\ud83c\uddf9 \ud83c\udf0f",
-   "weight": 7016991.8,
+   "weight": 7017002.15,
    "commission": 0.05,
    "jailed": false
   },
@@ -90,7 +90,7 @@
   },
   {
    "moniker": "NodesHub | DSTRX ",
-   "weight": 3519891.61,
+   "weight": 3529884.61,
    "commission": 0.05,
    "jailed": false
   },
@@ -156,7 +156,7 @@
   },
   {
    "moniker": "Blockval",
-   "weight": 2382929.7,
+   "weight": 2382939.7,
    "commission": 0.05,
    "jailed": false
   },
@@ -228,13 +228,13 @@
   },
   {
    "moniker": "[NODERS]",
-   "weight": 470345.92,
+   "weight": 470346.13,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Kynraze | Low fees",
-   "weight": 375451.54,
+   "weight": 375455.29,
    "commission": 0.05,
    "jailed": false
   },
