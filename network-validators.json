@@ -1,12 +1,12 @@
 {
- "as_of": "2026-09-16T10:35:32Z",
- "height": 19661345,
+ "as_of": "2026-09-17T10:45:29Z",
+ "height": 19676685,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 135468746.15,
+ "bonded_weight": 133743261.02,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
-   "weight": 7534308.62,
+   "weight": 7534309.92,
    "commission": 0.05,
    "jailed": false
   },
@@ -18,7 +18,7 @@
   },
   {
    "moniker": "Teshy 103k Bonded RIO",
-   "weight": 7337828.19,
+   "weight": 7338447.19,
    "commission": 0.05,
    "jailed": false
   },
@@ -36,7 +36,7 @@
   },
   {
    "moniker": "Realio Italy \ud83c\uddee\ud83c\uddf9 \ud83c\udf0f",
-   "weight": 7017002.15,
+   "weight": 7060258.08,
    "commission": 0.05,
    "jailed": false
   },
@@ -48,13 +48,13 @@
   },
   {
    "moniker": "Reallionaires Club | RIO",
-   "weight": 6630843.8,
+   "weight": 6673643.28,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "genznodes",
-   "weight": 6619632.94,
+   "weight": 6621474.11,
    "commission": 0.05,
    "jailed": false
   },
@@ -120,7 +120,7 @@
   },
   {
    "moniker": "dnsarz | DSTRX",
-   "weight": 3251598.62,
+   "weight": 3251634.18,
    "commission": 0.05,
    "jailed": false
   },
@@ -161,14 +161,8 @@
    "jailed": false
   },
   {
-   "moniker": "cryptobtcbuyer | Low fees \u26a1",
-   "weight": 1820711.51,
-   "commission": 0.05,
-   "jailed": false
-  },
-  {
    "moniker": "NodeStake",
-   "weight": 1262552.52,
+   "weight": 1265651.9,
    "commission": 0.1,
    "jailed": false
   },
@@ -180,7 +174,7 @@
   },
   {
    "moniker": "hubprovider",
-   "weight": 824498.07,
+   "weight": 826997.57,
    "commission": 0.05,
    "jailed": false
   },
@@ -228,7 +222,7 @@
   },
   {
    "moniker": "[NODERS]",
-   "weight": 470346.13,
+   "weight": 471346.03,
    "commission": 0.05,
    "jailed": false
   },
@@ -294,7 +288,7 @@
   },
   {
    "moniker": "AlxVoy \u26a1 ANODE.TEAM",
-   "weight": 56813.47,
+   "weight": 56822.97,
    "commission": 0.08,
    "jailed": false
   },
@@ -312,7 +306,7 @@
   },
   {
    "moniker": "Berito",
-   "weight": 42600.25,
+   "weight": 42665.91,
    "commission": 0.1,
    "jailed": false
   },
