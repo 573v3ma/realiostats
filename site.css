@@ -129,6 +129,7 @@
   .wm-chip .wm-name{color:var(--muted)}
   .wm-chip .wm-val{font-family:"Space Grotesk";font-weight:600;letter-spacing:-.01em}
   .wm-chip .wm-val.up{color:var(--green-ink)} .wm-chip .wm-val.down{color:#e11d48}
+  .chg.up{color:var(--mint)} .chg.down{color:#fb7185} .chg.flat{color:var(--card-muted)}
   .proj{border:1px solid var(--line);border-radius:var(--radius);padding:26px 26px 22px;background:var(--bg);box-shadow:var(--shadow-sm);margin-bottom:14px}
   .proj-h{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.14em;text-transform:uppercase}
   .proj-lede{font-size:13.5px;color:var(--muted);margin:8px 0 18px}

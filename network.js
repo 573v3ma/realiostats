@@ -160,21 +160,126 @@ function renderValidators(s, vd) {
     + "as delegations shift.";
 }
 
+/* Staking flow — how the bonded base has moved day to day, not just where it
+   sits today. Same source file as the ladder (network-history.json), just the
+   full run instead of only the last row. bonded_weight/not_bonded are voting
+   weight across all three staking denoms (see #base), not a RIO count, so the
+   flow here is a decentralisation/confidence signal rather than a RIO amount. */
+let FLOW_CHART = null;
+
+const flowCls = d => d > 0 ? "up" : d < 0 ? "down" : "flat";
+const flowStr = d => (d > 0 ? "+" : "") + fmtM(M(d));
+
+function renderStakingFlow(hist) {
+  const wrap = document.getElementById("staking");
+  if (!wrap || !Array.isArray(hist) || hist.length === 0) return;
+
+  const rows = hist.filter(r => r.staking && typeof r.staking.bonded_weight === "number");
+  const latest = rows[rows.length - 1];
+  const first = rows[0];
+  const st = latest.staking;
+  const rio = (st.pool_by_denom || []).find(x => x.label === "RIO");
+  const rioPct = (rio && latest.ario_supply) ? 100 * rio.amount / latest.ario_supply : null;
+
+  const netTotal = rows.length > 1 ? latest.staking.bonded_weight - first.staking.bonded_weight : 0;
+  const days = rows.length > 1
+    ? Math.max(1, Math.round((new Date(latest.ts) - new Date(first.ts)) / 86400000)) : 0;
+
+  document.getElementById("flowChips").innerHTML =
+      `<div class="chip"><div class="cn">Bonded voting weight</div><div class="cv">${fmtM(M(st.bonded_weight))}</div>
+        <div class="cx">across RIO, RST and DSTRX combined</div></div>`
+    + `<div class="chip"><div class="cn">Net flow${days ? " · " + days + "d" : ""}</div>
+        <div class="cv chg ${flowCls(netTotal)}">${rows.length > 1 ? flowStr(netTotal) : "—"}</div>
+        <div class="cx">${rows.length > 1
+            ? (netTotal >= 0 ? "more staked than unstaked" : "more unstaked than staked") + " since tracking began"
+            : "tracking just started, check back tomorrow"}</div></div>`
+    + `<div class="chip"><div class="cn">RIO bonding ratio</div><div class="cv">${rioPct != null ? rioPct.toFixed(1) + "%" : "—"}</div>
+        <div class="cx">of circulating native RIO supply</div></div>`
+    + `<div class="chip"><div class="cn">Unbonding queue</div><div class="cv">${fmtM(M(st.not_bonded))}</div>
+        <div class="cx">mid-unbond, liquid again within ${st.unbonding_time ? Math.round(parseInt(st.unbonding_time) / 86400) : 7} days</div></div>`;
+
+  const labels = rows.map(r => new Date(r.ts).toLocaleDateString("en-GB", { day: "numeric", month: "short" }));
+  const bonded = rows.map(r => +M(r.staking.bonded_weight).toFixed(3));
+  const dayFlow = rows.map((r, i) => i === 0 ? null : +(r.staking.bonded_weight - rows[i - 1].staking.bonded_weight).toFixed(0));
+
+  if (FLOW_CHART) FLOW_CHART.destroy();
+  FLOW_CHART = new Chart(document.getElementById("flowChart"), {
+    data: {
+      labels,
+      datasets: [
+        { type: "bar", label: "Net daily flow", data: dayFlow, yAxisID: "y1",
+          backgroundColor: dayFlow.map(d => d == null ? "transparent" : d >= 0 ? "#34d399" : "#fb7185"),
+          borderRadius: 3, order: 2 },
+        { type: "line", label: "Bonded weight", data: bonded, yAxisID: "y",
+          borderColor: "#0b1015", backgroundColor: "#0b1015", borderWidth: 2, tension: .25,
+          pointRadius: rows.length < 40 ? 3 : 0, pointBackgroundColor: "#0b1015", fill: false, order: 1 }
+      ]
+    },
+    plugins: [watermarkPlugin],
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: { duration: 300 },
+      interaction: { mode: "index", intersect: false },
+      scales: {
+        y: { position: "left", grid: { color: "#eef1f4" },
+             ticks: { callback: v => v + "M", color: "#69747f", font: { family: "Inter" } },
+             title: { display: true, text: "Bonded weight (M)", color: "#69747f", font: { family: "Inter", size: 11 } } },
+        y1: { position: "right", grid: { display: false },
+              ticks: { callback: v => (v >= 0 ? "+" : "") + fmtInt(v), color: "#69747f", font: { family: "Inter" } },
+              title: { display: true, text: "Net daily flow", color: "#69747f", font: { family: "Inter", size: 11 } } },
+        x: { grid: { display: false }, ticks: { color: "#69747f", font: { family: "Inter", size: 11 }, maxRotation: 0, autoSkipPadding: 14 } }
+      },
+      plugins: {
+        legend: { labels: { color: "#0b1015", font: { family: "Inter", size: 12 }, boxWidth: 12, usePointStyle: true } },
+        tooltip: { callbacks: {
+          label: c => c.dataset.yAxisID === "y1"
+            ? ` Net flow: ${c.parsed.y == null ? "—" : (c.parsed.y >= 0 ? "+" : "") + fmtInt(c.parsed.y)}`
+            : ` Bonded weight: ${(+c.parsed.y).toFixed(2)}M`
+        } }
+      }
+    }
+  });
+
+  document.getElementById("flowCap").innerHTML =
+    (rows.length < 5
+      ? "This panel started tracking on " + new Date(first.ts).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+        + ", so the trend is thin for now; it fills in with every daily reading. "
+      : "")
+    + "This is <b>net</b> flow: the day-over-day change in total bonded weight. Staking rewards are not auto-bonded on Realio "
+    + "(they sit in the rewards pool until claimed), so a change here reflects real delegation activity, not compounding. "
+    + "It cannot show <b>gross</b> staking and unstaking separately, a day with heavy churn in both directions that nets to "
+    + "zero looks flat here. Read alongside the validator-concentration trend below for the fuller confidence picture: bonded "
+    + "weight rising while concentration also rises is a different signal than both moving together the other way.";
+}
+
+function renderConcentrationTrend(hist) {
+  const el = document.getElementById("valTrend");
+  if (!el) return;
+  const rows = hist.filter(r => r.validators && typeof r.validators.nakamoto_coefficient === "number");
+  if (rows.length < 2) { el.textContent = ""; return; }
+  const first = rows[0].validators, last = rows[rows.length - 1].validators;
+  const days = Math.max(1, Math.round((new Date(rows[rows.length - 1].ts) - new Date(rows[0].ts)) / 86400000));
+  const dTop10 = last.top10_pct - first.top10_pct;
+  el.innerHTML = `Over the last ${days} days: Nakamoto coefficient ${first.nakamoto_coefficient} → <b>${last.nakamoto_coefficient}</b>`
+    + `, top 10 share ${first.top10_pct.toFixed(1)}% → <b>${last.top10_pct.toFixed(1)}%</b> `
+    + `<span class="chg ${flowCls(-dTop10)}">(${dTop10 >= 0 ? "+" : ""}${dTop10.toFixed(1)}pp)</span>.`;
+}
+
 function loadNetwork() {
   return fetch("./network-history.json", { cache: "no-store" })
     .then(r => r.json())
-    .then(arr => arr[arr.length - 1])
-    .catch(() => NET_FALLBACK);
+    .then(arr => ({ hist: arr, latest: arr[arr.length - 1] }))
+    .catch(() => ({ hist: [NET_FALLBACK], latest: NET_FALLBACK }));
 }
 
-loadNetwork().then(s => {
+loadNetwork().then(({ hist, latest: s }) => {
   renderLadder(s);
   renderBase(s);
+  renderStakingFlow(hist);
   const stamp = document.getElementById("netUpdated");
   if (stamp && s.ts) stamp.textContent = new Date(s.ts)
     .toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
   return fetch("./network-validators.json", { cache: "no-store" })
     .then(r => r.ok ? r.json() : null)
     .catch(() => null)
-    .then(vd => renderValidators(s, vd));
+    .then(vd => { renderValidators(s, vd); renderConcentrationTrend(hist); });
 });
