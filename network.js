@@ -192,7 +192,8 @@ function renderStakingFlow(hist) {
 
   document.getElementById("flowChips").innerHTML =
       `<div class="chip"><div class="cn">Bonded voting weight</div><div class="cv">${fmtM(M(st.bonded_weight))}</div>
-        <div class="cx">across RIO, RST and DSTRX combined</div></div>`
+        <div class="cx">across RIO, RST and DSTRX combined</div>
+        <div class="cx" id="bondedUsd">valuing at current prices…</div></div>`
     + `<div class="chip"><div class="cn">Net flow · ${dayLabel}</div>
         <div class="cv chg ${netDay == null ? "flat" : flowCls(netDay)}">${netDay == null ? "—" : flowStr(netDay)}</div>
         <div class="cx">${netDay == null
@@ -207,6 +208,8 @@ function renderStakingFlow(hist) {
         <div class="cx">of circulating native RIO supply</div></div>`
     + `<div class="chip"><div class="cn">Unbonding queue</div><div class="cv">${fmtM(M(st.not_bonded))}</div>
         <div class="cx">mid-unbond, liquid again within ${st.unbonding_time ? Math.round(parseInt(st.unbonding_time) / 86400) : 7} days</div></div>`;
+
+  renderBondedUsd(st);
 
   const labels = rows.map(r => new Date(r.ts).toLocaleDateString("en-GB", { day: "numeric", month: "short" }));
   const bonded = rows.map(r => +M(r.staking.bonded_weight).toFixed(3));
@@ -259,6 +262,49 @@ function renderStakingFlow(hist) {
     + "It cannot show <b>gross</b> staking and unstaking separately, a day with heavy churn in both directions that nets to "
     + "zero looks flat here. Read alongside the validator-concentration trend below for the fuller confidence picture: bonded "
     + "weight rising while concentration also rises is a different signal than both moving together the other way.";
+}
+
+/* Dollar value of the bonded base at current prices. Bonded weight is a mix of
+   three denoms, so it has no single price: each denom's share of the
+   multistaking pool is applied to bonded_weight (the pool also holds unbonding
+   tokens) and priced separately. RIO is live from CoinGecko. DSTRX is listed
+   there but trades thinly, so its price is shown as last reported. RST (Realio
+   Security Token) has no public market price and is left unpriced rather than
+   guessed, so the total is a floor. If CoinGecko is unreachable, RIO falls back
+   to the price in the latest supply snapshot and DSTRX is dropped. */
+const CG_IDS = { RIO: "realio-network", DSTRX: "districts" };
+
+function renderBondedUsd(st) {
+  const el = document.getElementById("bondedUsd");
+  if (!el) return;
+  const rows = st.pool_by_denom || [], pool = st.multistaking_pool_total;
+  if (!rows.length || !pool) { el.textContent = ""; return; }
+  const bonded = lbl => { const r = rows.find(x => x.label === lbl); return r ? r.amount * st.bonded_weight / pool : 0; };
+
+  const paint = (prices, live) => {
+    const parts = [];
+    let total = 0;
+    ["RIO", "DSTRX"].forEach(l => {
+      const p = prices[l];
+      if (typeof p !== "number") return;
+      const v = bonded(l) * p;
+      total += v;
+      parts.push(l + " " + fmtBig(v));
+    });
+    if (!parts.length) { el.textContent = ""; return; }
+    el.innerHTML = `≈ <b>${fmtBig(total)}</b> at ${live ? "current" : "last snapshot"} prices`
+      + `<br><span style="opacity:.8">${parts.join(" + ")}, RST unpriced (no public market)</span>`;
+  };
+
+  fetch("https://api.coingecko.com/api/v3/simple/price?ids=" + Object.values(CG_IDS).join(",") + "&vs_currencies=usd")
+    .then(r => { if (!r.ok) throw 0; return r.json(); })
+    .then(d => {
+      const prices = { RIO: (d[CG_IDS.RIO] || {}).usd, DSTRX: (d[CG_IDS.DSTRX] || {}).usd };
+      if (typeof prices.RIO !== "number") throw 0;
+      paint(prices, true);
+    })
+    .catch(() => loadSupply().then(({ latest }) =>
+      paint({ RIO: latest && latest.price_usd }, false)));
 }
 
 function renderConcentrationTrend(hist) {
