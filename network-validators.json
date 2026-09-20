@@ -1,8 +1,8 @@
 {
- "as_of": "2026-09-19T10:03:50Z",
- "height": 19706704,
+ "as_of": "2026-09-20T10:23:07Z",
+ "height": 19722157,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 133707622.96,
+ "bonded_weight": 133667127.68,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
@@ -48,19 +48,19 @@
   },
   {
    "moniker": "Reallionaires Club | RIO",
-   "weight": 6671397.15,
+   "weight": 6671402.85,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "genznodes",
-   "weight": 6621474.11,
+   "weight": 6622914.2,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "min fee\ud83c\udf84 \ud835\udc25\ud835\udc1e\ud835\udc2c\ud835\udc27\ud835\udc22\ud835\udc24 | \ud835\udc14\ud835\udc13\ud835\udc12\ud835\udc00",
-   "weight": 5261253.03,
+   "weight": 5261378.03,
    "commission": 0.05,
    "jailed": false
   },
@@ -222,13 +222,13 @@
   },
   {
    "moniker": "[NODERS]",
-   "weight": 471346.46,
+   "weight": 471346.77,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Kynraze | Low fees",
-   "weight": 361585.29,
+   "weight": 361505.29,
    "commission": 0.05,
    "jailed": false
   },
@@ -240,20 +240,20 @@
   },
   {
    "moniker": "Indonode | RIO | Low Fees",
-   "weight": 317409.91,
+   "weight": 313644.24,
    "commission": 0.1,
-   "jailed": false
-  },
-  {
-   "moniker": "Stefani",
-   "weight": 306538.96,
-   "commission": 0.07,
    "jailed": false
   },
   {
    "moniker": "KonsorTech | RST",
    "weight": 300047.42,
    "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "Stefani",
+   "weight": 296749.94,
+   "commission": 0.07,
    "jailed": false
   },
   {
@@ -288,7 +288,7 @@
   },
   {
    "moniker": "AlxVoy \u26a1 ANODE.TEAM",
-   "weight": 56822.97,
+   "weight": 56813.0,
    "commission": 0.08,
    "jailed": false
   },
@@ -306,7 +306,7 @@
   },
   {
    "moniker": "Berito",
-   "weight": 42665.91,
+   "weight": 14244.19,
    "commission": 0.1,
    "jailed": false
   },
