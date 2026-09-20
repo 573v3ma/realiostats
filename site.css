@@ -322,17 +322,7 @@
   .nav nav a{ font-size:12.5px; padding:4px 0; }
 }
 
-  /* ---- incident page + supply-page notice (added 25 Aug 2026) ---- */
-  .inc-banner{display:flex;gap:14px;align-items:flex-start;margin:0 0 26px;
-    padding:16px 18px;border:1px solid #f0c9c0;border-left:3px solid #c2410c;
-    background:#fdf6f3;border-radius:var(--radius-sm)}
-  .inc-banner .ib-i{flex:0 0 auto;width:9px;height:9px;margin-top:8px;border-radius:50%;
-    background:#c2410c;box-shadow:0 0 0 4px rgba(194,65,12,.13)}
-  .inc-banner .ib-t{font-size:14.5px;line-height:1.62;color:var(--body)}
-  .inc-banner .ib-t b{color:var(--ink)}
-  .inc-banner .ib-t p{margin:0 0 10px}
-  .inc-banner .ib-t p:last-child{margin-bottom:0}
-  .inc-banner a{color:#9a3412;font-weight:500;text-decoration:underline;text-underline-offset:3px}
+  /* ---- incident page (added 25 Aug 2026) ---- */
   .inc-status{margin:0 0 34px;padding:18px 20px;border:1px solid var(--line);
     border-left:3px solid #c2410c;background:var(--alt);border-radius:var(--radius-sm)}
   .inc-status-h{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--ink);
