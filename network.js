@@ -114,8 +114,25 @@ function renderBase(s) {
   const max = Math.max(...rows.map(r => r.amount), 1);
   document.getElementById("baseBody").innerHTML = rows.map(r =>
     `<tr><td><span class="vbar" style="width:${Math.round(46 * r.amount / max)}px"></span>${r.label}</td>
-         <td>${fmtM(M(r.amount))}</td><td>${r.pct_of_pool}%</td></tr>`).join("")
-    + `<tr class="lq-total"><td>Multistaking pool</td><td>${fmtM(M(st.multistaking_pool_total))}</td><td>100%</td></tr>`;
+         <td>${fmtM(M(r.amount))} <span class="base-usd" data-label="${r.label}" style="color:#69747f"></span></td><td>${r.pct_of_pool}%</td></tr>`).join("")
+    + `<tr class="lq-total"><td>Multistaking pool</td><td>${fmtM(M(st.multistaking_pool_total))} <span class="base-usd" data-label="TOTAL" style="color:#69747f"></span></td><td>100%</td></tr>`;
+
+  // Dollar value in brackets beside each amount. RST has no public market, so
+  // it reads "unpriced" and the pool total is a floor ("≥").
+  getPrices().then(({ prices, live }) => {
+    let total = 0, priced = 0;
+    rows.forEach(r => { const p = prices[r.label]; if (typeof p === "number") { total += r.amount * p; priced++; } });
+    document.querySelectorAll("#baseBody .base-usd").forEach(el => {
+      const l = el.dataset.label;
+      if (l === "TOTAL") { el.textContent = priced ? "(≥ " + usdShort(total) + ")" : ""; return; }
+      const r = rows.find(x => x.label === l), p = prices[l];
+      el.textContent = typeof p === "number" ? "(" + usdShort(r.amount * p) + ")" : "(unpriced)";
+    });
+    const cap = document.getElementById("baseUsdNote");
+    if (cap) cap.innerHTML = "Dollar values in brackets use " + (live ? "current CoinGecko prices" : "the last snapshot RIO price")
+      + ". DSTRX trades very thinly, so its figure is a last reported price rather than a deep market. "
+      + "RST has no public market price and is left unpriced rather than guessed, so the pool total is a floor.";
+  });
 
   document.getElementById("baseNote").innerHTML =
     "Realio uses multistaking: validators are secured by RIO, RST and DSTRX together, each bonded at "
@@ -272,6 +289,9 @@ function renderStakingFlow(hist) {
    Security Token) has no public market price and is left unpriced rather than
    guessed, so the total is a floor. If CoinGecko is unreachable, RIO falls back
    to the price in the latest supply snapshot and DSTRX is dropped. */
+/* $3.4M / $245k: compact so it fits beside the token amount. */
+const usdShort = n => !isFinite(n) ? "—" : n >= 1e6 ? "$" + (n / 1e6).toFixed(1) + "M" : n >= 1e3 ? "$" + Math.round(n / 1e3) + "k" : "$" + Math.round(n);
+
 const CG_IDS = { RIO: "realio-network", DSTRX: "districts" };
 
 function renderBondedUsd(st) {
@@ -289,22 +309,30 @@ function renderBondedUsd(st) {
       if (typeof p !== "number") return;
       const v = bonded(l) * p;
       total += v;
-      parts.push(l + " " + fmtBig(v));
+      parts.push(l + " " + usdShort(v));
     });
     if (!parts.length) { el.textContent = ""; return; }
-    el.innerHTML = `≈ <b>${fmtBig(total)}</b> at ${live ? "current" : "last snapshot"} prices`
+    el.innerHTML = `≈ <b>${usdShort(total)}</b> at ${live ? "current" : "last snapshot"} prices`
       + `<br><span style="opacity:.8">${parts.join(" + ")}, RST unpriced (no public market)</span>`;
   };
 
-  fetch("https://api.coingecko.com/api/v3/simple/price?ids=" + Object.values(CG_IDS).join(",") + "&vs_currencies=usd")
+  getPrices().then(({ prices, live }) => paint(prices, live));
+}
+
+/* One CoinGecko call per page load, shared by the staking-flow chip and the
+   base table. Resolves to { prices: {RIO, DSTRX}, live }. */
+let PRICES_P = null;
+function getPrices() {
+  if (PRICES_P) return PRICES_P;
+  PRICES_P = fetch("https://api.coingecko.com/api/v3/simple/price?ids=" + Object.values(CG_IDS).join(",") + "&vs_currencies=usd")
     .then(r => { if (!r.ok) throw 0; return r.json(); })
     .then(d => {
       const prices = { RIO: (d[CG_IDS.RIO] || {}).usd, DSTRX: (d[CG_IDS.DSTRX] || {}).usd };
       if (typeof prices.RIO !== "number") throw 0;
-      paint(prices, true);
+      return { prices, live: true };
     })
-    .catch(() => loadSupply().then(({ latest }) =>
-      paint({ RIO: latest && latest.price_usd }, false)));
+    .catch(() => loadSupply().then(({ latest }) => ({ prices: { RIO: latest && latest.price_usd }, live: false })));
+  return PRICES_P;
 }
 
 function renderConcentrationTrend(hist) {
