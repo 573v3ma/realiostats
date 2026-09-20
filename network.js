@@ -185,10 +185,20 @@ function renderStakingFlow(hist) {
   const days = rows.length > 1
     ? Math.max(1, Math.round((new Date(latest.ts) - new Date(first.ts)) / 86400000)) : 0;
 
+  const prev = rows.length > 1 ? rows[rows.length - 2] : null;
+  const netDay = prev ? latest.staking.bonded_weight - prev.staking.bonded_weight : null;
+  const gapH = prev ? Math.round((new Date(latest.ts) - new Date(prev.ts)) / 3600000) : null;
+  const dayLabel = gapH == null ? "24h" : Math.abs(gapH - 24) <= 3 ? "24h" : gapH + "h";
+
   document.getElementById("flowChips").innerHTML =
       `<div class="chip"><div class="cn">Bonded voting weight</div><div class="cv">${fmtM(M(st.bonded_weight))}</div>
         <div class="cx">across RIO, RST and DSTRX combined</div></div>`
-    + `<div class="chip"><div class="cn">Net flow${days ? " · " + days + "d" : ""}</div>
+    + `<div class="chip"><div class="cn">Net flow · ${dayLabel}</div>
+        <div class="cv chg ${netDay == null ? "flat" : flowCls(netDay)}">${netDay == null ? "—" : flowStr(netDay)}</div>
+        <div class="cx">${netDay == null
+            ? "need a second reading"
+            : (netDay >= 0 ? "staked more than unstaked" : "unstaked more than staked") + " vs the previous snapshot"}</div></div>`
+    + `<div class="chip"><div class="cn">Net flow${days ? " · since tracking, " + days + "d" : ""}</div>
         <div class="cv chg ${flowCls(netTotal)}">${rows.length > 1 ? flowStr(netTotal) : "—"}</div>
         <div class="cx">${rows.length > 1
             ? (netTotal >= 0 ? "more staked than unstaked" : "more unstaked than staked") + " since tracking began"
