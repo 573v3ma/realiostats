@@ -217,9 +217,8 @@ function renderStakingFlow(hist) {
   const dayLabel = gapH == null ? "24h" : Math.abs(gapH - 24) <= 3 ? "24h" : gapH + "h";
 
   document.getElementById("flowChips").innerHTML =
-      `<div class="chip"><div class="cn">Bonded voting weight</div><div class="cv">${fmtM(M(st.bonded_weight))}</div>
-        <div class="cx">across RIO, RST and DSTRX combined</div>
-        <div class="cx" id="bondedUsd">valuing at current prices…</div></div>`
+      `<div class="chip"><div class="cn">Bonded voting weight</div><div class="cv">${fmtM(M(st.bonded_weight))} <span id="bondedUsd" style="font-size:.55em;font-weight:500;color:#69747f"></span></div>
+        <div class="cx">across RIO, RST and DSTRX combined</div></div>`
     + `<div class="chip"><div class="cn">Net flow · ${dayLabel}</div>
         <div class="cv chg ${netDay == null ? "flat" : flowCls(netDay)}">${netDay == null ? "—" : flowStr(netDay)}</div>
         <div class="cx">${netDay == null
@@ -321,8 +320,9 @@ function renderBondedUsd(st) {
       parts.push(l + " " + usdShort(v));
     });
     if (!parts.length) { el.textContent = ""; return; }
-    el.innerHTML = `≈ <b>${usdShort(total)}</b> at ${live ? "current" : "last snapshot"} prices`
-      + `<br><span style="opacity:.8">${parts.join(" + ")}, RST unpriced (no public market)</span>`;
+    // Floor: RST has no public price. Breakdown stays in the tooltip only.
+    el.textContent = "(≥ " + usdShort(total) + ")";
+    el.title = parts.join(" + ") + ", RST unpriced (no public market), at " + (live ? "current" : "last snapshot") + " prices";
   };
 
   getPrices().then(({ prices, live }) => paint(prices, live));
