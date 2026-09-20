@@ -207,9 +207,13 @@ function renderStakingFlow(hist) {
   const rio = (st.pool_by_denom || []).find(x => x.label === "RIO");
   const rioPct = (rio && latest.ario_supply) ? 100 * rio.amount / latest.ario_supply : null;
 
-  const netTotal = rows.length > 1 ? latest.staking.bonded_weight - first.staking.bonded_weight : 0;
+  // Rolling 30-day window: baseline is the latest reading at least 30 days old,
+  // or the first reading while history is still shorter than that.
+  const cutoff = new Date(latest.ts) - 30 * 86400000;
+  const base30 = rows.filter(r => new Date(r.ts) <= cutoff + 12 * 3600000).pop() || first;
+  const netTotal = rows.length > 1 ? latest.staking.bonded_weight - base30.staking.bonded_weight : 0;
   const days = rows.length > 1
-    ? Math.max(1, Math.round((new Date(latest.ts) - new Date(first.ts)) / 86400000)) : 0;
+    ? Math.min(30, Math.max(1, Math.round((new Date(latest.ts) - new Date(base30.ts)) / 86400000))) : 0;
 
   const prev = rows.length > 1 ? rows[rows.length - 2] : null;
   const netDay = prev ? latest.staking.bonded_weight - prev.staking.bonded_weight : null;
@@ -224,10 +228,10 @@ function renderStakingFlow(hist) {
         <div class="cx">${netDay == null
             ? "need a second reading"
             : (netDay >= 0 ? "staked more than unstaked" : "unstaked more than staked") + " vs the previous snapshot"}</div></div>`
-    + `<div class="chip"><div class="cn">Net flow${days ? " · since tracking, " + days + "d" : ""}</div>
+    + `<div class="chip"><div class="cn">Net flow${days ? " · " + days + "d" : ""}</div>
         <div class="cv chg ${flowCls(netTotal)}">${rows.length > 1 ? flowStr(netTotal) : "—"}</div>
         <div class="cx">${rows.length > 1
-            ? (netTotal >= 0 ? "more staked than unstaked" : "more unstaked than staked") + " since tracking began"
+            ? (netTotal >= 0 ? "more staked than unstaked" : "more unstaked than staked") + " over the last " + days + " days"
             : "tracking just started, check back tomorrow"}</div></div>`
     + `<div class="chip"><div class="cn">RIO bonding ratio</div><div class="cv">${rioPct != null ? rioPct.toFixed(1) + "%" : "—"}</div>
         <div class="cx">of circulating native RIO supply</div></div>`
