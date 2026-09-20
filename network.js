@@ -90,7 +90,7 @@ function renderLadder(s) {
     "None of these numbers is wrong, and none of them contradicts the others. They measure "
     + "different points on the same chain of deductions, which is why quoting any single one "
     + "without its basis causes arguments. Between the headline APR and what lands in a wallet "
-    + (gap ? "there is about a <b>" + gap + "% difference</b>" : "there is a material difference")
+    + (gap ? "there is about " + (/^(8|11|18)/.test(gap) ? "an" : "a") + " <b>" + gap + "% difference</b>" : "there is a material difference")
     + ", and every step of it is on-chain and checkable."
     + " RIO staking rewards are always paid in RIO.";
 
