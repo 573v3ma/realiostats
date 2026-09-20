@@ -69,13 +69,13 @@ function renderLadder(s) {
        + "delegator pool, and it is the figure we verified against the chain by sampling a "
        + "validator's accruing rewards directly." },
 
-    { v: pct2(y.after_max_commission) + "–" + pct2(y.after_min_commission), sub: "in your wallet", cls: "is-final",
-      k: 'After validator commission <span class="rtag">what you receive</span>',
-      x: "Your validator's cut comes off your share. Commission across the active set currently runs "
-       + pct0(cMin) + " to " + pct0(cMax) + ", so where you delegate moves this by roughly "
-       + ((y.after_min_commission && y.after_max_commission)
-          ? (100 * (y.after_min_commission - y.after_max_commission)).toFixed(2) + " points"
-          : "a fraction of a point") + "." }
+    { v: pct2(y.after_min_commission), sub: "in your wallet", cls: "is-final",
+      k: 'After ' + pct0(cMin) + ' validator commission <span class="rtag">what you receive</span>',
+      x: "Your validator's cut comes off your share. " + pct0(cMin) + " is the network minimum and what the "
+       + "large majority of validators charge"
+       + '<span id="commShare"></span>'
+       + ", so it is the figure to use. The few validators above the minimum charge up to " + pct0(cMax)
+       + (y.after_max_commission ? ", which would bring this to " + pct2(y.after_max_commission) : "") + "." }
   ];
 
   document.getElementById("ladder").innerHTML = rungs.map(r =>
@@ -84,8 +84,8 @@ function renderLadder(s) {
        <div><div class="rk">${r.k}</div><div class="rx">${r.x}</div></div>
      </div>`).join("");
 
-  const gap = (y.official_apr && y.after_max_commission)
-    ? (100 * (1 - y.after_max_commission / y.official_apr)).toFixed(0) : null;
+  const gap = (y.official_apr && y.after_min_commission)
+    ? (100 * (1 - y.after_min_commission / y.official_apr)).toFixed(0) : null;
   document.getElementById("ladderRead").innerHTML =
     "None of these numbers is wrong, and none of them contradicts the others. They measure "
     + "different points on the same chain of deductions, which is why quoting any single one "
@@ -103,7 +103,7 @@ function renderLadder(s) {
     + "</code>, block-rate adjusted. The method behind rung 4 was checked against the chain directly on "
     + "21 August 2026, by reading a validator's outstanding rewards over a 39-second window and annualising: "
     + "4.59% measured against 4.58% derived at that moment, a 0.14% difference. The live figure above moves "
-    + "with block time and the bonded base. Commission is the live range across the active set, not a promise about any one validator. "
+    + "with block time and the bonded base. The final rung uses the network minimum commission, which is what most validators charge; check your own validator's rate. "
     + "This is a yield figure, not part of the supply count.";
 }
 
@@ -160,6 +160,15 @@ function renderValidators(s, vd) {
   const body = document.getElementById("valBody");
   if (!vd || !Array.isArray(vd.validators)) { body.innerHTML = ""; return; }
   const total = vd.bonded_weight || vd.validators.reduce((a, x) => a + x.weight, 0);
+
+  // Back the ladder's "most validators charge the minimum" with the live count.
+  const cs = document.getElementById("commShare");
+  if (cs && v.commission_min != null) {
+    const atMin = vd.validators.filter(x => Math.abs(x.commission - v.commission_min) < 1e-9);
+    const wMin = atMin.reduce((a, x) => a + x.weight, 0);
+    cs.innerHTML = " (<b>" + atMin.length + " of " + vd.validators.length + "</b> active validators, holding <b>"
+      + (100 * wMin / total).toFixed(1) + "%</b> of stake)";
+  }
   // The set spans four orders of magnitude, from 7.6M down to a few thousand.
   // fmtM would render the tail as a wall of "0.00M", so small stakes show whole.
   const w = n => n >= 1e5 ? fmtM(M(n)) : fmtInt(n);
