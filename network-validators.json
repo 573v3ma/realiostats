@@ -1,12 +1,12 @@
 {
- "as_of": "2026-09-20T10:23:07Z",
- "height": 19722157,
+ "as_of": "2026-09-21T11:36:57Z",
+ "height": 19738185,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 133667127.68,
+ "bonded_weight": 133669063.95,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
-   "weight": 7534267.92,
+   "weight": 7533527.92,
    "commission": 0.05,
    "jailed": false
   },
@@ -24,7 +24,7 @@
   },
   {
    "moniker": "Rose Validators | $DSTRX",
-   "weight": 7236320.29,
+   "weight": 7236393.37,
    "commission": 0.05,
    "jailed": false
   },
@@ -48,13 +48,13 @@
   },
   {
    "moniker": "Reallionaires Club | RIO",
-   "weight": 6671402.85,
+   "weight": 6671462.75,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "genznodes",
-   "weight": 6622914.2,
+   "weight": 6621036.38,
    "commission": 0.05,
    "jailed": false
   },
@@ -114,7 +114,7 @@
   },
   {
    "moniker": "Sr20de DSTRX",
-   "weight": 3255280.39,
+   "weight": 3259545.39,
    "commission": 0.05,
    "jailed": false
   },
@@ -156,7 +156,7 @@
   },
   {
    "moniker": "Blockval",
-   "weight": 2382939.7,
+   "weight": 2382942.7,
    "commission": 0.05,
    "jailed": false
   },
@@ -204,7 +204,7 @@
   },
   {
    "moniker": "KonsorTech | RIO",
-   "weight": 581715.27,
+   "weight": 581868.27,
    "commission": 0.05,
    "jailed": false
   },
@@ -222,7 +222,7 @@
   },
   {
    "moniker": "[NODERS]",
-   "weight": 471346.77,
+   "weight": 471346.88,
    "commission": 0.05,
    "jailed": false
   },
