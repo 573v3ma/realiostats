@@ -231,8 +231,11 @@ function renderStakingFlow(hist, tradableTotal) {
   document.getElementById("flowChipsTop").innerHTML =
       `<div class="chip"><div class="cn">Bonded voting weight</div><div class="cv">${fmtM(M(st.bonded_weight))} <span id="bondedUsd" style="font-size:.55em;font-weight:500;color:#69747f"></span></div>
         <div class="cx">across RIO, RST and DSTRX combined</div></div>`
-    + `<div class="chip"><div class="cn">RIO bonding ratio</div><div class="cv">${rioPct != null ? rioPct.toFixed(1) + "%" : "—"}</div>
+    + `<div class="chip"><div class="cn">RIO bonding ratio · native</div><div class="cv">${rioPct != null ? rioPct.toFixed(1) + "%" : "—"}</div>
         <div class="cx">of circulating native RIO supply</div></div>`
+    + (rioMultiPct == null ? "" :
+      `<div class="chip"><div class="cn">RIO bonding ratio · multichain</div><div class="cv">${rioMultiPct.toFixed(1)}%</div>
+        <div class="cx">of total circulating RIO supply, across every chain</div></div>`)
     + `<div class="chip"><div class="cn">Unbonding queue</div><div class="cv">${fmtM(M(st.not_bonded))} <span style="font-size:.55em;font-weight:500;color:#69747f">${unbondPctBonded != null ? "(" + unbondPctBonded.toFixed(1) + "% of bonded)" : ""}</span></div>
         <div class="cx">mid-unbond, liquid again within ${st.unbonding_time ? Math.round(parseInt(st.unbonding_time) / 86400) : 7} days</div></div>`;
 
@@ -247,10 +250,6 @@ function renderStakingFlow(hist, tradableTotal) {
         <div class="cx">${rows.length > 1
             ? (netTotal >= 0 ? "more staked than unstaked" : "more unstaked than staked") + " over the last " + days + " days"
             : "tracking just started, check back tomorrow"}</div></div>`;
-
-  document.getElementById("flowChipsBottom").innerHTML = rioMultiPct == null ? "" :
-      `<div class="chip"><div class="cn">Bonding ratio · multichain</div><div class="cv">${rioMultiPct.toFixed(1)}%</div>
-        <div class="cx">RIO bonded, against total circulating RIO supply across every chain</div></div>`;
 
   renderBondedUsd(st);
 
