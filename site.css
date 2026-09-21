@@ -100,6 +100,11 @@
   .total-row .tv{font-family:"Space Grotesk";font-size:31px;font-weight:700;letter-spacing:-.02em;color:var(--green-ink)}
   /* emissions */
   .emit{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+  /* staking-flow rows: fixed column counts so chips stretch evenly instead of
+     auto-fill leaving orphan tracks when a row has fewer items than fit */
+  .flow-row3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .flow-row2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .emit + .emit{margin-top:16px}
   .integrity{margin-top:20px;display:flex;align-items:center;gap:12px;background:var(--alt);
     border:1px solid var(--line);border-radius:14px;padding:15px 18px;font-size:14px;line-height:1.55;color:var(--body)}
   .idot{width:10px;height:10px;border-radius:50%;background:#cbd5e1;flex:none;box-shadow:0 0 0 4px rgba(203,213,225,.25)}
@@ -250,6 +255,7 @@
   /* responsive */
   @media(max-width:880px){
     .excl{grid-template-columns:1fr 1fr}
+    .flow-row3{grid-template-columns:1fr 1fr}
   }
   @media(max-width:720px){
     .wrap{padding:0 20px}
@@ -257,6 +263,7 @@
     .hero h1{letter-spacing:-.02em}
     section{padding:56px 0}
     .excl,.rules{grid-template-columns:1fr}
+    .flow-row3,.flow-row2{grid-template-columns:1fr}
     .proj-eq{display:none}
     .hero-stat{padding:28px 22px}
     .hero-metrics{gap:28px;margin-top:24px;padding-top:22px}

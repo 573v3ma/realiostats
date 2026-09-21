@@ -196,7 +196,7 @@ let FLOW_CHART = null;
 const flowCls = d => d > 0 ? "up" : d < 0 ? "down" : "flat";
 const flowStr = d => (d > 0 ? "+" : "") + fmtM(M(d));
 
-function renderStakingFlow(hist) {
+function renderStakingFlow(hist, tradableTotal) {
   const wrap = document.getElementById("staking");
   if (!wrap || !Array.isArray(hist) || hist.length === 0) return;
 
@@ -220,10 +220,24 @@ function renderStakingFlow(hist) {
   const gapH = prev ? Math.round((new Date(latest.ts) - new Date(prev.ts)) / 3600000) : null;
   const dayLabel = gapH == null ? "24h" : Math.abs(gapH - 24) <= 3 ? "24h" : gapH + "h";
 
-  document.getElementById("flowChips").innerHTML =
+  // Unbonding queue read against the bonded set it came out of, and (when the
+  // multichain snapshot is available) RIO bonding read against total supply
+  // across every chain rather than just native. Both are ratios of the same
+  // bonded/RIO figures above, just against a different, wider base.
+  const unbondPctBonded = (st.not_bonded != null && st.bonded_weight)
+    ? 100 * st.not_bonded / st.bonded_weight : null;
+  const rioMultiPct = (rio && tradableTotal) ? 100 * rio.amount / tradableTotal : null;
+
+  document.getElementById("flowChipsTop").innerHTML =
       `<div class="chip"><div class="cn">Bonded voting weight</div><div class="cv">${fmtM(M(st.bonded_weight))} <span id="bondedUsd" style="font-size:.55em;font-weight:500;color:#69747f"></span></div>
         <div class="cx">across RIO, RST and DSTRX combined</div></div>`
-    + `<div class="chip"><div class="cn">Net flow · ${dayLabel}</div>
+    + `<div class="chip"><div class="cn">RIO bonding ratio</div><div class="cv">${rioPct != null ? rioPct.toFixed(1) + "%" : "—"}</div>
+        <div class="cx">of circulating native RIO supply</div></div>`
+    + `<div class="chip"><div class="cn">Unbonding queue</div><div class="cv">${fmtM(M(st.not_bonded))} <span style="font-size:.55em;font-weight:500;color:#69747f">${unbondPctBonded != null ? "(" + unbondPctBonded.toFixed(1) + "% of bonded)" : ""}</span></div>
+        <div class="cx">mid-unbond, liquid again within ${st.unbonding_time ? Math.round(parseInt(st.unbonding_time) / 86400) : 7} days</div></div>`;
+
+  document.getElementById("flowChipsMid").innerHTML =
+      `<div class="chip"><div class="cn">Net flow · ${dayLabel}</div>
         <div class="cv chg ${netDay == null ? "flat" : flowCls(netDay)}">${netDay == null ? "—" : flowStr(netDay)}</div>
         <div class="cx">${netDay == null
             ? "need a second reading"
@@ -232,11 +246,11 @@ function renderStakingFlow(hist) {
         <div class="cv chg ${flowCls(netTotal)}">${rows.length > 1 ? flowStr(netTotal) : "—"}</div>
         <div class="cx">${rows.length > 1
             ? (netTotal >= 0 ? "more staked than unstaked" : "more unstaked than staked") + " over the last " + days + " days"
-            : "tracking just started, check back tomorrow"}</div></div>`
-    + `<div class="chip"><div class="cn">RIO bonding ratio</div><div class="cv">${rioPct != null ? rioPct.toFixed(1) + "%" : "—"}</div>
-        <div class="cx">of circulating native RIO supply</div></div>`
-    + `<div class="chip"><div class="cn">Unbonding queue</div><div class="cv">${fmtM(M(st.not_bonded))}</div>
-        <div class="cx">mid-unbond, liquid again within ${st.unbonding_time ? Math.round(parseInt(st.unbonding_time) / 86400) : 7} days</div></div>`;
+            : "tracking just started, check back tomorrow"}</div></div>`;
+
+  document.getElementById("flowChipsBottom").innerHTML = rioMultiPct == null ? "" :
+      `<div class="chip"><div class="cn">Bonding ratio · multichain</div><div class="cv">${rioMultiPct.toFixed(1)}%</div>
+        <div class="cx">RIO bonded, against total circulating RIO supply across every chain</div></div>`;
 
   renderBondedUsd(st);
 
@@ -368,10 +382,10 @@ function loadNetwork() {
     .catch(() => ({ hist: [NET_FALLBACK], latest: NET_FALLBACK }));
 }
 
-loadNetwork().then(({ hist, latest: s }) => {
+Promise.all([loadNetwork(), loadSupply()]).then(([{ hist, latest: s }, { latest: sup }]) => {
   renderLadder(s);
   renderBase(s);
-  renderStakingFlow(hist);
+  renderStakingFlow(hist, sup && sup.tradable_total);
   const stamp = document.getElementById("netUpdated");
   if (stamp && s.ts) stamp.textContent = new Date(s.ts)
     .toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
