@@ -93,6 +93,22 @@ ALGO_RESERVE = "GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA"
 ALGO_MEXC_CUSTODY = "M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM"
 ALGO_MEXC_HOT     = "ZEJPIFQF5MSDOB3YA6OUG4S26FFX64SCTHKDMYCCB26JGG7DC4IPBWQSLQ"
 ALGO_BRIDGE  = ALGO_MEXC_CUSTODY  # deprecated alias, kept so supply.js keeps rendering
+# 22 Sep 2026: at 04:49:01 UTC M3IAM sent its whole balance, 50,292,175 RIO
+# (tx SCGCXKILFDXK..., after a 100 RIO test on 18 Sep and ZEJPIFQF consolidating
+# its 2,017,371.68 into M3IAM on 16 Sep), to a fresh account created 17 Sep.
+# That account was funded by YN3PFCURSI... and seeded with 1 RIO by VWNELXG5QW...,
+# both of which have transacted directly with the official reserve GNRGAOG,
+# so it looks like Realio collecting the reissued units back. Not confirmed.
+# Because the old rule subtracted LIVE MEXC balances, the move put the full
+# 50.3M back into Algorand float and double-counted it against the Ethereum
+# reissuance (headline 375.9M -> 426.2M on the 22 Sep run).
+# Fix: the retired amount is now PINNED at what MEXC held at reissuance, the
+# same way the compromised Algorand take is pinned. Wherever those units move,
+# they stay retired; the live wallets below are tracked for display and for the
+# movement check only. If any of them reaches a market, that is a real
+# double issuance and must be handled explicitly, not by this constant.
+ALGO_REISSUE_RETURN = "O5PL7CXYDK3TLGKSDTABLABYDZYM55UMS34P4RJEE3WABW45QI2JFC7OCA"
+ALGO_REISSUED_RETIRED = 50_292_275.45  # 48,274,903.77 M3IAM + 2,017,371.68 ZEJPIFQF at 11 Sep
 # Balances that are provably OUTSIDE Realio's control but are NOT public float.
 # 25 Aug 2026: this account was created at round 64396365 and, between 04:52:50
 # and 08:39:30 UTC, received balances swept from 8,908 distinct Algorand
@@ -286,6 +302,7 @@ def fetch_algorand(url):
             return 0.0
     reserve = held(ALGO_RESERVE)
     mexc_custody = held(ALGO_MEXC_CUSTODY); mexc_hot = held(ALGO_MEXC_HOT)
+    reissue_return = held(ALGO_REISSUE_RETURN)
     bridge = mexc_custody  # deprecated key name, see ALGO_MEXC_CUSTODY above
     comp = {a: round(held(a), 4) for a in ALGO_COMPROMISED}
     comp_total = round(sum(comp.values()), 4)
@@ -297,9 +314,12 @@ def fetch_algorand(url):
             "mexc_custody": round(mexc_custody, 4),
             "mexc_hot_wallet": round(mexc_hot, 4),
             "mexc_total": round(mexc_custody + mexc_hot, 4),
+            "reissue_return_wallet": round(reissue_return, 4),
+            "retired_live": round(mexc_custody + mexc_hot + reissue_return, 4),
+            "retired_reissued": ALGO_REISSUED_RETIRED,
             "compromised": comp_total, "compromised_detail": comp,
             "compromised_excluded": comp_excl, "compromised_in_float": comp_float,
-            "circulating": round(total - reserve - mexc_custody - mexc_hot - comp_excl, 4)}
+            "circulating": round(total - reserve - ALGO_REISSUED_RETIRED - comp_excl, 4)}
 
 def fetch_stellar(url):
     r = _get(f"{url}/assets?asset_code=RIO&asset_issuer={STELLAR_ISSUER}")["_embedded"]["records"][0]
@@ -577,6 +597,7 @@ def _excluded_balances(chains):
     if isinstance(a.get("reserve"), (int, float)):       out["algorand.reserve"] = a["reserve"]
     if isinstance(a.get("bridge_wallet"), (int, float)): out["algorand.bridge_wallet"] = a["bridge_wallet"]
     if isinstance(a.get("compromised"), (int, float)):   out["algorand.compromised"] = a["compromised"]
+    if isinstance(a.get("retired_live"), (int, float)):  out["algorand.retired_live"] = a["retired_live"]
     x = chains.get("stellar") or {}
     if isinstance(x.get("treasury"), (int, float)):      out["stellar.treasury"] = x["treasury"]
     if isinstance(x.get("compromised"), (int, float)):  out["stellar.compromised"] = x["compromised"]

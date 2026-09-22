@@ -4080,8 +4080,9 @@
         },
         "compromised_excluded": 43850860.26,
         "compromised_in_float": 1646124.74,
-        "circulating": 5762734.2923,
-        "_source": "https://mainnet-api.algonode.cloud"
+        "circulating": 5762634.29,
+        "_source": "https://mainnet-api.algonode.cloud",
+        "retired_reissued": 50292275.45
       },
       "stellar": {
         "total_supply": 74999843.3882,
@@ -4106,7 +4107,7 @@
         "circulating": 0
       }
     },
-    "tradable_total": 375848699.23,
+    "tradable_total": 375848599.23,
     "native_cap": 175000000,
     "compromised_total": 46081865.31,
     "compromised_in_float": 7854850.65,
@@ -4120,7 +4121,7 @@
       "inflation_rate": 0.08,
       "blocks_per_year": 6311520
     },
-    "global_total_rio": 489663141.23,
+    "global_total_rio": 489663041.23,
     "expected_annual_emission_rio": 6913440.86,
     "expected_daily_emission_rio": 18940.93,
     "expected_daily_emission_nominal_rio": 18940.93,
@@ -4186,8 +4187,9 @@
         },
         "compromised_excluded": 43850860.26,
         "compromised_in_float": 1646124.74,
-        "circulating": 5762734.2923,
-        "_source": "https://mainnet-api.algonode.cloud"
+        "circulating": 5762634.29,
+        "_source": "https://mainnet-api.algonode.cloud",
+        "retired_reissued": 50292275.45
       },
       "stellar": {
         "total_supply": 74999843.3882,
@@ -4212,7 +4214,7 @@
         "circulating": 0
       }
     },
-    "tradable_total": 375857178.96,
+    "tradable_total": 375857078.96,
     "native_cap": 175000000,
     "compromised_total": 46081865.31,
     "compromised_in_float": 7854850.65,
@@ -4226,7 +4228,7 @@
       "inflation_rate": 0.08,
       "blocks_per_year": 6311520
     },
-    "global_total_rio": 489671620.96,
+    "global_total_rio": 489671520.96,
     "expected_annual_emission_rio": 6912761.6,
     "expected_daily_emission_rio": 18939.07,
     "expected_daily_emission_nominal_rio": 18939.07,
@@ -4292,8 +4294,9 @@
         },
         "compromised_excluded": 43850860.26,
         "compromised_in_float": 1646124.74,
-        "circulating": 5762734.2923,
-        "_source": "https://mainnet-api.algonode.cloud"
+        "circulating": 5762634.29,
+        "_source": "https://mainnet-api.algonode.cloud",
+        "retired_reissued": 50292275.45
       },
       "stellar": {
         "total_supply": 74999843.3882,
@@ -4318,7 +4321,7 @@
         "circulating": 0
       }
     },
-    "tradable_total": 375874102.37,
+    "tradable_total": 375874002.37,
     "native_cap": 175000000,
     "compromised_total": 46081865.31,
     "compromised_in_float": 7854850.65,
@@ -4332,7 +4335,7 @@
       "inflation_rate": 0.08,
       "blocks_per_year": 6311520
     },
-    "global_total_rio": 489688544.37,
+    "global_total_rio": 489688444.37,
     "expected_annual_emission_rio": 6911407.82,
     "expected_daily_emission_rio": 18935.36,
     "expected_daily_emission_nominal_rio": 18935.36,
@@ -4398,8 +4401,9 @@
         },
         "compromised_excluded": 43850860.26,
         "compromised_in_float": 1646124.74,
-        "circulating": 5762734.2923,
-        "_source": "https://mainnet-api.algonode.cloud"
+        "circulating": 5762634.29,
+        "_source": "https://mainnet-api.algonode.cloud",
+        "retired_reissued": 50292275.45
       },
       "stellar": {
         "total_supply": 74999843.3882,
@@ -4424,7 +4428,7 @@
         "circulating": 0
       }
     },
-    "tradable_total": 375891648.99,
+    "tradable_total": 375891548.99,
     "native_cap": 175000000,
     "compromised_total": 46081865.31,
     "compromised_in_float": 7854850.65,
@@ -4438,7 +4442,7 @@
       "inflation_rate": 0.08,
       "blocks_per_year": 6311520
     },
-    "global_total_rio": 489706090.99,
+    "global_total_rio": 489705990.99,
     "expected_annual_emission_rio": 6910004.09,
     "expected_daily_emission_rio": 18931.52,
     "expected_daily_emission_nominal_rio": 18931.52,
@@ -4505,8 +4509,11 @@
         },
         "compromised_excluded": 43850860.26,
         "compromised_in_float": 1646124.74,
-        "circulating": 56054909.2923,
-        "_source": "https://mainnet-api.algonode.cloud"
+        "circulating": 5762634.29,
+        "_source": "https://mainnet-api.algonode.cloud",
+        "retired_reissued": 50292275.45,
+        "reissue_return_wallet": 50292276.0,
+        "retired_live": 50292276.4477
       },
       "stellar": {
         "total_supply": 74999843.3882,
@@ -4531,7 +4538,7 @@
         "circulating": 0
       }
     },
-    "tradable_total": 426179477.95,
+    "tradable_total": 375887202.95,
     "native_cap": 175000000,
     "compromised_total": 46081865.31,
     "compromised_in_float": 7854850.65,
@@ -4545,7 +4552,7 @@
       "inflation_rate": 0.08,
       "blocks_per_year": 6311520
     },
-    "global_total_rio": 539993919.95,
+    "global_total_rio": 489701644.95,
     "expected_annual_emission_rio": 6908717.39,
     "expected_daily_emission_rio": 18927.99,
     "expected_daily_emission_nominal_rio": 18927.99,
@@ -4564,9 +4571,9 @@
       "gte_100k": 132
     },
     "flags": [
-      "EXCLUDED_WALLET_MOVED:algorand.bridge_wallet:50,292,175->0",
       "compromised_balance:46,081,865",
-      "emission_block_time_unavailable"
+      "emission_block_time_unavailable",
+      "RESTATED:algorand_reissued_units_pinned_retired"
     ]
   }
 ]
