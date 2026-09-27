@@ -1,8 +1,8 @@
 {
- "as_of": "2026-09-26T10:36:12Z",
- "height": 19813915,
+ "as_of": "2026-09-27T11:08:22Z",
+ "height": 19829544,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 136102737.02,
+ "bonded_weight": 136098275.65,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
@@ -60,7 +60,7 @@
   },
   {
    "moniker": "min fee\ud83c\udf84 \ud835\udc25\ud835\udc1e\ud835\udc2c\ud835\udc27\ud835\udc22\ud835\udc24 | \ud835\udc14\ud835\udc13\ud835\udc12\ud835\udc00",
-   "weight": 5261585.91,
+   "weight": 5257085.91,
    "commission": 0.05,
    "jailed": false
   },
@@ -228,7 +228,7 @@
   },
   {
    "moniker": "[NODERS]",
-   "weight": 471546.82,
+   "weight": 471547.03,
    "commission": 0.05,
    "jailed": false
   },
@@ -294,7 +294,7 @@
   },
   {
    "moniker": "AlxVoy \u26a1 ANODE.TEAM",
-   "weight": 56813.0,
+   "weight": 56851.42,
    "commission": 0.08,
    "jailed": false
   },
