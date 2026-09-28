@@ -1,6 +1,6 @@
 {
   "as_of": "2026-09-28",
-  "source": "Read from public keyless endpoints: Algorand indexer asset balances, Stellar Horizon accounts by asset, Solana getProgramAccounts on the Token-2022 mint aggregated by owner, and Base ERC-20 Transfer logs netted per address and reconciled against on-chain total supply.",
+  "source": "Read from public keyless endpoints: Algorand indexer asset balances, Stellar Horizon accounts by asset, Solana getProgramAccounts on the Token-2022 mint aggregated by owner, and Base ERC-20 transfers (Alchemy) netted per address and reconciled against on-chain total supply.",
   "notes": {
     "counting": "total counts addresses with a balance above zero, the same definition used for every other chain.",
     "stellar": "trustlines counts accounts that trust the asset, most of which hold nothing; total counts funded holders only.",
@@ -34,9 +34,9 @@
       "token_accounts": 2318
     },
     "base": {
-      "total": 329,
-      "gte_100": 101,
-      "gte_1k": 57,
+      "total": 339,
+      "gte_100": 102,
+      "gte_1k": 55,
       "gte_10k": 9,
       "gte_100k": 1,
       "history": [
@@ -130,14 +130,22 @@
         },
         {
           "month": "2026-08",
-          "total": 329,
+          "total": 330,
           "gte_100": 101,
           "gte_1k": 57,
           "gte_10k": 9,
           "gte_100k": 1
+        },
+        {
+          "month": "2026-09",
+          "total": 339,
+          "gte_100": 102,
+          "gte_1k": 55,
+          "gte_10k": 9,
+          "gte_100k": 1
         }
       ],
-      "transfers": 5869,
+      "transfers": 6163,
       "supply_delta_pct": 0.0
     }
   }

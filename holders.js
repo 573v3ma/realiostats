@@ -95,7 +95,12 @@ function renderHolderEvm(){
       natFirst = data.findIndex(v => v != null);
       if(natFirst > 0) data = data.map((v,i) => i < natFirst ? data[natFirst] : v);
     }
-    return {name, color, data, isNative};
+    // A chain whose history ends before the shared axis (its weekly fetch
+    // failed) holds its last reading instead of dropping to 0 in the stack.
+    let last = -1; data.forEach((v,i) => { if(v != null) last = i; });
+    const heldFrom = last >= 0 && last < data.length - 1 ? last + 1 : -1;
+    if(heldFrom > 0) data = data.map((v,i) => i >= heldFrom ? data[last] : v);
+    return {name, color, data, isNative, heldFrom};
   });
   const est = i => natFirst > 0 && i < natFirst;
   // The native band keeps its full green fill everywhere; only its top line
@@ -137,7 +142,7 @@ function renderHolderEvm(){
         tooltip:chartTooltip({title:i => i[0].label + " · " + HB_METRIC_LABEL[HB_EVM_METRIC],
           label:c => c.dataset.label === "Realio Native" && est(c.dataIndex)
             ? ` Realio Native: not yet measured (tracking began Aug 2026)`
-            : ` ${c.dataset.label}: ${fmtInt(c.parsed.y)}`,
+            : ` ${c.dataset.label}: ${fmtInt(c.parsed.y)}${(series[c.datasetIndex].heldFrom > 0 && c.dataIndex >= series[c.datasetIndex].heldFrom) ? " (last reading)" : ""}`,
           footer:items => (est(items[0].dataIndex) ? "Combined (EVM chains): " : "Combined: ")
             + fmtInt(items.reduce((t,i) => t + (i.dataset.label === "Realio Native" && est(i.dataIndex) ? 0 : (+i.parsed.y || 0)), 0))})
       }

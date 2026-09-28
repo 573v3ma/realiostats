@@ -20,10 +20,12 @@ is read from a PUBLIC, KEYLESS endpoint:
                and then aggregated BY OWNER, because one wallet can hold several
                token accounts for the same mint and counting accounts would
                inflate the holder count.
-  * Base     : an EVM chain, so balances are netted from the ERC-20 Transfer log
-               the same way as BNB/Ethereum, but the token is small enough that
-               a public RPC serves the entire log range in one request, no key
-               needed. Base is an OP-stack chain with an exact 2-second block
+  * Base     : an EVM chain, so balances are netted from every ERC-20 transfer
+               the same way as BNB/Ethereum. Read through Alchemy
+               alchemy_getAssetTransfers (key derived from ALCHEMY_ETH_URL, run from
+               fetch_evm_holders.py, the step that holds the secret),
+               because since Aug 2026 every public Base RPC range-limits
+               eth_getLogs; the public RPCs remain as a fallback only. Base is an OP-stack chain with an exact 2-second block
                time and zero observed drift from genesis, so a log's month comes
                from its block number arithmetically, which means the monthly
                history costs no extra calls. Reconciled against on-chain
@@ -236,24 +238,73 @@ def _base_month(block_number):
     return datetime.fromtimestamp(ts, timezone.utc).strftime("%Y-%m")
 
 
+def _base_alchemy_url():
+    """Alchemy Base endpoint. ALCHEMY_BASE_URL if set, otherwise derived from the
+    ALCHEMY_ETH_URL secret the EVM step already uses (same app, same key; Base
+    Mainnet is enabled on it). None if neither is available."""
+    u = os.environ.get("ALCHEMY_BASE_URL", "").strip()
+    if u:
+        return u
+    eth = os.environ.get("ALCHEMY_ETH_URL", "").strip()
+    if "eth-mainnet.g.alchemy.com" in eth:
+        return eth.replace("eth-mainnet.g.alchemy.com", "base-mainnet.g.alchemy.com")
+    return None
+
+
+def _base_transfers_alchemy(url):
+    """Every RIO transfer on Base via alchemy_getAssetTransfers, paged.
+    Returns [(block, from, to, raw_value)] in chain order. Not range-limited,
+    unlike eth_getLogs, which the free tier caps at 10 blocks."""
+    out, page = [], None
+    while True:
+        q = {"contractAddresses": [BASE_CONTRACT], "category": ["erc20"],
+             "fromBlock": "0x0", "toBlock": "latest", "order": "asc",
+             "withMetadata": False, "excludeZeroValue": False, "maxCount": "0x3e8"}
+        if page:
+            q["pageKey"] = page
+        r = _post(url, {"jsonrpc": "2.0", "id": 1, "method": "alchemy_getAssetTransfers",
+                        "params": [q]}, tries=4, timeout=120)
+        if "result" not in r:
+            raise RuntimeError(str(r.get("error"))[:200])
+        for t in r["result"]["transfers"]:
+            out.append((int(t["blockNum"], 16), (t["from"] or ZERO).lower(),
+                        (t["to"] or ZERO).lower(), int(t["rawContract"]["value"], 16)))
+        page = r["result"].get("pageKey")
+        if not page:
+            return out
+
+
+def _base_transfers_logs(rpc):
+    """Whole Transfer log in one eth_getLogs call. Only works on an RPC that
+    serves the full block range; the public ones stopped doing so in Aug 2026."""
+    logs = _post(rpc, {"jsonrpc": "2.0", "id": 1, "method": "eth_getLogs",
+                       "params": [{"address": BASE_CONTRACT, "topics": [TRANSFER_TOPIC],
+                                   "fromBlock": "0x0", "toBlock": "latest"}]},
+                 tries=2, timeout=120)
+    if "result" not in logs:
+        raise RuntimeError(str(logs.get("error"))[:200])
+    logs = sorted(logs["result"], key=lambda l: (int(l["blockNumber"], 16), int(l["logIndex"], 16)))
+    return [(int(l["blockNumber"], 16), "0x" + l["topics"][1][-40:], "0x" + l["topics"][2][-40:],
+             int(l["data"], 16)) for l in logs]
+
+
 def fetch_base():
+    # Alchemy first (keyed, reliable); public RPCs as a fallback only.
+    sources = []
+    au = _base_alchemy_url()
+    if au:
+        sources.append(("alchemy", au, _base_transfers_alchemy))
+    sources += [(rpc, rpc, _base_transfers_logs) for rpc in BASE_RPCS]
     err = None
-    for rpc in BASE_RPCS:
+    for name, rpc, reader in sources:
         try:
-            logs = _post(rpc, {"jsonrpc": "2.0", "id": 1, "method": "eth_getLogs",
-                               "params": [{"address": BASE_CONTRACT, "topics": [TRANSFER_TOPIC],
-                                           "fromBlock": "0x0", "toBlock": "latest"}]},
-                         tries=2, timeout=120)
-            if "result" not in logs:
-                raise RuntimeError(str(logs.get("error"))[:200])
-            logs = logs["result"]
-            if not logs:
-                raise RuntimeError("no transfer logs returned")
-            logs.sort(key=lambda l: (int(l["blockNumber"], 16), int(l["logIndex"], 16)))
+            txs = reader(rpc)
+            if not txs:
+                raise RuntimeError("no transfers returned")
 
             bal, history, curmonth = defaultdict(int), [], None
-            for l in logs:
-                m = _base_month(int(l["blockNumber"], 16))
+            for blk, frm, to, v in txs:
+                m = _base_month(blk)
                 if curmonth is None:
                     curmonth = m
                 if m > curmonth:
@@ -261,9 +312,6 @@ def fetch_base():
                     while curmonth < m:
                         history.append({"month": curmonth, **snap})
                         curmonth = next_month(curmonth)
-                v = int(l["data"], 16)
-                frm = "0x" + l["topics"][1][-40:]
-                to  = "0x" + l["topics"][2][-40:]
                 bal[frm] -= v
                 bal[to]  += v
 
@@ -293,14 +341,29 @@ def fetch_base():
 
             out = dict(snap)
             out["history"] = history
-            out["transfers"] = len(logs)
+            out["transfers"] = len(txs)
             if reconciled is not None:
                 out["supply_delta_pct"] = reconciled
+            print(f"base: source={'alchemy' if name == 'alchemy' else name}", file=sys.stderr)
             return out
         except Exception as e:
             err = e
+            print(f"base: {'alchemy' if name == 'alchemy' else name} failed: {str(e)[:160]}", file=sys.stderr)
             continue
     raise err
+
+
+def refresh_base():
+    """Refresh only the Base entry of holders-chains.json. Called from
+    fetch_evm_holders.py, the workflow step that holds the Alchemy secrets."""
+    try:
+        d = json.load(open(OUT))
+    except Exception:
+        d = {"chains": {}}
+    d.setdefault("chains", {})["base"] = fetch_base()
+    json.dump(d, open(OUT, "w"), indent=2)
+    b = d["chains"]["base"]
+    print(f"base: total={b['total']} transfers={b.get('transfers')} months={len(b.get('history', []))}")
 
 
 def main():
@@ -311,6 +374,12 @@ def main():
     ok = 0
     for key, fn in (("algorand", fetch_algorand), ("stellar", fetch_stellar),
                     ("solana", fetch_solana), ("base", fetch_base)):
+        if key == "base" and not _base_alchemy_url():
+            # No key in this step: Base was already refreshed by
+            # fetch_evm_holders.py (refresh_base), which runs with the Alchemy
+            # secrets. Public RPCs can no longer serve it, so don't try.
+            print("base: no Alchemy URL in this step, keeping value from fetch_evm_holders.py", file=sys.stderr)
+            continue
         t0 = time.time()
         try:
             chains[key] = fn()
@@ -320,7 +389,7 @@ def main():
                   f"10k+={chains[key]['gte_10k']} 100k+={chains[key]['gte_100k']} "
                   f"({time.time() - t0:.1f}s)")
         except Exception as e:
-            print(f"{key}: FAILED ({type(e).__name__}: {e}), keeping previous", file=sys.stderr)
+            print(f"::error::{key}: FAILED ({type(e).__name__}: {str(e)[:200]}), keeping previous value", file=sys.stderr)
     if not ok:
         print("every chain failed, refusing to rewrite the file", file=sys.stderr)
         return 1

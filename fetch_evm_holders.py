@@ -174,6 +174,15 @@ def main():
     }
     json.dump(out, open(OUT, "w"), indent=2)
     print("wrote", OUT)
+    # Base lives in holders-chains.json but needs the same Alchemy key: every
+    # public Base RPC range-limits eth_getLogs since Aug 2026. Refresh it here,
+    # in the step that has the secret; fetch_chain_holders.py then keeps it.
+    if os.environ.get("ALCHEMY_ETH_URL", "").strip():
+        try:
+            import fetch_chain_holders
+            fetch_chain_holders.refresh_base()
+        except Exception as e:
+            print(f"::error::base: FAILED ({type(e).__name__}: {str(e)[:200]}), keeping previous value", file=sys.stderr)
 
 
 if __name__ == "__main__":
