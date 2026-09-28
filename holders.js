@@ -51,7 +51,7 @@ function renderHolderTable(){
 // migration. Reads chains.<c>.history from holders-evm.json, produced in one
 // pass over each token's full transfer history. A metric toggle switches the
 // threshold; both chains plot on a shared month axis.
-let HB_EVM_CHART = null, HB_EVM_METRIC = "gte_100", HB_EVM_WIRED = false;
+let HB_EVM_CHART = null, HB_EVM_METRIC = "total", HB_EVM_WIRED = false;
 const HB_METRIC_LABEL = {gte_100:"100+ RIO", gte_1k:"1,000+ RIO", gte_10k:"10,000+ RIO", gte_100k:"100,000+ RIO", total:"All holders"};
 function renderHolderEvm(){
   const card = document.getElementById("hbEvmCard"); if(!card) return;
@@ -74,6 +74,13 @@ function renderHolderEvm(){
     }));
     HB_EVM_WIRED = true;
   }
+  // Realio Native joins as a fourth band. Its history is counted forward only
+  // (daily from 3 Aug 2026), so it is folded into month-end readings here, the
+  // latest daily reading in each month, and is zero before tracking began.
+  const natByMonth = {};
+  (HB_NAT_PTS || []).forEach(p => { natByMonth[p.ts.slice(0,7)] = p.native_holders; });
+  const natHist = Object.keys(natByMonth).sort().map(m => ({month:m, ...natByMonth[m]}));
+  if(natHist.length) have.push(["Realio Native","#34d399", natHist]);
   const set = new Set(); have.forEach(([,,h]) => h.forEach(p => set.add(p.month)));
   const months = [...set].sort();
   const labels = months.map(m => { const [y,mo] = m.split("-");
