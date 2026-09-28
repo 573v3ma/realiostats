@@ -577,12 +577,12 @@ function render(latest, liveSeries, fullArr){
      type:"blacklisted"}
   ].filter(c=>typeof c.v==="number" && c.v>0).map(c=>`
     <div class="ex"><div class="exk">${c.k}</div><div class="exv">${fmtM(M(c.v))}</div>
-      <div class="exa">${c.addr}${c.type==="dead-reserve" && c.liveBalance===0 ? " (now empty, attacker sold from here)" : ""}</div>
+      <div class="exa">${c.addr}${c.type==="dead-reserve" && c.liveBalance===0 ? " (now empty)" : ""}</div>
       <div class="exn">${c.type==="blacklisted"
-        ? "Held by the attacker since the 25 August theft, all of it originally from ordinary holder wallets. Realio's validator channel reports this address has been blacklisted on-chain, and we exclude it on that basis while we monitor. We could not confirm the freeze ourselves as of 11 September: the address showed no active on-chain restriction on direct query. We will restore this balance to circulating if that does not hold up."
-        : "On 27 August 2026 Realio's own account posted that RIO on this chain is \"a dead asset,\" warning against buying it. The reserve or treasury share of what the attacker took here is treated as permanently excluded on that basis, whether or not the attacker has sold it. Realio's stated position, not something we can confirm independently: this is forward-looking, based on a plan to make pre-theft holders whole (likely via a migration to another chain), not a completed migration. We will keep watching how that plays out."
+        ? "Taken from holder wallets on 25 August. Excluded while Realio reports the address frozen, which we have not been able to confirm."
+        : "Reserve and treasury RIO taken in the 25 August theft. Realio has declared RIO on this chain a dead asset, so it stays excluded whether or not the attacker sells."
       }${
-        c.inFloat>0 ? " A further "+fmtInt(c.inFloat)+" RIO taken here came from holder wallets rather than reserve or treasury, and <b>is counted as circulating</b>: those holders are to be allowed to claim their tokens back, so the claim is live, and being stolen does not take a token out of public hands in any case." : ""
+        c.inFloat>0 ? " The "+fmtInt(c.inFloat)+" RIO taken from holder wallets is <b>still counted as circulating</b>, because those holders are to get it back." : ""
       } <a href="incident.html">Incident report</a>.</div>
       ${c.url ? `<div style="margin-top:8px"><a href="${c.url}" target="_blank" rel="noopener">Verify ↗</a></div>` : ""}</div>`).join("");
   document.getElementById("exclGrid").innerHTML = compCards + `
@@ -591,7 +591,7 @@ function render(latest, liveSeries, fullArr){
       <div style="margin-top:8px"><a href="https://allo.info/account/GNRGAOG65JPGWVIK2Q45R4XLLVIMF7AWVBK5TEBGWRRAZ3EHPQIN44EGFA" target="_blank" rel="noopener">Verify ↗</a></div></div>
     ${typeof a.retired_reissued==="number" ? `<div class="ex"><div class="exk">Algorand · reissued on Ethereum (retired)</div><div class="exv">${fmtM(M(a.retired_reissued))}</div>
       <div class="exa">M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM · ZEJPIFQF5MSDOB3YA6OUG4S26FFX64SCTHKDMYCCB26JGG7DC4IPBWQSLQ · O5PL7CXYDK3TLGKSDTABLABYDZYM55UMS34P4RJEE3WABW45QI2JFC7OCA</div>
-      <div class="exn">MEXC held 50,292,275.45 RIO on Algorand in two wallets. Realio reissued that balance on Ethereum on 11 September 2026 because Algorand is being retired, so it is counted on Ethereum now and these Algorand units are treated as retired. The retired amount is fixed at what MEXC held at the reissuance, so it no longer depends on which wallet the old units sit in. On 22 September MEXC sent the whole Algorand balance to a new account (O5PL7C...) that appears to be linked to Realio's reserve wallet; we have asked Realio to confirm. Held there now: ${fmtInt(a.reissue_return_wallet||0)} RIO. The first wallet listed is the one this site called a bridge wallet until 12 September 2026. Until the reissuance these units were ordinary exchange float, and this site's history counts them as float.</div>
+      <div class="exn">MEXC's Algorand RIO, reissued on Ethereum on 11 September 2026 as Algorand is retired. Counted once, on Ethereum.</div>
       <div style="margin-top:8px"><a href="https://allo.info/account/O5PL7CXYDK3TLGKSDTABLABYDZYM55UMS34P4RJEE3WABW45QI2JFC7OCA" target="_blank" rel="noopener">Verify ↗</a></div></div>` : (typeof a.mexc_custody==="number" && a.mexc_custody>0 ? `<div class="ex"><div class="exk">Algorand · MEXC custody (retired)</div><div class="exv">${fmtM(M(a.mexc_custody))}</div>
       <div class="exa">M3IAMWFYEIJWLWFIIOEDFOLGIVMEOB3F4I3CA4BIAHJENHUUSX63APOXXM</div></div>` : "")}
     <div class="ex"><div class="exk">Stellar · treasury (realio.fund)</div><div class="exv">${fmtM(M(s.treasury))}</div>
