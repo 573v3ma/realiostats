@@ -53,6 +53,16 @@
   </div>
 </div>
 
+<section id="chains"><div class="wrap">
+  <h2>Circulating supply, chain by chain</h2>
+  <p class="sec-lede">Each figure is public float on that chain: total minted, minus any Realio-controlled wallets. Every number is verifiable on that chain's explorer.</p>
+  <div class="chains" id="chainGrid"></div>
+  <div class="total-row">
+    <span class="tl">Total across all chains, counted once</span>
+    <span class="tv" id="totalNum">—</span>
+  </div>
+</div></section>
+
 <section id="liquidity"><div class="wrap">
   <h2>How liquid is RIO? <span class="h2-note">liquid float</span></h2>
   <p class="sec-lede">Circulating supply says how much RIO exists. How much of it can actually trade depends on two things: how much the market absorbs in a day, and how far each coin is from a venue.</p>
@@ -100,16 +110,6 @@
     <div class="wm-chips" id="wmChips"></div>
   </div>
   <p class="cap">Emission parameters are read live from Realio's on-chain mint module (<code>/realionetwork/mint/v1/params</code>). The 8% is charged on the unminted native supply, the gap between native supply and the 175M cap, so the amount of new RIO declines as the cap is approached. The observed figures measure RIO that came into existence across all seven chains: circulating supply, plus whatever is still held in Realio's Algorand wallets, so that pre-existing RIO being released into public float is never mistaken for new issuance. RIO also bridges in two different ways: burn-and-mint between native and the EVM chains, and lock-and-mint on the Stellar and Base legs, where the token is escrowed rather than destroyed. Either way the token is counted once, so bridging nets to zero, and only block-reward emission, minus burns, moves this figure. Expected issuance is adjusted for the chain's real block rate: the mint module pays a fixed reward per block, and Realio produces blocks a little slower than the 5-second pace its parameter assumes (currently ~5.67s, measured live), so real issuance is about 12% below a naive <code>annual_provisions ÷ 365</code>. With that correction, observed net-new sits right on the expected line, and genuine day-to-day dips are bridge transfers caught mid-settlement, not a shortfall.</p>
-</div></section>
-
-<section id="chains"><div class="wrap">
-  <h2>Circulating supply, chain by chain</h2>
-  <p class="sec-lede">Each figure is public float on that chain: total minted, minus any Realio-controlled wallets. Every number is verifiable on that chain's explorer.</p>
-  <div class="chains" id="chainGrid"></div>
-  <div class="total-row">
-    <span class="tl">Total across all chains, counted once</span>
-    <span class="tv" id="totalNum">—</span>
-  </div>
 </div></section>
 
 <section id="excluded"><div class="wrap">
