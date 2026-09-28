@@ -43,13 +43,18 @@ const HISTORY = [
   {label:"Mar 2026", bnb:143.80, native:92.16, ethereum:66.88, algorand:56.31, stellar:5.86, solana:1.04},
   {label:"Jun 2026", bnb:156.44, native:83.97, ethereum:69.54, algorand:56.19,  stellar:5.86, solana:1.07}
 ];
+/* Bottom to top. In a stacked chart each line marks the top of its band, so
+   the top line is always the running total. The two small chains (Solana ~1M,
+   Stellar ~6M) sit at the bottom so their lines hug the axis where they belong;
+   on top they drew the 375M total in their own colour. Algorand sits under
+   Ethereum so the 11 Sep MEXC reissuance only moves the boundary between them. */
 const STACK = [
+  {key:"solana",   name:"Solana",        color:"#e879f9"},
+  {key:"stellar",  name:"Stellar",       color:"#94a3b8"},
   {key:"native",   name:"Realio Native", color:"#34d399"},
   {key:"bnb",      name:"BNB Chain",     color:"#fbbf24"},
-  {key:"ethereum", name:"Ethereum",      color:"#818cf8"},
   {key:"algorand", name:"Algorand",      color:"#38bdf8"},
-  {key:"stellar",  name:"Stellar",       color:"#94a3b8"},
-  {key:"solana",   name:"Solana",        color:"#e879f9"}
+  {key:"ethereum", name:"Ethereum",      color:"#818cf8"}
 ];
 
 const CHAINS = [
