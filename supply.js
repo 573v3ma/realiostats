@@ -796,10 +796,9 @@ function renderFloatRead(){
 function renderFloatRows(){
   const el = document.getElementById("floatLadder");
   if(!el || !FLOAT_F) return;
-  const f = FLOAT_F, rpd = floatRioPerDay();
+  const f = FLOAT_F;
   const pc = n => f.circ ? (100*n/f.circ).toFixed(1)+"%" : "—";
-  const dd = n => rpd > 0 ? (n/rpd < 1 ? "<1 day" : "~"+Math.round(n/rpd)+" days") : "";
-  const sub = (n, lead) => [lead || pc(n), dd(n)].filter(Boolean).join(" · ");
+  const sub = (n, lead) => lead || pc(n);
   const hasStake = f.staked != null;
 
   const rows = [
