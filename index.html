@@ -72,7 +72,7 @@
 
 <section id="emissions"><div class="wrap">
   <h2>Emissions &amp; supply integrity</h2>
-  <p class="sec-lede">New RIO is issued on the Realio native chain only, through scheduled block-reward emissions paid to stakers, and native supply is capped at 175M. The token contracts on the other six chains can mint as well, but only against RIO burned or escrowed elsewhere, so bridging moves RIO between chains without changing how much of it exists. Circulating supply should therefore grow only at the scheduled rate. We check that every day.</p>
+  <p class="sec-lede">New RIO is issued only on the Realio native chain, as block rewards to stakers, capped at 175M. The other chains mint only against RIO burned or locked elsewhere. So circulating supply should grow only at the scheduled rate, and we check that every day.</p>
   <div class="emit">
     <div class="chip"><div class="cn">Emission rate</div><div class="cv" id="emRate">—</div><div class="cx" id="emRateNote">of unminted native supply, per year</div></div>
     <div class="chip"><div class="cn">Expected new RIO</div><div class="cv" id="emDaily">—</div><div class="cx" id="emAnnual">per day</div></div>
@@ -84,11 +84,7 @@
     <span class="idot" id="iDot"></span>
     <span id="iText">Building the daily baseline. As readings accrue, this confirms whether circulating RIO supply is growing within the scheduled emission and flags anything above it.</span>
   </div>
-  <div class="whatmoved" id="whatMoved" hidden>
-    <div class="wm-read" id="wmRead"></div>
-    <div class="wm-chips" id="wmChips"></div>
-  </div>
-  <p class="cap">Emission parameters are read live from Realio's on-chain mint module (<code>/realionetwork/mint/v1/params</code>). The 8% is charged on the unminted native supply, the gap between native supply and the 175M cap, so the amount of new RIO declines as the cap is approached. The observed figures measure RIO that came into existence across all seven chains: circulating supply, plus whatever is still held in Realio's Algorand wallets, so that pre-existing RIO being released into public float is never mistaken for new issuance. RIO also bridges in two different ways: burn-and-mint between native and the EVM chains, and lock-and-mint on the Stellar and Base legs, where the token is escrowed rather than destroyed. Either way the token is counted once, so bridging nets to zero, and only block-reward emission, minus burns, moves this figure. Expected issuance is adjusted for the chain's real block rate: the mint module pays a fixed reward per block, and Realio produces blocks a little slower than the 5-second pace its parameter assumes (currently ~5.67s, measured live), so real issuance is about 12% below a naive <code>annual_provisions ÷ 365</code>. With that correction, observed net-new sits right on the expected line, and genuine day-to-day dips are bridge transfers caught mid-settlement, not a shortfall.</p>
+  <p class="cap">Read live from Realio's on-chain mint module. Expected issuance allows for the chain's real block time, about 5.67 seconds against the 5 its parameter assumes, which puts real issuance about 12% below the nominal rate. Bridging moves RIO between chains without creating any, so only emission minus burns changes the total.</p>
 </div></section>
 
 <section id="liquidity"><div class="wrap">

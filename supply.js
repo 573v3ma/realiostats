@@ -501,19 +501,10 @@ function render(latest, liveSeries, fullArr){
     const obsDays = Math.round(obs.days);
     document.getElementById("emObservedNote").textContent = obsDays<=1 ? "measured over the last 24h" : "median day, last "+obsDays+" days";
     const pct = infl ? (infl*100).toFixed(0) : "8";
-    const comp = latest.compromised_total || 0;
     const halted = (latest.flags||[]).some(f=>String(f).indexOf("NATIVE_CHAIN_HALTED")===0);
-    if(comp > 0){
-      // An emission read is not meaningful across an incident window. Say so
-      // rather than publishing a tidy sentence over a distorted measurement.
+    if(halted){
       dot.className="idot warn";
-      const compExcl = (typeof latest.compromised_excluded === "number") ? latest.compromised_excluded : comp;
-      const compFloat = (typeof latest.compromised_in_float === "number") ? latest.compromised_in_float : 0;
-      it.innerHTML="Emission cannot be measured cleanly across this window. On 25 August 2026 roughly 124.4M RIO moved out of Realio-controlled wallets and holder accounts across five chains, and "
-        +fmtInt(comp)+" RIO is still attacker-held today. Of what was taken, "+fmtInt(compExcl)+" came out of reserve and treasury wallets that were never counted as float and stays excluded whether or not it is sold, while "
-        +fmtInt(compFloat)+" came out of ordinary holder wallets and is counted as circulating, because those holders are to be allowed to claim their tokens back and being stolen does not take a token out of public hands"
-        +(halted ? ". The native chain has stopped producing blocks, so its supply reading is frozen" : "")
-        +". No RIO was minted on any chain in the theft itself. Separately, on 11 September 2026 Realio minted 50,292,276 RIO on Ethereum to reissue MEXC's Algorand holdings ahead of Algorand being retired. That is a one-for-one replacement, not new float: the matching Algorand units are treated as retired here, so the circulating figure is unchanged by it. <a href=\"incident.html\">See the incident report</a>.";
+      it.textContent="The native chain has stopped producing blocks, so its supply reading is frozen until it resumes.";
     } else if(ed && obs.perDay <= ed*1.25){
       dot.className="idot ok";
       it.textContent="Circulating RIO supply is growing within the scheduled ~"+pct+"% emission. No unexplained minting detected over the measured window.";
@@ -522,7 +513,6 @@ function render(latest, liveSeries, fullArr){
       it.textContent="Circulating RIO supply grew faster than the ~"+pct+"% schedule over the measured window, worth a closer look.";
     }
   }
-  renderWhatMoved(fullArr, ed);
 
   const grid = document.getElementById("chainGrid");
   grid.innerHTML = CHAINS.map(c=>{
