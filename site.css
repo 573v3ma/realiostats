@@ -40,7 +40,7 @@
   /* hero */
   .hero{padding-top:84px;padding-bottom:48px}
   .hero h1{font-size:clamp(32px,4.6vw,54px);line-height:1.04;margin:18px 0;font-weight:700;letter-spacing:-.03em;max-width:820px}
-  .hero p.lede{font-size:17.5px;line-height:1.65;color:var(--muted);max-width:620px;margin:0}
+  .hero p.lede{font-size:17.5px;line-height:1.65;color:var(--muted);margin:0}
   .hero-stat{margin:44px 0 24px;color:var(--card-ink);border-radius:var(--radius);
     padding:clamp(28px,4.5vw,48px);position:relative;overflow:hidden;
     background:linear-gradient(155deg,#0e161d 0%,#0a0f14 52%,#0c141b 100%);
@@ -70,7 +70,7 @@
   .assume{border:1px solid var(--line);border-left:3px solid var(--green);border-radius:var(--radius-sm);
     padding:26px 28px;background:linear-gradient(180deg,var(--alt),#fbfcfc)}
   .assume .ah{font-family:"Space Grotesk";font-weight:600;font-size:16.5px;letter-spacing:-.01em;margin-bottom:8px}
-  .assume p{margin:0 0 14px;color:var(--muted);font-size:14.5px;line-height:1.65;max-width:720px}
+  .assume p{margin:0 0 14px;color:var(--muted);font-size:14.5px;line-height:1.65}
   .assume ul{margin:0;padding-left:20px}
   .assume li{margin:9px 0;font-size:14.5px;line-height:1.65;color:var(--body)}
   .assume li::marker{color:var(--green)}
@@ -81,7 +81,7 @@
   .h2-note{font-size:.5em;font-weight:600;color:var(--faint);letter-spacing:.04em;text-transform:uppercase;vertical-align:middle;margin-left:8px;border:1px solid var(--line);border-radius:999px;padding:3px 10px}
   section h2::before{content:"";display:block;width:30px;height:3px;border-radius:3px;
     background:linear-gradient(90deg,var(--green),var(--mint));margin-bottom:16px}
-  section .sec-lede{color:var(--muted);font-size:15.5px;line-height:1.65;margin:0 0 34px;max-width:660px}
+  section .sec-lede{color:var(--muted);font-size:15.5px;line-height:1.65;margin:0 0 34px}
   /* chain grid */
   .chains{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
   .chip{border:1px solid var(--line);border-radius:var(--radius-sm);padding:20px 20px 18px;background:var(--bg);
@@ -175,7 +175,7 @@
   .lq-sub{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.55}
   .lq-eth .lq-big{font-family:"Space Grotesk";font-size:42px;font-weight:600;color:var(--ink);letter-spacing:-.03em;line-height:1}
   .lq-eth .lq-cap2{font-size:13px;color:var(--body);margin-top:8px;line-height:1.5}
-  .lq-read{font-size:13.5px;color:var(--body);line-height:1.65;margin-top:20px;max-width:820px}
+  .lq-read{font-size:13.5px;color:var(--body);line-height:1.65;margin-top:20px}
   .lq-read b{color:var(--ink);font-weight:600}
   .ptbl tbody tr.lq-total td{border-top:2px solid var(--line-strong);border-bottom:0;font-weight:600;color:var(--ink)}
   .lq-tag{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--muted);background:var(--alt);border:1px solid var(--line);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:middle;white-space:nowrap}
@@ -234,7 +234,7 @@
   .support::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;
     background:linear-gradient(90deg,transparent 5%,rgba(52,211,153,.45),transparent 95%)}
   .support h3{margin:0 0 8px;color:#fff;font-size:19px;letter-spacing:-.01em}
-  .support p{margin:0 0 20px;color:var(--card-muted);font-size:14.5px;line-height:1.65;max-width:640px}
+  .support p{margin:0 0 20px;color:var(--card-muted);font-size:14.5px;line-height:1.65}
   .btns{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
   .btn{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#04140d;font-weight:600;
     padding:12px 22px;border-radius:999px;font-size:14px;border:none;cursor:pointer;
@@ -251,7 +251,7 @@
     padding:2px 4px;border-radius:6px;transition:color .18s var(--ease)}
   .copy:hover{color:#7df0c3}
   .foot-links{display:flex;gap:22px;flex-wrap:wrap;font-size:14px;font-weight:500;margin-bottom:16px}
-  .foot-note{font-size:12.5px;color:var(--muted);line-height:1.65;max-width:720px}
+  .foot-note{font-size:12.5px;color:var(--muted);line-height:1.65}
   /* responsive */
   @media(max-width:880px){
     .excl{grid-template-columns:1fr 1fr}
@@ -285,7 +285,7 @@
 .page-lede{ padding-top:74px; padding-bottom:6px; }
 .page-lede h1{ font-size:clamp(28px,3.6vw,42px); line-height:1.08; margin:14px 0 10px;
                font-weight:700; letter-spacing:-.03em; max-width:820px; }
-.page-lede .lede{ max-width:760px; }
+.page-lede .lede{ max-width:none; }
 
 /* ---- network page: the staking-yield ladder --------------------------- */
 .ladder{ border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--bg); }
