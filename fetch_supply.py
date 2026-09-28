@@ -134,6 +134,10 @@ STELLAR_COMPROMISED = {
 }
 NATIVE_DENOM = "ario"
 NATIVE_BRIDGE_MODULE = "realio1zlefkpe3g0vvm9a4h0jf9000lmqutlh9jzcavp"
+# multistaking module account: holds every RIO bonded to validators (and any
+# mid-unbond, released after the 7-day unbonding period). Informational only:
+# staked RIO is already inside native circulating, this just says how much of it.
+NATIVE_MULTISTAKING_MODULE = "realio1mgydlcxrwfn9kx9u6642t4l5fn5h5kydekwk47"
 # Third leg of the 25 Aug 2026 incident, on the native chain. Between 09:29:23 and
 # 10:15:22 UTC this account received 5,732,040.91 ario from 2,374 distinct accounts,
 # one transfer each, and has never sent a transaction. 2,349 of those 2,374 accounts
@@ -375,6 +379,12 @@ def fetch_native(url):
            "compromised": comp_total, "compromised_detail": comp,
            "compromised_excluded": comp_excl, "compromised_in_float": comp_float,
            "circulating": round(total - comp_excl, 4)}
+    # Soft-fail: a missing staked figure hides one row on the site, never the snapshot.
+    try:
+        sb = _get(f"{url}/cosmos/bank/v1beta1/balances/{NATIVE_MULTISTAKING_MODULE}/by_denom?denom={NATIVE_DENOM}")
+        out["staked"] = round(int(sb["balance"]["amount"]) / 10**18, 4)
+    except Exception:
+        pass
     try:
         hdr = _get(f"{url}/cosmos/base/tendermint/v1beta1/blocks/latest")["block"]["header"]
         age = datetime.now(timezone.utc).timestamp() - _parse_cosmos_ts(hdr["time"])

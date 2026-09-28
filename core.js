@@ -81,7 +81,12 @@ function computeFloat(latest, h){
   // spread). Applies to both sides, not just BNB.
   const dead = sum(bsc.filter(x=>x.note)) + sum(eth.filter(x=>x.note));
   const onVenues = sum(bsc) + sum(eth);
-  return {circ, liquidChains, onVenues, withMarket: onVenues - dead, dead};
+  // Staked RIO (native multistaking module) is already inside circulating;
+  // null when the snapshot predates the field, and the page then hides that row.
+  const nat = c.realio_native || {};
+  const staked = typeof nat.staked === "number" ? nat.staked : null;
+  const elsewhere = circ - liquidChains - (staked || 0);
+  return {circ, liquidChains, onVenues, withMarket: onVenues - dead, dead, staked, elsewhere};
 }
 
 /* Legacy deep links. Before the page split every section lived at
