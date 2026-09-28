@@ -50,11 +50,20 @@ function copyAddr(){
 /* Every page needs the latest committed snapshot. Same failure behaviour as
    before: if the fetch is blocked (file://, offline), fall back to the frozen
    snapshot so the page still renders rather than blanking. */
+/* Charts measure axis labels once, when first drawn, and cache the widths by
+   font name. If Inter is still loading at that moment the labels are measured
+   in the fallback font, and the wider Inter digits later get clipped at the
+   left edge. So nothing renders until the web fonts are in (capped at 2s so a
+   blocked font server never holds the page up). */
+const FONTS_READY = (document.fonts && document.fonts.ready)
+  ? Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 2000))]) : Promise.resolve();
 function loadSupply(){
-  return fetch("./supply-history.json",{cache:"no-store"})
-    .then(r=>r.json())
-    .then(arr=>({arr, latest:arr[arr.length-1]}))
-    .catch(()=>({arr:[FALLBACK], latest:FALLBACK}));
+  return Promise.all([
+    fetch("./supply-history.json",{cache:"no-store"}).then(r=>r.json())
+      .then(arr=>({arr, latest:arr[arr.length-1]}))
+      .catch(()=>({arr:[FALLBACK], latest:FALLBACK})),
+    FONTS_READY
+  ]).then(([d]) => d);
 }
 
 /* Tradable float, shared.

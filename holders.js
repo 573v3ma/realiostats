@@ -82,33 +82,25 @@ function renderHolderEvm(){
     const bym = {}; h.forEach(p => bym[p.month] = p[HB_EVM_METRIC]);
     return {name, color, data: months.map(m => bym[m] ?? null)};
   });
-  const datasets = series.map(s => ({label:s.name, data:s.data, borderColor:s.color,
-    backgroundColor:s.color, ...LINE_STYLE, pointBackgroundColor:s.color, pointBorderColor:T().bg,
-    fill:false, spanGaps:true}));
-  // Combined line = both EVM chains summed for the selected tier, the global
-  // trajectory. Drawn last so it sits on top; native is not included because it
-  // has no reconstructable monthly history.
-  if(series.length > 1){
-    const combined = months.map((m,i) => {
-      let sum = 0, any = false;
-      series.forEach(s => { if(s.data[i] != null){ sum += s.data[i]; any = true; } });
-      return any ? sum : null;
-    });
-    datasets.push({label:"Combined (" + series.map(s=>s.name).join(" + ") + ")", data:combined, borderColor:T().ink,
-      backgroundColor:"transparent", ...LINE_STYLE, borderWidth:2.5, pointBackgroundColor:T().ink, pointBorderColor:T().bg,
-      fill:false, spanGaps:true});
-  }
+  // Stacked translucent bands, the same look as the supply chart: the top edge
+  // of the stack is the combined total across the EVM chains shown. A chain with
+  // no data yet for a month (Base before Sep 2025) stacks as zero.
+  const datasets = series.map((s,i) => ({label:s.name, data:s.data.map(v => v ?? 0), borderColor:s.color,
+    backgroundColor:fadeFill(s.color,.38,.12), ...LINE_STYLE, pointBackgroundColor:s.color, pointBorderColor:T().bg,
+    fill: i === 0 ? "origin" : "-1", stack:"s"}));
   if(HB_EVM_CHART) HB_EVM_CHART.destroy();
   HB_EVM_CHART = new Chart(document.getElementById("hbEvmCanvas"),{
     type:"line", plugins:[watermarkPlugin], data:{labels, datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
       scales:{
-        y:{beginAtZero:true,grid:{color:T().grid},ticks:{color:T().tick,font:{family:"Inter"}}},
+        y:{stacked:true,beginAtZero:true,grid:{color:T().grid},ticks:{color:T().tick,font:{family:"Inter"}}},
         x:{grid:{display:false},ticks:{color:T().tick,font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
       },
       plugins:{
         legend:chartLegend(),
-        tooltip:chartTooltip({title:i => i[0].label + " · " + HB_METRIC_LABEL[HB_EVM_METRIC]})
+        tooltip:chartTooltip({title:i => i[0].label + " · " + HB_METRIC_LABEL[HB_EVM_METRIC],
+          label:c => ` ${c.dataset.label}: ${fmtInt(c.parsed.y)}`,
+          footer:items => "Combined: " + fmtInt(items.reduce((t,i) => t + (+i.parsed.y || 0), 0))})
       }
     }
   });
