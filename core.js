@@ -34,7 +34,7 @@ const watermarkPlugin = {
     const ctx = chart.ctx;
     ctx.save();
     ctx.font = "600 12px Inter, system-ui, sans-serif";
-    ctx.fillStyle = "rgba(11,16,21,0.12)";
+    ctx.fillStyle = T().wm;
     ctx.textAlign = "right";
     ctx.textBaseline = "bottom";
     ctx.fillText("realiostats.com", a.right - 8, a.bottom - 6);
@@ -89,17 +89,97 @@ function computeFloat(latest, h){
   return {circ, liquidChains, onVenues, withMarket: onVenues - dead, dead, staked, elsewhere};
 }
 
-/* Legacy deep links. Before the page split every section lived at
-   realiostats.com/#<id>, and those URLs are out in the wild (they were the nav
-   for months). A fragment never reaches the server, so Cloudflare _redirects
-   cannot fix this; it has to happen in the browser. Sections still on the home
-   page (#emissions, #chains, #chart, #provenance) are left alone. */
+/* Legacy deep links. The supply page used to be the site root, so
+   realiostats.com/#<id> links are out in the wild. The root is now the
+   overview page and the supply page lives at supply.html. A fragment never
+   reaches the server, so Cloudflare _redirects cannot fix this; it has to
+   happen in the browser. */
 (function(){
   var moved = { holders:"holders.html",
                 method:"methodology.html", faq:"methodology.html",
-                contribute:"methodology.html" };
+                contribute:"methodology.html",
+                liquidity:"supply.html", emissions:"supply.html", chains:"supply.html",
+                excluded:"supply.html", chart:"supply.html", provenance:"supply.html",
+                calculator:"supply.html", proj:"supply.html" };
   var here = location.pathname.replace(/\/index\.html$/, "/");
-  if(here !== "/" && !/\/$/.test(here)) return;      // only rewrite from the home page
+  if(here !== "/" && !/\/$/.test(here)) return;      // only rewrite from the root
   var id = location.hash.slice(1);
   if(moved[id]) location.replace(moved[id] + "#" + id);
+})();
+
+/* Theme. Dark is the default; the nav button switches to light and the choice
+   is remembered per browser. The attribute itself is set by a one-line script
+   in each page's <head>, before first paint, so there is no flash.
+
+   Charts cannot read CSS, so they take colours from T(), which reads the
+   --chart-* tokens. On a switch, retheme() swaps every old token value for the
+   new one inside each live chart's own config and redraws it. Custom canvas
+   drawing (the supply chart's era markers, the watermark) calls T() at draw
+   time, so it follows automatically. */
+function T(){
+  const cs = getComputedStyle(document.documentElement);
+  const g = k => cs.getPropertyValue(k).trim();
+  return { ink:g("--chart-ink"), grid:g("--chart-grid"), tick:g("--chart-tick"),
+           guide:g("--chart-guide"), wm:g("--chart-wm"), bg:g("--bg") };
+}
+function applyChartDefaults(){
+  if(!window.Chart) return;
+  const t = T();
+  Chart.defaults.color = t.tick;
+  Chart.defaults.borderColor = t.grid;
+}
+function retheme(from, to){
+  const map = {};
+  Object.keys(from).forEach(k => { if(from[k] && from[k] !== to[k]) map[from[k]] = to[k]; });
+  const walk = (o, depth) => {
+    if(!o || typeof o !== "object" || depth > 9) return;
+    for(const k of Object.keys(o)){
+      const v = o[k];
+      if(typeof v === "string"){ if(map[v]) o[k] = map[v]; }
+      else if(Array.isArray(v)){
+        for(let i=0;i<v.length;i++){
+          if(typeof v[i] === "string"){ if(map[v[i]]) v[i] = map[v[i]]; }
+          else if(v[i] && typeof v[i] === "object") walk(v[i], depth+1);
+        }
+      }
+      else if(v && typeof v === "object" && k !== "chart") walk(v, depth+1);
+    }
+  };
+  if(!window.Chart) return;
+  Object.values(Chart.instances || {}).forEach(ch => {
+    try{ walk(ch.config.options, 0); walk(ch.config.data, 0); ch.update("none"); }catch(e){}
+  });
+}
+function toggleTheme(){
+  const root = document.documentElement;
+  const from = T();
+  const next = root.dataset.theme === "light" ? "dark" : "light";
+  root.dataset.theme = next;
+  try{ localStorage.setItem("rs-theme", next); }catch(e){}
+  applyChartDefaults();
+  retheme(from, T());
+}
+applyChartDefaults();
+
+/* Overview page (body[data-summary]). It shows a handful of blocks from the
+   supply, holders and network pages by loading those pages' own scripts
+   unchanged, so every number is computed by exactly the same code as on the
+   full pages. Those scripts write to elements the overview does not have, so
+   here, and only here, a missing id resolves to a detached placeholder and a
+   chart aimed at one is not built. On every other page behaviour is untouched. */
+(function(){
+  if(!document.body || !document.body.hasAttribute("data-summary")) return;
+  const real = document.getElementById.bind(document);
+  document.getElementById = id => real(id) || document.createElement("div");
+  if(window.Chart){
+    const RealChart = window.Chart;
+    window.Chart = new Proxy(RealChart, {
+      construct(target, args){
+        const el = args[0];
+        if(!(el && el.isConnected && el.tagName === "CANVAS"))
+          return { destroy(){}, update(){}, data:{datasets:[]}, options:{} };
+        return Reflect.construct(target, args);
+      }
+    });
+  }
 })();

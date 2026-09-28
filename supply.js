@@ -644,7 +644,7 @@ function drawChart(liveSeries){
     label:s.name, data:rows.map(r=> r[s.key] ?? 0),
     borderColor:s.color, backgroundColor:s.color+"cc",
     fill: i===0 ? "origin" : "-1", stack:"s", borderWidth:1, tension:.2,
-    pointRadius:liveRadius, pointBackgroundColor:s.color, pointBorderColor:"#fff", pointBorderWidth:1
+    pointRadius:liveRadius, pointBackgroundColor:s.color, pointBorderColor:T().bg, pointBorderWidth:1
   }));
   if(!all){
     datasets.push({label:"175M native emission cap (reference)", data:labels.map(()=>175),
@@ -663,17 +663,17 @@ function drawChart(liveSeries){
       if(all){
         const yv=v=>scales.y.getPixelForValue(v);
         const mark=(xp,label,align)=>{
-          ctx.strokeStyle="rgba(15,23,42,0.3)";ctx.setLineDash([3,4]);ctx.lineWidth=1;
+          ctx.strokeStyle=T().guide;ctx.setLineDash([3,4]);ctx.lineWidth=1;
           ctx.beginPath();ctx.moveTo(xp,chartArea.top+18);ctx.lineTo(xp,chartArea.bottom);ctx.stroke();
           ctx.setLineDash([]);
-          ctx.fillStyle="#0b1015";ctx.textAlign=align;
+          ctx.fillStyle=T().ink;ctx.textAlign=align;
           ctx.fillText(label, align==="right" ? xp-6 : xp+6, chartArea.top+14);
         };
         /* 175M native emission cap, for scale */
         ctx.setLineDash([6,5]);ctx.lineWidth=1.4;ctx.strokeStyle="rgba(154,167,178,0.95)";
         ctx.beginPath();ctx.moveTo(chartArea.left,yv(175));ctx.lineTo(chartArea.right,yv(175));ctx.stroke();
         ctx.setLineDash([]);
-        ctx.fillStyle="#8b97a3";ctx.textAlign="right";
+        ctx.fillStyle=T().tick;ctx.textAlign="right";
         ctx.fillText("175M native emission cap", chartArea.right-8, yv(175)-6);
         const ath=PRE.findIndex(r=>r.label==="Mar 2024");
         if(ath>=0) mark(scales.x.getPixelForValue(ath), "All-time high", "right");
@@ -684,10 +684,10 @@ function drawChart(liveSeries){
         const rIdx = rows.findIndex(r=>r.reissued);
         if(rIdx>0){
           const xr=(scales.x.getPixelForValue(rIdx-1)+scales.x.getPixelForValue(rIdx))/2;
-          ctx.strokeStyle="rgba(15,23,42,0.3)";ctx.setLineDash([3,4]);ctx.lineWidth=1;
+          ctx.strokeStyle=T().guide;ctx.setLineDash([3,4]);ctx.lineWidth=1;
           ctx.beginPath();ctx.moveTo(xr,chartArea.top+18);ctx.lineTo(xr,chartArea.bottom);ctx.stroke();
           ctx.setLineDash([]);
-          ctx.fillStyle="#0b1015";ctx.textAlign="right";
+          ctx.fillStyle=T().ink;ctx.textAlign="right";
           ctx.fillText("MEXC moves to Ethereum", xr-6, chartArea.top+14);
         }
         const x2=scales.x.getPixelForValue(2);
@@ -696,7 +696,7 @@ function drawChart(liveSeries){
         ctx.strokeStyle="rgba(100,116,139,0.45)";ctx.setLineDash([4,4]);ctx.lineWidth=1;
         ctx.beginPath();ctx.moveTo(x2,chartArea.top);ctx.lineTo(x2,chartArea.bottom);ctx.stroke();
         ctx.setLineDash([]);
-        ctx.fillStyle="#64748b";ctx.textAlign="left";
+        ctx.fillStyle=T().tick;ctx.textAlign="left";
         ctx.fillText("Migration & bridge ramp (Oct 2024 to mid 2025)", chartArea.left+8, chartArea.top+13);
       }
       ctx.restore();
@@ -711,12 +711,12 @@ function drawChart(liveSeries){
     options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},
       interaction:{mode:"index",intersect:false},
       scales:{
-        y:{stacked:true,beginAtZero:true,suggestedMax:all?400:360,grid:{color:"#eef1f4"},
-           ticks:{callback:v=>v+"M",color:"#69747f",font:{family:"Inter"}}},
-        x:{grid:{display:false},ticks:{color:"#69747f",font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
+        y:{stacked:true,beginAtZero:true,suggestedMax:all?400:360,grid:{color:T().grid},
+           ticks:{callback:v=>v+"M",color:T().tick,font:{family:"Inter"}}},
+        x:{grid:{display:false},ticks:{color:T().tick,font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
       },
       plugins:{
-        legend:{labels:{color:"#0b1015",font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}},
+        legend:{labels:{color:T().ink,font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}},
         tooltip:{callbacks:{
           label:c=>` ${c.dataset.label}: ${(+c.parsed.y).toFixed(1)}M`,
           footer:items=>{

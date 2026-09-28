@@ -61,7 +61,7 @@ function renderLadder(s) {
        + " its <code>blocks_per_year</code> parameter assumes"
        + (drift ? ", roughly <b>" + drift.toFixed(0) + "% slower</b>" : "")
        + ", so real annual issuance lands below nominal. This is the same correction the "
-       + '<a href="index.html#emissions">emissions panel</a> applies to supply.' },
+       + '<a href="supply.html#emissions">emissions panel</a> applies to supply.' },
 
     { v: pct2(y.after_community_tax), sub: "after tax", cls: "",
       k: "After the " + pct0(tax) + " community tax",
@@ -114,8 +114,8 @@ function renderBase(s) {
   const max = Math.max(...rows.map(r => r.amount), 1);
   document.getElementById("baseBody").innerHTML = rows.map(r =>
     `<tr><td><span class="vbar" style="width:${Math.round(46 * r.amount / max)}px"></span>${r.label}</td>
-         <td>${fmtM(M(r.amount))} <span class="base-usd" data-label="${r.label}" style="color:#69747f"></span></td><td>${r.pct_of_pool}%</td></tr>`).join("")
-    + `<tr class="lq-total"><td>Multistaking pool</td><td>${fmtM(M(st.multistaking_pool_total))} <span class="base-usd" data-label="TOTAL" style="color:#69747f"></span></td><td>100%</td></tr>`;
+         <td>${fmtM(M(r.amount))} <span class="base-usd" data-label="${r.label}" style="color:var(--muted)"></span></td><td>${r.pct_of_pool}%</td></tr>`).join("")
+    + `<tr class="lq-total"><td>Multistaking pool</td><td>${fmtM(M(st.multistaking_pool_total))} <span class="base-usd" data-label="TOTAL" style="color:var(--muted)"></span></td><td>100%</td></tr>`;
 
   // Dollar value in brackets beside each amount. RST has no public market, so
   // it reads "unpriced" and the pool total is a floor ("≥").
@@ -229,14 +229,14 @@ function renderStakingFlow(hist, tradableTotal) {
   const rioMultiPct = (rio && tradableTotal) ? 100 * rio.amount / tradableTotal : null;
 
   document.getElementById("flowChipsTop").innerHTML =
-      `<div class="chip"><div class="cn">Bonded voting weight</div><div class="cv">${fmtM(M(st.bonded_weight))} <span id="bondedUsd" style="font-size:.55em;font-weight:500;color:#69747f"></span></div>
+      `<div class="chip"><div class="cn">Bonded voting weight</div><div class="cv">${fmtM(M(st.bonded_weight))} <span id="bondedUsd" style="font-size:.55em;font-weight:500;color:var(--muted)"></span></div>
         <div class="cx">across RIO, RST and DSTRX combined</div></div>`
     + `<div class="chip"><div class="cn">RIO bonding ratio · native</div><div class="cv">${rioPct != null ? rioPct.toFixed(1) + "%" : "—"}</div>
         <div class="cx">of circulating native RIO supply</div></div>`
     + (rioMultiPct == null ? "" :
       `<div class="chip"><div class="cn">RIO bonding ratio · multichain</div><div class="cv">${rioMultiPct.toFixed(1)}%</div>
         <div class="cx">of total circulating RIO supply, across every chain</div></div>`)
-    + `<div class="chip"><div class="cn">Unbonding queue</div><div class="cv">${fmtM(M(st.not_bonded))} <span style="font-size:.55em;font-weight:500;color:#69747f">${unbondPctBonded != null ? "(" + unbondPctBonded.toFixed(1) + "% of bonded)" : ""}</span></div>
+    + `<div class="chip"><div class="cn">Unbonding queue</div><div class="cv">${fmtM(M(st.not_bonded))} <span style="font-size:.55em;font-weight:500;color:var(--muted)">${unbondPctBonded != null ? "(" + unbondPctBonded.toFixed(1) + "% of bonded)" : ""}</span></div>
         <div class="cx">mid-unbond, liquid again within ${st.unbonding_time ? Math.round(parseInt(st.unbonding_time) / 86400) : 7} days</div></div>`;
 
   document.getElementById("flowChipsMid").innerHTML =
@@ -266,8 +266,8 @@ function renderStakingFlow(hist, tradableTotal) {
           backgroundColor: dayFlow.map(d => d == null ? "transparent" : d >= 0 ? "#34d399" : "#fb7185"),
           borderRadius: 3, order: 2 },
         { type: "line", label: "Bonded weight", data: bonded, yAxisID: "y",
-          borderColor: "#0b1015", backgroundColor: "#0b1015", borderWidth: 2, tension: .25,
-          pointRadius: rows.length < 40 ? 3 : 0, pointBackgroundColor: "#0b1015", fill: false, order: 1 }
+          borderColor: T().ink, backgroundColor: T().ink, borderWidth: 2, tension: .25,
+          pointRadius: rows.length < 40 ? 3 : 0, pointBackgroundColor: T().ink, fill: false, order: 1 }
       ]
     },
     plugins: [watermarkPlugin],
@@ -275,16 +275,16 @@ function renderStakingFlow(hist, tradableTotal) {
       responsive: true, maintainAspectRatio: false, animation: { duration: 300 },
       interaction: { mode: "index", intersect: false },
       scales: {
-        y: { position: "left", grid: { color: "#eef1f4" },
-             ticks: { callback: v => v + "M", color: "#69747f", font: { family: "Inter" } },
-             title: { display: true, text: "Bonded weight (M)", color: "#69747f", font: { family: "Inter", size: 11 } } },
+        y: { position: "left", grid: { color: T().grid },
+             ticks: { callback: v => v + "M", color: T().tick, font: { family: "Inter" } },
+             title: { display: true, text: "Bonded weight (M)", color: T().tick, font: { family: "Inter", size: 11 } } },
         y1: { position: "right", grid: { display: false },
-              ticks: { callback: v => (v >= 0 ? "+" : "") + fmtInt(v), color: "#69747f", font: { family: "Inter" } },
-              title: { display: true, text: "Net daily flow", color: "#69747f", font: { family: "Inter", size: 11 } } },
-        x: { grid: { display: false }, ticks: { color: "#69747f", font: { family: "Inter", size: 11 }, maxRotation: 0, autoSkipPadding: 14 } }
+              ticks: { callback: v => (v >= 0 ? "+" : "") + fmtInt(v), color: T().tick, font: { family: "Inter" } },
+              title: { display: true, text: "Net daily flow", color: T().tick, font: { family: "Inter", size: 11 } } },
+        x: { grid: { display: false }, ticks: { color: T().tick, font: { family: "Inter", size: 11 }, maxRotation: 0, autoSkipPadding: 14 } }
       },
       plugins: {
-        legend: { labels: { color: "#0b1015", font: { family: "Inter", size: 12 }, boxWidth: 12, usePointStyle: true } },
+        legend: { labels: { color: T().ink, font: { family: "Inter", size: 12 }, boxWidth: 12, usePointStyle: true } },
         tooltip: { callbacks: {
           label: c => c.dataset.yAxisID === "y1"
             ? ` Net flow: ${c.parsed.y == null ? "—" : (c.parsed.y >= 0 ? "+" : "") + fmtInt(c.parsed.y)}`

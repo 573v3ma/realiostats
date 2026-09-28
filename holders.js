@@ -93,7 +93,7 @@ function renderHolderEvm(){
       series.forEach(s => { if(s.data[i] != null){ sum += s.data[i]; any = true; } });
       return any ? sum : null;
     });
-    datasets.push({label:"Combined (" + series.map(s=>s.name).join(" + ") + ")", data:combined, borderColor:"#0b1015",
+    datasets.push({label:"Combined (" + series.map(s=>s.name).join(" + ") + ")", data:combined, borderColor:T().ink,
       backgroundColor:"transparent", tension:.25, pointRadius:0, borderWidth:2.4, fill:false, spanGaps:true});
   }
   if(HB_EVM_CHART) HB_EVM_CHART.destroy();
@@ -101,11 +101,11 @@ function renderHolderEvm(){
     type:"line", plugins:[watermarkPlugin], data:{labels, datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
       scales:{
-        y:{beginAtZero:true,grid:{color:"#eef1f4"},ticks:{color:"#69747f",font:{family:"Inter"}}},
-        x:{grid:{display:false},ticks:{color:"#69747f",font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
+        y:{beginAtZero:true,grid:{color:T().grid},ticks:{color:T().tick,font:{family:"Inter"}}},
+        x:{grid:{display:false},ticks:{color:T().tick,font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
       },
       plugins:{
-        legend:{labels:{color:"#0b1015",font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}},
+        legend:{labels:{color:T().ink,font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}},
         tooltip:{callbacks:{title:i => i[0].label + " · " + HB_METRIC_LABEL[HB_EVM_METRIC]}}
       }
     }
@@ -142,10 +142,10 @@ function renderNativeChart(){
       pointBackgroundColor:"#10b981", fill:false, borderWidth:1.8}]},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
       scales:{
-        y:{beginAtZero:true,grid:{color:"#eef1f4"},ticks:{color:"#69747f",font:{family:"Inter"}}},
-        x:{grid:{display:false},ticks:{color:"#69747f",font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
+        y:{beginAtZero:true,grid:{color:T().grid},ticks:{color:T().tick,font:{family:"Inter"}}},
+        x:{grid:{display:false},ticks:{color:T().tick,font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
       },
-      plugins:{legend:{labels:{color:"#0b1015",font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}}}
+      plugins:{legend:{labels:{color:T().ink,font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}}}
     }
   });
 }

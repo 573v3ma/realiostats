@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("rs-theme")||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Incident report, 25 August 2026 · realiostats</title>
 <meta name="description" content="On-chain record of the 25 August 2026 movement of roughly 129.5M RIO on Ethereum, BNB Chain, Algorand, Stellar and the Realio native chain, with addresses, transaction IDs and timestamps, and what it means for the circulating supply figure." />
@@ -9,18 +11,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="site.css?v=9">
+<link rel="stylesheet" href="site.css?v=20">
 </head>
 <body>
 <header><div class="wrap nav">
   <a class="brand" href="index.html"><span class="dot"></span> realiostats</a>
   <nav>
-    <a href="index.html">Supply</a>
+    <a href="index.html">Overview</a>
+    <a href="supply.html">Supply</a>
     <a href="holders.html">Holders</a>
     <a href="network.html">Network</a>
     <a href="incident.html" class="is-active">Incident</a>
     <a href="methodology.html">Methodology</a>
     <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">Source</a>
+    <button type="button" class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Switch colour theme" title="Switch colour theme">
+      <svg class="i-sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    </button>
   </nav>
 </div></header>
 
@@ -287,11 +294,11 @@
     <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">GitHub &amp; methodology</a>
     <a href="https://t.me/Cryptomus2634" target="_blank" rel="noopener">Telegram</a>
     <a href="methodology.html#method">How it's calculated</a>
-    <a href="index.html">Supply</a>
+    <a href="supply.html">Supply</a>
   </div>
   <p class="foot-note">Most figures on this page are a point-in-time reading as at 25 August 2026, 11:50 UTC, drawn from public blockchain endpoints, with the situation update at the top of the page current as at 11 September 2026, 07:20 UTC. They are one on-chain measurement, not the Realio team's official numbers. Not affiliated with the Realio team. Not financial advice.</p>
 </div></footer>
 
-<script src="core.js?v=7"></script>
+<script src="core.js?v=20"></script>
 </body>
 </html>
