@@ -43,30 +43,6 @@
     <div class="updated">Last updated <b id="updated">—</b> · refreshes daily from a public, open-source pipeline.</div>
   </div>
 
-  <div class="proj" id="proj">
-    <div class="proj-h">Price to market cap</div>
-    <p class="proj-lede">Try a price. See the circulating market cap it would imply, on our real multichain supply.</p>
-    <div class="proj-row">
-      <label class="proj-field"><span>RIO price</span>
-        <div class="proj-inwrap"><span class="proj-pfx">$</span><input id="projPrice" type="text" inputmode="decimal" value="1.00" aria-label="RIO price in USD"></div>
-      </label>
-      <div class="proj-eq">=</div>
-      <label class="proj-field"><span>Circulating market cap</span>
-        <div class="proj-inwrap"><span class="proj-pfx">$</span><input id="projMcap" type="text" inputmode="decimal" aria-label="Circulating market cap in USD"></div>
-      </label>
-    </div>
-    <input id="projSlider" class="proj-slider" type="range" min="0" max="1000" value="0" aria-label="RIO price slider">
-    <div class="proj-mult" id="projMult"></div>
-    <div class="proj-presets" id="projPresets"></div>
-    <div class="proj-hold">
-      <span class="proj-holdlab">Your RIO</span>
-      <div class="proj-inwrap proj-holdin"><input id="projHold" type="text" inputmode="decimal" placeholder="amount you hold" aria-label="Your RIO holdings"></div>
-      <span class="proj-holdout" id="projHoldOut"></span>
-    </div>
-    <p class="proj-clarify"><b class="imp">Important</b>A market cap is a valuation, price times supply, not the capital needed to reach that price. Because only a fraction of the supply is actively liquid, price can move on far less than the market cap implies, in either direction. <a href="#liquidity">See how much of it is actually liquid</a>, just below.</p>
-    <p class="proj-cap">Arithmetic, price times supply, not a forecast. Uses realiostats' full multichain circulating supply. Anything you enter stays in your browser.</p>
-  </div>
-
   <div class="assume">
     <div class="ah">One method, stated openly</div>
     <p>Circulating supply can be measured in more than one legitimate way. This is one of them, built to be transparent and reproducible. It rests on two assumptions:</p>
@@ -201,6 +177,32 @@
     <p>So the ongoing bridge is consistent and two-way, but the size of the cross-chain supply is a legacy of historical direct issuance across several chains, not of the native emission schedule. We present this as measurement, not accusation, and we invite the team to publish the full cross-chain reconciliation.</p>
   </div>
   <p class="cap">Method: for the burn-and-mint contracts, every ERC-20 <code>Transfer</code> from the zero address (a mint) and to the zero address (a burn) since the 30 October 2024 migration, summed and reconciled against <code>totalSupply</code>; both use the RIO contract at <code>0x94a8&#8230;1aa0</code>. Per-chain totals are read live from each chain's public endpoint. Native emission is bounded by the 8% schedule and the 175M cap, so it cannot have created more than roughly 90M over the chain's life to date; bridging moves RIO in and out of native but does not create it. Fully reproducible from public data (see <a href="https://github.com/573v3ma/realiostats/blob/main/rio_mint_burn_audit.py" target="_blank" rel="noopener">rio_mint_burn_audit.py</a>).</p>
+</div></section>
+
+<section id="calculator"><div class="wrap">
+  <div class="proj" id="proj">
+    <div class="proj-h">Price to market cap</div>
+    <p class="proj-lede">Try a price. See the circulating market cap it would imply, on our real multichain supply.</p>
+    <div class="proj-row">
+      <label class="proj-field"><span>RIO price</span>
+        <div class="proj-inwrap"><span class="proj-pfx">$</span><input id="projPrice" type="text" inputmode="decimal" value="1.00" aria-label="RIO price in USD"></div>
+      </label>
+      <div class="proj-eq">=</div>
+      <label class="proj-field"><span>Circulating market cap</span>
+        <div class="proj-inwrap"><span class="proj-pfx">$</span><input id="projMcap" type="text" inputmode="decimal" aria-label="Circulating market cap in USD"></div>
+      </label>
+    </div>
+    <input id="projSlider" class="proj-slider" type="range" min="0" max="1000" value="0" aria-label="RIO price slider">
+    <div class="proj-mult" id="projMult"></div>
+    <div class="proj-presets" id="projPresets"></div>
+    <div class="proj-hold">
+      <span class="proj-holdlab">Your RIO</span>
+      <div class="proj-inwrap proj-holdin"><input id="projHold" type="text" inputmode="decimal" placeholder="amount you hold" aria-label="Your RIO holdings"></div>
+      <span class="proj-holdout" id="projHoldOut"></span>
+    </div>
+    <p class="proj-clarify"><b class="imp">Important</b>A market cap is a valuation, price times supply, not the capital needed to reach that price. Because only a fraction of the supply is actively liquid, price can move on far less than the market cap implies, in either direction. <a href="#liquidity">See how much of it is actually liquid</a>, further up this page.</p>
+    <p class="proj-cap">Arithmetic, price times supply, not a forecast. Uses realiostats' full multichain circulating supply. Anything you enter stays in your browser.</p>
+  </div>
 </div></section>
 
 <section><div class="wrap">
