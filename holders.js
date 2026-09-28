@@ -98,28 +98,35 @@ function renderHolderEvm(){
     return {name, color, data, isNative};
   });
   const est = i => natFirst > 0 && i < natFirst;
-  // Placeholder part of the native band is dimmed with a veil in the page
-  // colour, drawn over the band only (segment styling would split the fills
-  // above it and leave hairline seams).
-  const natVeil = {id:"natVeil", afterDatasetsDraw(chart){
-    if(!(natFirst > 0)) return;
-    const {ctx, chartArea:a, scales} = chart;
-    const x1 = scales.x.getPixelForValue(natFirst);
-    const yTop = scales.y.getPixelForValue(series[0].data[natFirst]) - 2;
-    ctx.save();
-    ctx.fillStyle = hexA(T().bg, .62);
-    ctx.fillRect(a.left, yTop, x1 - a.left, scales.y.getPixelForValue(0) - yTop);
+  // The native band keeps its full green fill everywhere; only its top line
+  // changes: faint over the placeholder months, full strength once measured.
+  // The line is drawn here rather than by Chart.js because per-segment line
+  // styles would also split the fills stacked above it and leave hairline seams.
+  const natLine = {id:"natLine", afterDatasetsDraw(chart){
+    if(!series.length || !series[0].isNative) return;
+    const pts = chart.getDatasetMeta(0).data;
+    if(!pts || pts.length < 2) return;
+    const ctx = chart.ctx, col = series[0].color, split = natFirst > 0 ? natFirst : 0;
+    const stroke = (from, to, alpha) => {
+      if(to <= from) return;
+      ctx.beginPath(); ctx.moveTo(pts[from].x, pts[from].y);
+      for(let i = from + 1; i <= to; i++) ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.strokeStyle = hexA(col, alpha); ctx.stroke();
+    };
+    ctx.save(); ctx.lineWidth = 2; ctx.lineJoin = "round";
+    stroke(0, split, .35);
+    stroke(split, pts.length - 1, 1);
     ctx.restore();
   }};
   const datasets = series.map((s,i) => {
-    const d = {label:s.name, data:s.data.map(v => v ?? 0), borderColor:s.color,
+    const d = {label:s.name, data:s.data.map(v => v ?? 0), borderColor:s.isNative ? "transparent" : s.color, legendColor:s.color,
       backgroundColor:fadeFill(s.color,.38,.12), ...LINE_STYLE, pointBackgroundColor:s.color, pointBorderColor:T().bg,
       fill: i === 0 ? "origin" : "-1", stack:"s"};
     return d;
   });
   if(HB_EVM_CHART) HB_EVM_CHART.destroy();
   HB_EVM_CHART = new Chart(document.getElementById("hbEvmCanvas"),{
-    type:"line", plugins:[natVeil, watermarkPlugin], data:{labels, datasets},
+    type:"line", plugins:[natLine, watermarkPlugin], data:{labels, datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
       scales:{
         y:{stacked:true,beginAtZero:true,grid:{color:T().grid},ticks:{color:T().tick,font:{family:"Inter"}}},
