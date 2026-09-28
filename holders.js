@@ -74,30 +74,52 @@ function renderHolderEvm(){
     }));
     HB_EVM_WIRED = true;
   }
-  // Realio Native joins as a fourth band. Its history is counted forward only
-  // (daily from 3 Aug 2026), so it is folded into month-end readings here, the
-  // latest daily reading in each month, and is zero before tracking began.
+  // Realio Native sits at the bottom of the stack. Its history is counted
+  // forward only (daily from 3 Aug 2026), folded here into month-end readings.
+  // Months before the first reading are held at that first value so the band
+  // runs the full width, and are drawn lighter and dashed: a placeholder for
+  // scale, not a measurement. The tooltip says so.
   const natByMonth = {};
   (HB_NAT_PTS || []).forEach(p => { natByMonth[p.ts.slice(0,7)] = p.native_holders; });
   const natHist = Object.keys(natByMonth).sort().map(m => ({month:m, ...natByMonth[m]}));
-  if(natHist.length) have.push(["Realio Native","#34d399", natHist]);
+  if(natHist.length) have.unshift(["Realio Native","#34d399", natHist, true]);
   const set = new Set(); have.forEach(([,,h]) => h.forEach(p => set.add(p.month)));
   const months = [...set].sort();
   const labels = months.map(m => { const [y,mo] = m.split("-");
     return new Date(y, mo-1, 1).toLocaleDateString("en-GB",{month:"short",year:"2-digit"}); });
-  const series = have.map(([name,color,h]) => {
+  let natFirst = -1;
+  const series = have.map(([name,color,h,isNative]) => {
     const bym = {}; h.forEach(p => bym[p.month] = p[HB_EVM_METRIC]);
-    return {name, color, data: months.map(m => bym[m] ?? null)};
+    let data = months.map(m => bym[m] ?? null);
+    if(isNative){
+      natFirst = data.findIndex(v => v != null);
+      if(natFirst > 0) data = data.map((v,i) => i < natFirst ? data[natFirst] : v);
+    }
+    return {name, color, data, isNative};
   });
-  // Stacked translucent bands, the same look as the supply chart: the top edge
-  // of the stack is the combined total across the EVM chains shown. A chain with
-  // no data yet for a month (Base before Sep 2025) stacks as zero.
-  const datasets = series.map((s,i) => ({label:s.name, data:s.data.map(v => v ?? 0), borderColor:s.color,
-    backgroundColor:fadeFill(s.color,.38,.12), ...LINE_STYLE, pointBackgroundColor:s.color, pointBorderColor:T().bg,
-    fill: i === 0 ? "origin" : "-1", stack:"s"}));
+  const est = i => natFirst > 0 && i < natFirst;
+  // Placeholder part of the native band is dimmed with a veil in the page
+  // colour, drawn over the band only (segment styling would split the fills
+  // above it and leave hairline seams).
+  const natVeil = {id:"natVeil", afterDatasetsDraw(chart){
+    if(!(natFirst > 0)) return;
+    const {ctx, chartArea:a, scales} = chart;
+    const x1 = scales.x.getPixelForValue(natFirst);
+    const yTop = scales.y.getPixelForValue(series[0].data[natFirst]) - 2;
+    ctx.save();
+    ctx.fillStyle = hexA(T().bg, .62);
+    ctx.fillRect(a.left, yTop, x1 - a.left, scales.y.getPixelForValue(0) - yTop);
+    ctx.restore();
+  }};
+  const datasets = series.map((s,i) => {
+    const d = {label:s.name, data:s.data.map(v => v ?? 0), borderColor:s.color,
+      backgroundColor:fadeFill(s.color,.38,.12), ...LINE_STYLE, pointBackgroundColor:s.color, pointBorderColor:T().bg,
+      fill: i === 0 ? "origin" : "-1", stack:"s"};
+    return d;
+  });
   if(HB_EVM_CHART) HB_EVM_CHART.destroy();
   HB_EVM_CHART = new Chart(document.getElementById("hbEvmCanvas"),{
-    type:"line", plugins:[watermarkPlugin], data:{labels, datasets},
+    type:"line", plugins:[natVeil, watermarkPlugin], data:{labels, datasets},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
       scales:{
         y:{stacked:true,beginAtZero:true,grid:{color:T().grid},ticks:{color:T().tick,font:{family:"Inter"}}},
@@ -106,8 +128,11 @@ function renderHolderEvm(){
       plugins:{
         legend:chartLegend(),
         tooltip:chartTooltip({title:i => i[0].label + " · " + HB_METRIC_LABEL[HB_EVM_METRIC],
-          label:c => ` ${c.dataset.label}: ${fmtInt(c.parsed.y)}`,
-          footer:items => "Combined: " + fmtInt(items.reduce((t,i) => t + (+i.parsed.y || 0), 0))})
+          label:c => c.dataset.label === "Realio Native" && est(c.dataIndex)
+            ? ` Realio Native: not yet measured (tracking began Aug 2026)`
+            : ` ${c.dataset.label}: ${fmtInt(c.parsed.y)}`,
+          footer:items => (est(items[0].dataIndex) ? "Combined (EVM chains): " : "Combined: ")
+            + fmtInt(items.reduce((t,i) => t + (i.dataset.label === "Realio Native" && est(i.dataIndex) ? 0 : (+i.parsed.y || 0)), 0))})
       }
     }
   });
