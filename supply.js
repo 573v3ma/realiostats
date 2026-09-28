@@ -51,8 +51,6 @@ const STACK = [
   {key:"stellar",  name:"Stellar",       color:"#94a3b8"},
   {key:"solana",   name:"Solana",        color:"#e879f9"}
 ];
-/* hex -> rgba, for the translucent band fills */
-const hexA = (h,a) => { const n=parseInt(h.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
 
 const CHAINS = [
   {key:"bnb",       name:"BNB Chain",       color:"#f59e0b", verify:"https://bscscan.com/token/0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0#balances"},
@@ -643,16 +641,9 @@ function drawChart(liveSeries){
   void live; void nRecon;
   /* Translucent bands with a crisp line on top of each: every band fades from
      its top edge down, so the stack reads as layers rather than solid blocks. */
-  const bandFill = (c) => (ctx) => {
-    const a = ctx.chart.chartArea;
-    if(!a) return hexA(c,.22);
-    const g = ctx.chart.ctx.createLinearGradient(0,a.top,0,a.bottom);
-    g.addColorStop(0, hexA(c,.38)); g.addColorStop(1, hexA(c,.12));
-    return g;
-  };
   const datasets = STACK.map((s,i)=>({
     label:s.name, data:rows.map(r=> r[s.key] ?? 0),
-    borderColor:s.color, backgroundColor:bandFill(s.color),
+    borderColor:s.color, backgroundColor:fadeFill(s.color,.38,.12),
     fill: i===0 ? "origin" : "-1", stack:"s", borderWidth:2, tension:.35, cubicInterpolationMode:"monotone",
     pointRadius:0, pointHoverRadius:4, pointHitRadius:8,
     pointBackgroundColor:s.color, pointBorderColor:T().bg, pointBorderWidth:2
@@ -728,10 +719,8 @@ function drawChart(liveSeries){
         x:{grid:{display:false},ticks:{color:T().tick,font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
       },
       plugins:{
-        legend:{labels:{color:T().ink,font:{family:"Inter",size:12},boxWidth:8,boxHeight:8,usePointStyle:true,pointStyle:"circle",padding:16,
-          generateLabels:ch=>Chart.defaults.plugins.legend.labels.generateLabels(ch).map(l=>{ const c=ch.data.datasets[l.datasetIndex].borderColor; return {...l, fillStyle:c, strokeStyle:c}; })}},
-        tooltip:{backgroundColor:"rgba(15,20,26,.94)",borderColor:"rgba(255,255,255,.08)",borderWidth:1,padding:12,cornerRadius:10,
-          titleColor:"#f0f4f7",bodyColor:"#cfd8df",footerColor:"#f0f4f7",boxPadding:4,usePointStyle:true,
+        legend:chartLegend(),
+        tooltip:{...chartTooltip(),
           callbacks:{
           label:c=>` ${c.dataset.label}: ${(+c.parsed.y).toFixed(1)}M`,
           footer:items=>{

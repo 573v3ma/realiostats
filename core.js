@@ -122,6 +122,35 @@ function T(){
   return { ink:g("--chart-ink"), grid:g("--chart-grid"), tick:g("--chart-tick"),
            guide:g("--chart-guide"), wm:g("--chart-wm"), bg:g("--bg") };
 }
+/* Shared chart styling, so every chart on the site looks like one family:
+   translucent fills that fade downward, smooth lines, no point markers until
+   hover, dot legends and a dark rounded tooltip. */
+const hexA = (h,a) => { const n=parseInt(h.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
+// colour may be a hex string or a function returning one (read at draw time,
+// so fills follow a theme switch).
+function fadeFill(color, top, bottom){
+  return ctx => {
+    const c = typeof color === "function" ? color() : color;
+    const a = ctx.chart.chartArea;
+    if(!a) return hexA(c, (top+bottom)/2);
+    const g = ctx.chart.ctx.createLinearGradient(0, a.top, 0, a.bottom);
+    g.addColorStop(0, hexA(c, top)); g.addColorStop(1, hexA(c, bottom));
+    return g;
+  };
+}
+function chartLegend(){
+  return {labels:{color:T().ink,font:{family:"Inter",size:12},boxWidth:8,boxHeight:8,usePointStyle:true,pointStyle:"circle",padding:16,
+    generateLabels:ch=>Chart.defaults.plugins.legend.labels.generateLabels(ch).map(l=>{
+      const ds=ch.data.datasets[l.datasetIndex], c=ds.legendColor||ds.borderColor;
+      return typeof c==="string" ? {...l, fillStyle:c, strokeStyle:c} : l; })}};
+}
+function chartTooltip(callbacks){
+  return {backgroundColor:"rgba(15,20,26,.94)",borderColor:"rgba(255,255,255,.08)",borderWidth:1,padding:12,cornerRadius:10,
+    titleColor:"#f0f4f7",bodyColor:"#cfd8df",footerColor:"#f0f4f7",boxPadding:4,usePointStyle:true,callbacks:callbacks||{}};
+}
+const LINE_STYLE = {borderWidth:2, tension:.35, cubicInterpolationMode:"monotone",
+  pointRadius:0, pointHoverRadius:4, pointHitRadius:8, pointBorderWidth:2};
+
 function applyChartDefaults(){
   if(!window.Chart) return;
   const t = T();

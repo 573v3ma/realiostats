@@ -60,9 +60,9 @@ function renderHolderEvm(){
   // transfer log fits in one public request, so its monthly history is free.
   // Algorand, Stellar and Solana stay out of this chart, snapshot only.
   const bx = (HB_CHAINS && HB_CHAINS.chains) || {};
-  const have = [["Ethereum","#4f46e5", cx.ethereum && cx.ethereum.history],
-                ["BNB Chain","#f0b90b", cx.bnb && cx.bnb.history],
-                ["Base","#0052ff", bx.base && bx.base.history]]
+  const have = [["Ethereum","#818cf8", cx.ethereum && cx.ethereum.history],
+                ["BNB Chain","#fbbf24", cx.bnb && cx.bnb.history],
+                ["Base","#38bdf8", bx.base && bx.base.history]]
                .filter(x => x[2] && x[2].length);
   if(!have.length){ card.hidden = true; return; }
   card.hidden = false;
@@ -83,7 +83,8 @@ function renderHolderEvm(){
     return {name, color, data: months.map(m => bym[m] ?? null)};
   });
   const datasets = series.map(s => ({label:s.name, data:s.data, borderColor:s.color,
-    backgroundColor:s.color+"22", tension:.25, pointRadius:0, borderWidth:1.8, fill:false, spanGaps:true}));
+    backgroundColor:s.color, ...LINE_STYLE, pointBackgroundColor:s.color, pointBorderColor:T().bg,
+    fill:false, spanGaps:true}));
   // Combined line = both EVM chains summed for the selected tier, the global
   // trajectory. Drawn last so it sits on top; native is not included because it
   // has no reconstructable monthly history.
@@ -94,7 +95,8 @@ function renderHolderEvm(){
       return any ? sum : null;
     });
     datasets.push({label:"Combined (" + series.map(s=>s.name).join(" + ") + ")", data:combined, borderColor:T().ink,
-      backgroundColor:"transparent", tension:.25, pointRadius:0, borderWidth:2.4, fill:false, spanGaps:true});
+      backgroundColor:"transparent", ...LINE_STYLE, borderWidth:2.5, pointBackgroundColor:T().ink, pointBorderColor:T().bg,
+      fill:false, spanGaps:true});
   }
   if(HB_EVM_CHART) HB_EVM_CHART.destroy();
   HB_EVM_CHART = new Chart(document.getElementById("hbEvmCanvas"),{
@@ -105,8 +107,8 @@ function renderHolderEvm(){
         x:{grid:{display:false},ticks:{color:T().tick,font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
       },
       plugins:{
-        legend:{labels:{color:T().ink,font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}},
-        tooltip:{callbacks:{title:i => i[0].label + " · " + HB_METRIC_LABEL[HB_EVM_METRIC]}}
+        legend:chartLegend(),
+        tooltip:chartTooltip({title:i => i[0].label + " · " + HB_METRIC_LABEL[HB_EVM_METRIC]})
       }
     }
   });
@@ -138,14 +140,14 @@ function renderNativeChart(){
     type:"line",
     plugins:[watermarkPlugin],
     data:{labels, datasets:[{label:"Native, " + HB_METRIC_LABEL[HB_NAT_METRIC], data,
-      borderColor:"#10b981", backgroundColor:"#10b98122", tension:.25, pointRadius:3,
-      pointBackgroundColor:"#10b981", fill:false, borderWidth:1.8}]},
+      borderColor:"#34d399", backgroundColor:fadeFill("#34d399",.30,0), ...LINE_STYLE,
+      pointBackgroundColor:"#34d399", pointBorderColor:T().bg, fill:"origin"}]},
     options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
       scales:{
         y:{beginAtZero:true,grid:{color:T().grid},ticks:{color:T().tick,font:{family:"Inter"}}},
         x:{grid:{display:false},ticks:{color:T().tick,font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
       },
-      plugins:{legend:{labels:{color:T().ink,font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}}}
+      plugins:{legend:chartLegend(), tooltip:chartTooltip()}
     }
   });
 }

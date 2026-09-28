@@ -263,11 +263,12 @@ function renderStakingFlow(hist, tradableTotal) {
       labels,
       datasets: [
         { type: "bar", label: "Net daily flow", data: dayFlow, yAxisID: "y1",
-          backgroundColor: dayFlow.map(d => d == null ? "transparent" : d >= 0 ? "#34d399" : "#fb7185"),
-          borderRadius: 3, order: 2 },
+          backgroundColor: dayFlow.map(d => d == null ? "transparent" : d >= 0 ? hexA("#34d399", .55) : hexA("#fb7185", .55)),
+          hoverBackgroundColor: dayFlow.map(d => d == null ? "transparent" : d >= 0 ? "#34d399" : "#fb7185"),
+          borderRadius: 6, borderSkipped: false, maxBarThickness: 14, legendColor: "#34d399", order: 2 },
         { type: "line", label: "Bonded weight", data: bonded, yAxisID: "y",
-          borderColor: T().ink, backgroundColor: T().ink, borderWidth: 2, tension: .25,
-          pointRadius: rows.length < 40 ? 3 : 0, pointBackgroundColor: T().ink, fill: false, order: 1 }
+          borderColor: T().ink, backgroundColor: T().ink, ...LINE_STYLE,
+          pointBackgroundColor: T().ink, pointBorderColor: T().bg, fill: false, order: 1 }
       ]
     },
     plugins: [watermarkPlugin],
@@ -284,8 +285,8 @@ function renderStakingFlow(hist, tradableTotal) {
         x: { grid: { display: false }, ticks: { color: T().tick, font: { family: "Inter", size: 11 }, maxRotation: 0, autoSkipPadding: 14 } }
       },
       plugins: {
-        legend: { labels: { color: T().ink, font: { family: "Inter", size: 12 }, boxWidth: 12, usePointStyle: true } },
-        tooltip: { callbacks: {
+        legend: chartLegend(),
+        tooltip: { ...chartTooltip(), callbacks: {
           label: c => c.dataset.yAxisID === "y1"
             ? ` Net flow: ${c.parsed.y == null ? "—" : (c.parsed.y >= 0 ? "+" : "") + fmtInt(c.parsed.y)}`
             : ` Bonded weight: ${(+c.parsed.y).toFixed(2)}M`
