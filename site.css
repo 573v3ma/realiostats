@@ -127,6 +127,12 @@
      auto-fill leaving orphan tracks when a row has fewer items than fit */
   .flow-row4{grid-template-columns:repeat(4,minmax(0,1fr))}
   .flow-row2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  /* Each chip spans three subgrid rows (label, value, note), so a label that
+     wraps to two lines pushes the whole row down together and every value
+     and note in the row stays on the same baseline. */
+  .flow-row4,.flow-row2{grid-auto-rows:auto}
+  .flow-row4 .chip,.flow-row2 .chip{display:grid;grid-template-rows:subgrid;grid-row:span 3;row-gap:0}
+  .flow-row4 .chip .cn,.flow-row2 .chip .cn{align-self:start}
   .emit + .emit{margin-top:16px}
   .integrity{margin-top:20px;display:flex;align-items:center;gap:12px;background:var(--alt);
     border:1px solid var(--line);border-radius:14px;padding:15px 18px;font-size:14px;line-height:1.55;color:var(--body)}
