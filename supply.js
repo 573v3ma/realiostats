@@ -44,13 +44,15 @@ const HISTORY = [
   {label:"Jun 2026", bnb:156.44, native:83.97, ethereum:69.54, algorand:56.19,  stellar:5.86, solana:1.07}
 ];
 const STACK = [
-  {key:"native",   name:"Realio Native", color:"#10b981"},
-  {key:"bnb",      name:"BNB Chain",     color:"#f59e0b"},
-  {key:"ethereum", name:"Ethereum",      color:"#4f46e5"},
-  {key:"algorand", name:"Algorand",      color:"#0ea5e9"},
-  {key:"stellar",  name:"Stellar",       color:"#64748b"},
-  {key:"solana",   name:"Solana",        color:"#a855f7"}
+  {key:"native",   name:"Realio Native", color:"#34d399"},
+  {key:"bnb",      name:"BNB Chain",     color:"#fbbf24"},
+  {key:"ethereum", name:"Ethereum",      color:"#818cf8"},
+  {key:"algorand", name:"Algorand",      color:"#38bdf8"},
+  {key:"stellar",  name:"Stellar",       color:"#94a3b8"},
+  {key:"solana",   name:"Solana",        color:"#e879f9"}
 ];
+/* hex -> rgba, for the translucent band fills */
+const hexA = (h,a) => { const n=parseInt(h.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; };
 
 const CHAINS = [
   {key:"bnb",       name:"BNB Chain",       color:"#f59e0b", verify:"https://bscscan.com/token/0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0#balances"},
@@ -638,17 +640,27 @@ function drawChart(liveSeries){
   const nPre = all ? PRE.length : 0;
   const nRecon = nPre + HISTORY.length;
   const labels = rows.map(r=>r.label);
-  const liveRadius = labels.map((_,i)=> i>=nRecon ? 3 : 0);
-  void live;
+  void live; void nRecon;
+  /* Translucent bands with a crisp line on top of each: every band fades from
+     its top edge down, so the stack reads as layers rather than solid blocks. */
+  const bandFill = (c) => (ctx) => {
+    const a = ctx.chart.chartArea;
+    if(!a) return hexA(c,.22);
+    const g = ctx.chart.ctx.createLinearGradient(0,a.top,0,a.bottom);
+    g.addColorStop(0, hexA(c,.38)); g.addColorStop(1, hexA(c,.12));
+    return g;
+  };
   const datasets = STACK.map((s,i)=>({
     label:s.name, data:rows.map(r=> r[s.key] ?? 0),
-    borderColor:s.color, backgroundColor:s.color+"cc",
-    fill: i===0 ? "origin" : "-1", stack:"s", borderWidth:1, tension:.2,
-    pointRadius:liveRadius, pointBackgroundColor:s.color, pointBorderColor:T().bg, pointBorderWidth:1
+    borderColor:s.color, backgroundColor:bandFill(s.color),
+    fill: i===0 ? "origin" : "-1", stack:"s", borderWidth:2, tension:.35, cubicInterpolationMode:"monotone",
+    pointRadius:0, pointHoverRadius:4, pointHitRadius:8,
+    pointBackgroundColor:s.color, pointBorderColor:T().bg, pointBorderWidth:2
   }));
   if(!all){
-    datasets.push({label:"175M native emission cap (reference)", data:labels.map(()=>175),
-      borderColor:"#9aa7b2", borderWidth:1.4, borderDash:[6,5], pointRadius:0, fill:false, stack:"ref"});
+    datasets.push({label:"175M native emission cap", data:labels.map(()=>175),
+      borderColor:T().tick, backgroundColor:"transparent", borderWidth:1, borderDash:[4,5],
+      pointRadius:0, pointHoverRadius:0, fill:false, stack:"ref"});
   }
 
   /* Era divider: everything left of it is issued supply, everything right of it
@@ -670,7 +682,7 @@ function drawChart(liveSeries){
           ctx.fillText(label, align==="right" ? xp-6 : xp+6, chartArea.top+14);
         };
         /* 175M native emission cap, for scale */
-        ctx.setLineDash([6,5]);ctx.lineWidth=1.4;ctx.strokeStyle="rgba(154,167,178,0.95)";
+        ctx.setLineDash([4,5]);ctx.lineWidth=1;ctx.strokeStyle=T().tick;
         ctx.beginPath();ctx.moveTo(chartArea.left,yv(175));ctx.lineTo(chartArea.right,yv(175));ctx.stroke();
         ctx.setLineDash([]);
         ctx.fillStyle=T().tick;ctx.textAlign="right";
@@ -691,9 +703,9 @@ function drawChart(liveSeries){
           ctx.fillText("MEXC moves to Ethereum", xr-6, chartArea.top+14);
         }
         const x2=scales.x.getPixelForValue(2);
-        ctx.fillStyle="rgba(100,116,139,0.14)";
+        ctx.fillStyle="rgba(148,163,184,0.07)";
         ctx.fillRect(chartArea.left,chartArea.top,x2-chartArea.left,chartArea.bottom-chartArea.top);
-        ctx.strokeStyle="rgba(100,116,139,0.45)";ctx.setLineDash([4,4]);ctx.lineWidth=1;
+        ctx.strokeStyle="rgba(148,163,184,0.35)";ctx.setLineDash([4,4]);ctx.lineWidth=1;
         ctx.beginPath();ctx.moveTo(x2,chartArea.top);ctx.lineTo(x2,chartArea.bottom);ctx.stroke();
         ctx.setLineDash([]);
         ctx.fillStyle=T().tick;ctx.textAlign="left";
@@ -711,13 +723,16 @@ function drawChart(liveSeries){
     options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},
       interaction:{mode:"index",intersect:false},
       scales:{
-        y:{stacked:true,beginAtZero:true,suggestedMax:all?400:360,grid:{color:T().grid},
+        y:{stacked:true,beginAtZero:true,suggestedMax:all?400:360,grid:{color:T().grid},border:{display:false},
            ticks:{callback:v=>v+"M",color:T().tick,font:{family:"Inter"}}},
         x:{grid:{display:false},ticks:{color:T().tick,font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
       },
       plugins:{
-        legend:{labels:{color:T().ink,font:{family:"Inter",size:12},boxWidth:12,usePointStyle:true}},
-        tooltip:{callbacks:{
+        legend:{labels:{color:T().ink,font:{family:"Inter",size:12},boxWidth:8,boxHeight:8,usePointStyle:true,pointStyle:"circle",padding:16,
+          generateLabels:ch=>Chart.defaults.plugins.legend.labels.generateLabels(ch).map(l=>{ const c=ch.data.datasets[l.datasetIndex].borderColor; return {...l, fillStyle:c, strokeStyle:c}; })}},
+        tooltip:{backgroundColor:"rgba(15,20,26,.94)",borderColor:"rgba(255,255,255,.08)",borderWidth:1,padding:12,cornerRadius:10,
+          titleColor:"#f0f4f7",bodyColor:"#cfd8df",footerColor:"#f0f4f7",boxPadding:4,usePointStyle:true,
+          callbacks:{
           label:c=>` ${c.dataset.label}: ${(+c.parsed.y).toFixed(1)}M`,
           footer:items=>{
             const t=items.filter(i=>i.dataset.stack==="s").reduce((a,i)=>a+(+i.parsed.y||0),0);
