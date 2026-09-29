@@ -230,14 +230,14 @@ function renderStakingFlow(hist, tradableTotal) {
 
   document.getElementById("flowChipsTop").innerHTML =
       `<div class="chip"><div class="cn">Bonded voting weight</div><div class="cv">${fmtM(M(st.bonded_weight))} <span id="bondedUsd" style="font-size:.55em;font-weight:500;color:var(--muted)"></span></div>
-        <div class="cx">across RIO, RST and DSTRX combined</div></div>`
+        <div class="cx">across RIO, RST and DSTRX</div></div>`
     + `<div class="chip"><div class="cn">RIO bonding ratio · native</div><div class="cv">${rioPct != null ? rioPct.toFixed(1) + "%" : "—"}</div>
         <div class="cx">of circulating native RIO supply</div></div>`
     + (rioMultiPct == null ? "" :
       `<div class="chip"><div class="cn">RIO bonding ratio · multi</div><div class="cv">${rioMultiPct.toFixed(1)}%</div>
         <div class="cx">of RIO supply, across every chain</div></div>`)
     + `<div class="chip"><div class="cn">Unbonding queue</div><div class="cv">${fmtM(M(st.not_bonded))} <span style="font-size:.55em;font-weight:500;color:var(--muted)">${unbondPctBonded != null ? "(" + unbondPctBonded.toFixed(1) + "% of bonded)" : ""}</span></div>
-        <div class="cx">mid-unbond, liquid again within ${st.unbonding_time ? Math.round(parseInt(st.unbonding_time) / 86400) : 7} days</div></div>`;
+        <div class="cx">liquid again within ${st.unbonding_time ? Math.round(parseInt(st.unbonding_time) / 86400) : 7} days</div></div>`;
 
   document.getElementById("flowChipsMid").innerHTML =
       `<div class="chip"><div class="cn">Net flow · ${dayLabel}</div>
