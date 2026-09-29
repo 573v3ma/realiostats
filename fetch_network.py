@@ -178,6 +178,14 @@ def fetch_from(base, flags):
          for v in vs),
         key=lambda x: -x["weight"])
 
+    # not_bonded_tokens is NOT the unbonding queue: it also holds stake still
+    # delegated to jailed/inactive validators (57 of them, ~2.64M, on 29 Sep 2026).
+    # Subtract that to get what is actually mid-unbond, which is what explorers show.
+    inactive = 0.0
+    for st_ in ("BOND_STATUS_UNBONDED", "BOND_STATUS_UNBONDING"):
+        inactive += sum(_atoms(v["tokens"]) for v in _paginate(
+            base, f"/cosmos/staking/v1beta1/validators?status={st_}", "validators"))
+
     bt, span, height = measure_block_time(base, flags)
     # A heavily pruned node (noders serves ~150 blocks) gives a noisy block time,
     # and block time drives the whole emission correction. If the window was
@@ -197,7 +205,7 @@ def fetch_from(base, flags):
                 break
 
     return dict(inflation=inflation, blocks_per_year=blocks_per_year, ario=ario,
-                bonded=bonded, not_bonded=not_bonded, tax=tax, sp=sp,
+                bonded=bonded, not_bonded=not_bonded, inactive=inactive, tax=tax, sp=sp,
                 bonded_by_denom=bonded_by_denom, vals=vals,
                 block_time=bt, block_span=span, height=height, lcd=base)
 
@@ -277,6 +285,10 @@ def build(d, flags):
         "staking": {
             "bonded_weight": round(bonded, 2),
             "not_bonded": round(d["not_bonded"], 2),
+            # not_bonded split: stake parked on jailed/inactive validators vs the
+            # real unbonding queue (liquid again within unbonding_time).
+            "on_inactive_validators": round(d["inactive"], 2),
+            "unbonding": round(max(0.0, d["not_bonded"] - d["inactive"]), 2),
             "bond_denom": d["sp"].get("bond_denom"),
             "max_validators": d["sp"].get("max_validators"),
             "min_commission_rate": float(d["sp"].get("min_commission_rate", 0)),

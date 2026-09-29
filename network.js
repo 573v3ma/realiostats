@@ -224,8 +224,11 @@ function renderStakingFlow(hist, tradableTotal) {
   // multichain snapshot is available) RIO bonding read against total supply
   // across every chain rather than just native. Both are ratios of the same
   // bonded/RIO figures above, just against a different, wider base.
-  const unbondPctBonded = (st.not_bonded != null && st.bonded_weight)
-    ? 100 * st.not_bonded / st.bonded_weight : null;
+  // Older rows only have not_bonded, which also counts stake left on jailed
+  // validators; prefer the real unbonding queue when the row has it.
+  const unbonding = st.unbonding != null ? st.unbonding : st.not_bonded;
+  const unbondPctBonded = (unbonding != null && st.bonded_weight)
+    ? 100 * unbonding / st.bonded_weight : null;
   const rioMultiPct = (rio && tradableTotal) ? 100 * rio.amount / tradableTotal : null;
 
   document.getElementById("flowChipsTop").innerHTML =
@@ -248,7 +251,7 @@ function renderStakingFlow(hist, tradableTotal) {
         <div class="cx">${rows.length > 1
             ? (netTotal >= 0 ? "more staked than unstaked" : "more unstaked than staked") + " over the last " + days + " days"
             : "tracking just started, check back tomorrow"}</div></div>`
-    + `<div class="chip"><div class="cn">Unbonding queue</div><div class="cv">${fmtM(M(st.not_bonded))} <span style="font-size:.55em;font-weight:500;color:var(--muted)">${unbondPctBonded != null ? "(" + unbondPctBonded.toFixed(1) + "% of bonded)" : ""}</span></div>
+    + `<div class="chip"><div class="cn">Unbonding queue</div><div class="cv">${unbonding >= 1e5 ? fmtM(M(unbonding)) : fmtFull(unbonding)} <span style="font-size:.55em;font-weight:500;color:var(--muted)">${unbondPctBonded != null ? "(" + unbondPctBonded.toFixed(unbondPctBonded < 1 ? 2 : 1) + "% of bonded)" : ""}</span></div>
         <div class="cx">liquid again within ${st.unbonding_time ? Math.round(parseInt(st.unbonding_time) / 86400) : 7} days</div></div>`;
 
   renderBondedUsd(st);
