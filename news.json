@@ -1,4 +1,39 @@
 {
-  "updated": null,
-  "days": []
+ "updated": "2026-09-29T06:43:14Z",
+ "days": [
+  {
+   "date": "2026-09-24",
+   "items": [
+    {
+     "project": "Realio",
+     "title": "Derek will never DM holders on Telegram",
+     "text": "Derek says he never sends or answers direct messages on Telegram. Anyone messaging you privately in his name is a scammer.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-23T17:59:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Freehold",
+     "title": "SSN is a normal part of full Freehold KYC",
+     "text": "Derek confirms a social security number is a standard part of full KYC. If verification fails, for example because of an expired ID, support can email a new verification link.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-23T14:47:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-23T16:23:00Z"
+      }
+     ]
+    }
+   ]
+  }
+ ]
 }
