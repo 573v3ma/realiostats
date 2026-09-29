@@ -257,18 +257,47 @@ function renderStakingFlow(hist, tradableTotal) {
   const bonded = rows.map(r => +M(r.staking.bonded_weight).toFixed(3));
   const dayFlow = rows.map((r, i) => i === 0 ? null : +(r.staking.bonded_weight - rows[i - 1].staking.bonded_weight).toFixed(0));
 
+  // Two panels on one canvas sharing the date axis (Chart.js stacked scales):
+  // bonded weight as a soft area on top, net daily flow as rounded bars in a
+  // strip underneath with its own zero line. Replaces the old dual-axis layout,
+  // where the bars floated around a zero sitting mid-chart.
+  const BOND = "#818cf8", UP = "#34d399", DOWN = "#fb7185";
+  const sgnM = v => (v > 0 ? "+" : v < 0 ? "\u2212" : "") + (v === 0 ? "0" : (Math.abs(v) / 1e6).toFixed(Math.abs(v) >= 1e6 ? 0 : 1) + "M");
+  // One scriptable fill for every bar: gradient from the bar tip (strong) to
+  // the zero line (faint), green for net staking, rose for net unstaking.
+  const barFill = (top, bottom) => ctx => {
+    const d = ctx.raw;
+    if (d == null) return "transparent";
+    const c = d >= 0 ? UP : DOWN, a = ctx.chart.chartArea, y1 = ctx.chart.scales.y1;
+    if (!a || !y1) return hexA(c, top);
+    const z = y1.getPixelForValue(0), tip = y1.getPixelForValue(d);
+    if (!isFinite(z) || !isFinite(tip) || Math.abs(tip - z) < 1) return hexA(c, top);
+    const g = ctx.chart.ctx.createLinearGradient(0, tip, 0, z);
+    g.addColorStop(0, hexA(c, top)); g.addColorStop(1, hexA(c, bottom));
+    return g;
+  };
+
+  // Fit the flow strip to the data (rounded out to whole millions, each side on
+  // its own) so the bars use the strip instead of sitting in a padded ±5M band.
+  const flows = dayFlow.filter(d => d != null);
+  const niceM = v => Math.max(1e6, Math.ceil(v / 1e6) * 1e6);
+  const y1Max = niceM(Math.max(0, ...flows)), y1Min = -niceM(Math.max(0, ...flows.map(d => -d)));
+  // Label zero and one mid-strip value each side; a label at the very top edge would crowd the area above.
+  const y1Mid = Math.max(1e6, Math.floor(y1Max / 2e6) * 1e6);
+
   if (FLOW_CHART) FLOW_CHART.destroy();
   FLOW_CHART = new Chart(document.getElementById("flowChart"), {
     data: {
       labels,
       datasets: [
-        { type: "bar", label: "Net daily flow", data: dayFlow, yAxisID: "y1",
-          backgroundColor: dayFlow.map(d => d == null ? "transparent" : d >= 0 ? hexA("#34d399", .55) : hexA("#fb7185", .55)),
-          hoverBackgroundColor: dayFlow.map(d => d == null ? "transparent" : d >= 0 ? "#34d399" : "#fb7185"),
-          borderRadius: 6, borderSkipped: false, maxBarThickness: 14, legendColor: "#34d399", order: 2 },
         { type: "line", label: "Bonded weight", data: bonded, yAxisID: "y",
-          borderColor: T().ink, backgroundColor: T().ink, ...LINE_STYLE,
-          pointBackgroundColor: T().ink, pointBorderColor: T().bg, fill: false, order: 1 }
+          borderColor: BOND, backgroundColor: fadeFill(BOND, .32, 0), ...LINE_STYLE,
+          pointBackgroundColor: BOND, pointBorderColor: T().bg, fill: "start", order: 1 },
+        { type: "bar", label: "Net daily flow", data: dayFlow, yAxisID: "y1",
+          backgroundColor: barFill(.9, .3),
+          hoverBackgroundColor: c => c.raw == null ? "transparent" : c.raw >= 0 ? UP : DOWN,
+          borderRadius: 5, borderSkipped: false, barPercentage: .7, categoryPercentage: .9,
+          maxBarThickness: 18, minBarLength: 2, legendColor: UP, order: 2 }
       ]
     },
     plugins: [watermarkPlugin],
@@ -276,20 +305,25 @@ function renderStakingFlow(hist, tradableTotal) {
       responsive: true, maintainAspectRatio: false, animation: { duration: 300 },
       interaction: { mode: "index", intersect: false },
       scales: {
-        y: { position: "left", grid: { color: T().grid },
-             ticks: { callback: v => v + "M", color: T().tick, font: { family: "Inter" } },
-             title: { display: true, text: "Bonded weight (M)", color: T().tick, font: { family: "Inter", size: 11 } } },
-        y1: { position: "right", grid: { display: false },
-              ticks: { callback: v => (v >= 0 ? "+" : "") + fmtInt(v), color: T().tick, font: { family: "Inter" } },
-              title: { display: true, text: "Net daily flow", color: T().tick, font: { family: "Inter", size: 11 } } },
-        x: { grid: { display: false }, ticks: { color: T().tick, font: { family: "Inter", size: 11 }, maxRotation: 0, autoSkipPadding: 14 } }
+        // In an axis stack the first-declared scale sits at the bottom.
+        y1: { position: "left", stack: "flow", stackWeight: 1.8, offset: true, min: y1Min, max: y1Max,
+              border: { display: false },
+              grid: { drawTicks: false, color: c => c.tick && c.tick.value === 0 ? T().guide || T().tick : "transparent", lineWidth: c => c.tick && c.tick.value === 0 ? 1 : 0 },
+              ticks: { color: T().tick, font: { family: "Inter", size: 11 }, padding: 8, stepSize: 1e6, autoSkip: false, callback: v => (v === 0 || v === y1Mid || v === y1Min) ? sgnM(v) : "" } },
+        y: { position: "left", stack: "flow", stackWeight: 3, offset: true, grace: "8%",
+             border: { display: false }, grid: { color: T().grid, drawTicks: false },
+             ticks: { callback: v => v + "M", color: T().tick, font: { family: "Inter", size: 11 }, maxTicksLimit: 5, padding: 8 } },
+        x: { grid: { display: false }, border: { display: false },
+             ticks: { color: T().tick, font: { family: "Inter", size: 11 }, maxRotation: 0, autoSkipPadding: 18 } }
       },
       plugins: {
-        legend: chartLegend(),
+        legend: { ...chartLegend(), align: "start" },
         tooltip: { ...chartTooltip(), callbacks: {
           label: c => c.dataset.yAxisID === "y1"
-            ? ` Net flow: ${c.parsed.y == null ? "—" : (c.parsed.y >= 0 ? "+" : "") + fmtInt(c.parsed.y)}`
-            : ` Bonded weight: ${(+c.parsed.y).toFixed(2)}M`
+            ? ` Net flow: ${c.parsed.y == null ? "\u2014" : (c.parsed.y >= 0 ? "+" : "\u2212") + fmtInt(Math.abs(c.parsed.y))}`
+            : ` Bonded weight: ${(+c.parsed.y).toFixed(2)}M`,
+          labelColor: c => { const col = c.dataset.yAxisID === "y1" ? ((c.parsed.y ?? 0) >= 0 ? UP : DOWN) : BOND;
+            return { borderColor: col, backgroundColor: col, borderRadius: 4 }; }
         } }
       }
     }
@@ -297,14 +331,11 @@ function renderStakingFlow(hist, tradableTotal) {
 
   document.getElementById("flowCap").innerHTML =
     (rows.length < 5
-      ? "This panel started tracking on " + new Date(first.ts).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
-        + ", so the trend is thin for now; it fills in with every daily reading. "
+      ? "Tracking started " + new Date(first.ts).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+        + ", so the trend is thin for now. "
       : "")
-    + "This is <b>net</b> flow: the day-over-day change in total bonded weight. Staking rewards are not auto-bonded on Realio "
-    + "(they sit in the rewards pool until claimed), so a change here reflects real delegation activity, not compounding. "
-    + "It cannot show <b>gross</b> staking and unstaking separately, a day with heavy churn in both directions that nets to "
-    + "zero looks flat here. Read alongside the validator-concentration trend below for the fuller confidence picture: bonded "
-    + "weight rising while concentration also rises is a different signal than both moving together the other way.";
+    + "Top: total bonded weight. Bottom: the net change each day. Rewards are not auto-bonded on Realio, so moves here are real "
+    + "delegation activity, not compounding. Net only: a day of heavy staking and unstaking that cancels out looks flat.";
 }
 
 /* Dollar value of the bonded base at current prices. Bonded weight is a mix of
