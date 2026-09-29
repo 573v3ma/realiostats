@@ -1499,26 +1499,26 @@
   ]
  },
  {
-  "ts": "2026-09-29T08:35:30Z",
+  "ts": "2026-09-29T11:54:28Z",
   "lcd": "https://realio-api.noders.services",
-  "height": 19858504,
+  "height": 19860613,
   "native_cap": 175000000,
-  "ario_supply": 88981231.61,
-  "unminted": 86018768.39,
+  "ario_supply": 88985830.99,
+  "unminted": 86014169.01,
   "mint": {
    "inflation_rate": 0.08,
    "blocks_per_year": 6311520.0,
    "assumed_block_time_s": 4.9966
   },
-  "block_time_s": 5.6577,
+  "block_time_s": 5.6576,
   "block_time_span": 1000,
-  "block_adjust_factor": 0.883148,
-  "annual_emission_nominal": 6881501.47,
-  "annual_emission_adjusted": 6077384.94,
-  "daily_emission_adjusted": 16650.37,
+  "block_adjust_factor": 0.883164,
+  "annual_emission_nominal": 6881133.52,
+  "annual_emission_adjusted": 6077166.86,
+  "daily_emission_adjusted": 16649.77,
   "community_tax": 0.02,
   "staking": {
-   "bonded_weight": 136119523.72,
+   "bonded_weight": 136119535.84,
    "not_bonded": 2679353.19,
    "on_inactive_validators": 2638960.55,
    "unbonding": 40392.64,
@@ -1530,7 +1530,7 @@
     {
      "denom": "ario",
      "label": "RIO",
-     "amount": 68726797.44,
+     "amount": 68726809.57,
      "pct_of_pool": 49.34
     },
     {
@@ -1546,7 +1546,7 @@
      "pct_of_pool": 23.36
     }
    ],
-   "multistaking_pool_total": 139282568.2,
+   "multistaking_pool_total": 139282580.33,
    "rio_pct_of_pool": 49.34,
    "pool_vs_staked_delta_pct": 0.348
   },
@@ -1562,12 +1562,12 @@
   },
   "yield_ladder": {
    "mint_parameter": 0.08,
-   "official_apr": 0.050555,
-   "block_adjusted": 0.044647,
-   "after_community_tax": 0.043754,
-   "after_min_commission": 0.041567,
-   "after_med_commission": 0.041567,
-   "after_max_commission": 0.039379
+   "official_apr": 0.050552,
+   "block_adjusted": 0.044646,
+   "after_community_tax": 0.043753,
+   "after_min_commission": 0.041565,
+   "after_med_commission": 0.041565,
+   "after_max_commission": 0.039378
   },
   "flags": []
  }
