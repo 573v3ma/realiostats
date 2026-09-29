@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="site.css?v=22">
+<link rel="stylesheet" href="site.css?v=23">
 </head>
 <body data-summary>
 <header><div class="wrap nav">
@@ -23,6 +23,7 @@
     <a href="holders.html">Holders</a>
     <a href="network.html">Network</a>
     <a href="incident.html">Incident</a>
+    <a href="news.html">News</a>
     <a href="methodology.html">Methodology</a>
     <a href="https://github.com/573v3ma/realiostats" target="_blank" rel="noopener">Source</a>
     <button type="button" class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Switch colour theme" title="Switch colour theme">
@@ -50,6 +51,14 @@
   </div>
   <a class="more" href="supply.html">Full supply breakdown &rarr;</a>
 </div>
+
+<section class="home-sec" id="overview-news" hidden><div class="wrap">
+  <h2>Official updates</h2>
+  <div class="nw-stamp" id="newsStamp"></div>
+  <div class="nw-card" id="newsHome"></div>
+  <p class="nw-note">AI summary of posts from official Realio, Freehold and Districts channels. Always check the source before acting.</p>
+  <a class="more" href="news.html">All updates &rarr;</a>
+</div></section>
 
 <section class="home-sec" id="staking"><div class="wrap">
   <h2>Staking flow</h2>
@@ -124,5 +133,6 @@
 <script src="supply.js?v=22"></script>
 <script src="holders.js?v=26"></script>
 <script src="network.js?v=22"></script>
+<script src="news.js?v=1"></script>
 </body>
 </html>
