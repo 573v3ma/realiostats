@@ -1,6 +1,28 @@
 {
- "updated": "2026-09-29T06:43:30Z",
+ "updated": "2026-09-29T06:43:35Z",
  "days": [
+  {
+   "date": "2026-09-28",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold will curate its public project portal",
+     "text": "Derek says Freehold will choose which projects appear on the public portal, favouring those that fit the brand and are likely to succeed. Other issuers can still create a private project and share it directly.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-28T00:09:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-28T00:10:00Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-09-27",
    "items": [
