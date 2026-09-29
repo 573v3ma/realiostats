@@ -1,6 +1,48 @@
 {
- "updated": "2026-09-29T06:43:35Z",
+ "updated": "2026-09-29T06:43:40Z",
  "days": [
+  {
+   "date": "2026-09-29",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "First car in the Freehold Collection to be revealed soon",
+     "text": "Freehold says the first car is the kind that rarely reaches an open market. Early access requests are open now.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2104572673023934954",
+       "ts": "2026-09-28T14:03:20Z"
+      }
+     ]
+    },
+    {
+     "project": "Freehold",
+     "title": "Tokenization projects can be listed privately",
+     "text": "Derek says issuers can set a project to private when creating it or during review. Private projects are shared by direct link only, with no public profile or promotion on official Freehold channels.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-28T15:33:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Realio",
+     "title": "No update yet for holders on Algorand and Stellar",
+     "text": "Asked about tokens held on Algorand and Stellar since the August incident, Derek says there is no update yet and asks holders to hang tight.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-29T01:48:00Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-09-28",
    "items": [
