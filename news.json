@@ -1,4 +1,276 @@
 {
-  "updated": null,
-  "days": []
+ "updated": "2026-09-29T06:30:34Z",
+ "days": [
+  {
+   "date": "2026-09-29",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "First car in the Freehold Collection to be revealed soon",
+     "text": "Freehold says the first car is the kind that rarely reaches an open market. Early access requests are open now.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2104572673023934954",
+       "ts": "2026-09-28T14:03:20Z"
+      }
+     ]
+    },
+    {
+     "project": "Freehold",
+     "title": "Tokenization projects can be listed privately",
+     "text": "Derek says issuers can set a project to private when creating it or during review. Private projects are shared by direct link only, with no public profile or promotion on official Freehold channels.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-28T15:33:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Realio",
+     "title": "No update yet for holders on Algorand and Stellar",
+     "text": "Asked about tokens held on Algorand and Stellar since the August incident, Derek says there is no update yet and asks holders to hang tight.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-29T01:48:00Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "date": "2026-09-28",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold will curate its public project portal",
+     "text": "Derek says Freehold will choose which projects appear on the public portal, favouring those that fit the brand and are likely to succeed. Other issuers can still create a private project and share it directly.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-28T00:09:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-28T00:10:00Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "date": "2026-09-27",
+   "items": [
+    {
+     "project": "Realio",
+     "title": "Incident updates stay on the Realio Fund page",
+     "text": "Derek says all current information about the security incident is on the Realio Fund web app, and future updates will be posted when available.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-26T19:18:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Realio",
+     "title": "RIO can be bridged to Base",
+     "text": "Derek says there is a bridge to Base, which he believes is Superbridge, though he was not certain of the name.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-26T14:59:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-26T15:24:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Freehold",
+     "title": "Freehold KYC problems go through a support ticket",
+     "text": "Derek says failed KYC on Freehold should be raised as a support ticket, which the team will see. Fixes often need a reply from the outside KYC provider.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-26T16:44:00Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "date": "2026-09-26",
+   "items": [
+    {
+     "project": "Realio",
+     "title": "Staked RIO was frozen, not stolen",
+     "text": "Derek says staked coins are still in the wallets that were staking them. Those wallets were frozen on the network so they could not be stolen. When they will be returned is still to be determined.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-25T18:00:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-25T17:03:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Districts",
+     "title": "Districts bridge is active again",
+     "text": "Derek says the Districts bridge is now active, and bridged assets can be sent on to MEXC.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-25T15:58:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-25T18:47:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Freehold",
+     "title": "Freehold Tokenization Studio is open to anyone",
+     "text": "Freehold invites owners of rare assets such as cars, watches, buildings or portfolios to try fractional ownership in its Tokenization Studio, which is free to start.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2103532776070816078",
+       "ts": "2026-09-25T17:11:10Z"
+      }
+     ]
+    },
+    {
+     "project": "Freehold",
+     "title": "RST support on Freehold expected relatively soon",
+     "text": "RST cannot be whitelisted on Freehold yet, but Derek says much of the work to onboard its asset controls is already done.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-25T22:28:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Realio",
+     "title": "The old Realio platform will not return",
+     "text": "Derek confirms the old Realio platform is gone for good.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-25T16:53:00Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "date": "2026-09-25",
+   "items": [
+    {
+     "project": "Realio",
+     "title": "Recovery plan still being worked on and reviewed",
+     "text": "Derek says the team is building a plan to restart the network without losing staked coins, plus a way to prove ownership of wallets from the old platform on the new one without fraud. He says this will not happen overnight.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-24T14:41:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-24T14:43:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-24T14:44:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Realio",
+     "title": "Bridging back up, pending transfers checked",
+     "text": "After bridging resumed, Derek asked holders with open bridge transactions to confirm they had received their tokens.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-24T22:48:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Districts",
+     "title": "Staking 1 DSTRX earns the same reward as 1 RIO",
+     "text": "Derek notes that DSTRX can be staked on the network and earns the same staking reward per token as RIO.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-24T19:16:00Z"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "date": "2026-09-24",
+   "items": [
+    {
+     "project": "Realio",
+     "title": "Derek will never DM holders on Telegram",
+     "text": "Derek says he never sends or answers direct messages on Telegram. Anyone messaging you privately in his name is a scammer.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-23T17:59:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Freehold",
+     "title": "SSN is a normal part of full Freehold KYC",
+     "text": "Derek confirms a social security number is a standard part of full KYC. If verification fails, for example because of an expired ID, support can email a new verification link.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-23T14:47:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-23T16:23:00Z"
+      }
+     ]
+    }
+   ]
+  }
+ ]
 }
