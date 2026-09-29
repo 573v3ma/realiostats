@@ -134,6 +134,8 @@
   .flow-row3 .chip .cn{align-self:start}
   .emit + .emit{margin-top:16px}
   .emit-row4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .chip.is-final{background:var(--mint-soft)}
+  .chip.is-final .cv{color:var(--green-ink)}
   @media(max-width:960px){.emit-row4{grid-template-columns:repeat(2,minmax(0,1fr))}}
   .integrity{margin-top:20px;display:flex;align-items:center;gap:12px;background:var(--alt);
     border:1px solid var(--line);border-radius:14px;padding:15px 18px;font-size:14px;line-height:1.55;color:var(--body)}

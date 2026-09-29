@@ -792,7 +792,27 @@ function renderFloatRead(){
   el.innerHTML = t;
 }
 
+// Overview: the same four-way split as the ladder, as one row of chips.
+// Staked and unstaked native RIO are folded into "Other chains" so it is always
+// four cards that add up to circulating.
+function renderFloatChips(){
+  const el = document.getElementById("floatChips");
+  if(!el || !FLOAT_F || !el.isConnected) return;
+  const f = FLOAT_F;
+  const pc = n => f.circ ? (100*n/f.circ).toFixed(1)+"%" : "—";
+  const other = f.circ - f.liquidChains;
+  const cards = [
+    {k:"Circulating", n:f.circ, x:"all RIO in public hands"},
+    {k:"Ready to trade", n:f.withMarket, x:pc(f.withMarket)+" · on exchanges and DEXs", cls:"is-final"},
+    {k:"Other BNB & ETH wallets", n:f.liquidChains - f.withMarket, x:pc(f.liquidChains - f.withMarket)+" · minutes from a market"},
+    {k:"Other chains", n:other, x:pc(other)+" · a bridge away, incl. staked"}
+  ];
+  el.innerHTML = cards.map(c =>
+    `<div class="chip ${c.cls||""}"><div class="cn">${c.k}</div><div class="cv">${fmtM(M(c.n))}</div><div class="cx">${c.x}</div></div>`).join("");
+}
+
 function renderFloatRows(){
+  renderFloatChips();
   const el = document.getElementById("floatLadder");
   if(!el || !FLOAT_F) return;
   const f = FLOAT_F;
