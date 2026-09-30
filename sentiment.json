@@ -1,5 +1,5 @@
 {
- "updated": "2026-09-30T20:54:16Z",
+ "updated": "2026-09-30T21:19:04Z",
  "method": 1,
  "days": [
   {
@@ -8,6 +8,11 @@
     "bull": 29,
     "bear": 14,
     "neutral": 33
+   },
+   "x": {
+    "bull": 14,
+    "bear": 3,
+    "neutral": 7
    }
   },
   {
@@ -16,6 +21,11 @@
     "bull": 16,
     "bear": 8,
     "neutral": 33
+   },
+   "x": {
+    "bull": 8,
+    "bear": 2,
+    "neutral": 7
    }
   },
   {
@@ -24,6 +34,11 @@
     "bull": 10,
     "bear": 4,
     "neutral": 18
+   },
+   "x": {
+    "bull": 3,
+    "bear": 3,
+    "neutral": 3
    }
   },
   {
@@ -32,6 +47,11 @@
     "bull": 23,
     "bear": 11,
     "neutral": 33
+   },
+   "x": {
+    "bull": 15,
+    "bear": 3,
+    "neutral": 10
    }
   },
   {
@@ -40,6 +60,11 @@
     "bull": 22,
     "bear": 14,
     "neutral": 43
+   },
+   "x": {
+    "bull": 20,
+    "bear": 2,
+    "neutral": 12
    }
   },
   {
@@ -48,6 +73,11 @@
     "bull": 13,
     "bear": 14,
     "neutral": 27
+   },
+   "x": {
+    "bull": 16,
+    "bear": 1,
+    "neutral": 3
    }
   },
   {
@@ -56,6 +86,11 @@
     "bull": 22,
     "bear": 6,
     "neutral": 31
+   },
+   "x": {
+    "bull": 12,
+    "bear": 2,
+    "neutral": 11
    }
   },
   {
@@ -64,6 +99,11 @@
     "bull": 28,
     "bear": 13,
     "neutral": 54
+   },
+   "x": {
+    "bull": 20,
+    "bear": 1,
+    "neutral": 2
    }
   },
   {
@@ -72,6 +112,11 @@
     "bull": 30,
     "bear": 17,
     "neutral": 35
+   },
+   "x": {
+    "bull": 13,
+    "bear": 2,
+    "neutral": 3
    }
   },
   {
@@ -80,6 +125,11 @@
     "bull": 5,
     "bear": 9,
     "neutral": 27
+   },
+   "x": {
+    "bull": 4,
+    "bear": 1,
+    "neutral": 0
    }
   },
   {
@@ -88,6 +138,11 @@
     "bull": 15,
     "bear": 6,
     "neutral": 43
+   },
+   "x": {
+    "bull": 17,
+    "bear": 1,
+    "neutral": 7
    }
   },
   {
@@ -96,6 +151,11 @@
     "bull": 32,
     "bear": 16,
     "neutral": 35
+   },
+   "x": {
+    "bull": 12,
+    "bear": 1,
+    "neutral": 1
    }
   },
   {
@@ -104,6 +164,11 @@
     "bull": 10,
     "bear": 15,
     "neutral": 34
+   },
+   "x": {
+    "bull": 3,
+    "bear": 0,
+    "neutral": 0
    }
   },
   {
@@ -112,6 +177,11 @@
     "bull": 9,
     "bear": 13,
     "neutral": 26
+   },
+   "x": {
+    "bull": 1,
+    "bear": 0,
+    "neutral": 1
    }
   },
   {
@@ -120,6 +190,11 @@
     "bull": 14,
     "bear": 11,
     "neutral": 42
+   },
+   "x": {
+    "bull": 6,
+    "bear": 0,
+    "neutral": 4
    }
   },
   {
@@ -128,6 +203,11 @@
     "bull": 19,
     "bear": 10,
     "neutral": 45
+   },
+   "x": {
+    "bull": 9,
+    "bear": 3,
+    "neutral": 2
    }
   },
   {
@@ -136,6 +216,11 @@
     "bull": 10,
     "bear": 20,
     "neutral": 14
+   },
+   "x": {
+    "bull": 4,
+    "bear": 8,
+    "neutral": 4
    }
   },
   {
@@ -144,6 +229,11 @@
     "bull": 13,
     "bear": 17,
     "neutral": 38
+   },
+   "x": {
+    "bull": 7,
+    "bear": 3,
+    "neutral": 0
    }
   },
   {
@@ -152,6 +242,11 @@
     "bull": 9,
     "bear": 11,
     "neutral": 35
+   },
+   "x": {
+    "bull": 1,
+    "bear": 0,
+    "neutral": 0
    }
   },
   {
@@ -160,6 +255,11 @@
     "bull": 11,
     "bear": 6,
     "neutral": 39
+   },
+   "x": {
+    "bull": 8,
+    "bear": 0,
+    "neutral": 3
    }
   },
   {
@@ -168,6 +268,11 @@
     "bull": 14,
     "bear": 9,
     "neutral": 35
+   },
+   "x": {
+    "bull": 7,
+    "bear": 0,
+    "neutral": 3
    }
   },
   {
@@ -176,6 +281,11 @@
     "bull": 18,
     "bear": 10,
     "neutral": 27
+   },
+   "x": {
+    "bull": 3,
+    "bear": 2,
+    "neutral": 1
    }
   },
   {
@@ -184,6 +294,11 @@
     "bull": 10,
     "bear": 13,
     "neutral": 26
+   },
+   "x": {
+    "bull": 0,
+    "bear": 0,
+    "neutral": 1
    }
   },
   {
@@ -192,6 +307,11 @@
     "bull": 7,
     "bear": 6,
     "neutral": 28
+   },
+   "x": {
+    "bull": 4,
+    "bear": 0,
+    "neutral": 3
    }
   },
   {
@@ -200,6 +320,11 @@
     "bull": 4,
     "bear": 4,
     "neutral": 8
+   },
+   "x": {
+    "bull": 6,
+    "bear": 0,
+    "neutral": 0
    }
   },
   {
@@ -208,6 +333,11 @@
     "bull": 20,
     "bear": 13,
     "neutral": 26
+   },
+   "x": {
+    "bull": 3,
+    "bear": 0,
+    "neutral": 0
    }
   },
   {
@@ -216,6 +346,11 @@
     "bull": 32,
     "bear": 12,
     "neutral": 44
+   },
+   "x": {
+    "bull": 7,
+    "bear": 1,
+    "neutral": 4
    }
   },
   {
@@ -224,6 +359,11 @@
     "bull": 16,
     "bear": 12,
     "neutral": 43
+   },
+   "x": {
+    "bull": 5,
+    "bear": 0,
+    "neutral": 3
    }
   },
   {
@@ -232,6 +372,11 @@
     "bull": 23,
     "bear": 14,
     "neutral": 31
+   },
+   "x": {
+    "bull": 8,
+    "bear": 1,
+    "neutral": 5
    }
   },
   {
@@ -240,6 +385,11 @@
     "bull": 13,
     "bear": 11,
     "neutral": 31
+   },
+   "x": {
+    "bull": 0,
+    "bear": 1,
+    "neutral": 0
    }
   }
  ]
