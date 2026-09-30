@@ -281,8 +281,7 @@
        "ts": "2026-09-23T17:59:00Z"
       }
      ],
-     "topic": "scam-warning-dms",
-     "key": true
+     "topic": "scam-warning-dms"
     },
     {
      "project": "Freehold",
