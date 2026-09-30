@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="site.css?v=26">
+<link rel="stylesheet" href="site.css?v=27">
 </head>
 <body data-summary>
 <header><div class="wrap nav">
@@ -61,6 +61,26 @@
   <div class="nw-card" id="newsHome"></div>
   <p class="nw-note">AI summary of posts from official Realio, Freehold and Districts channels. Always check the source before acting.</p>
   <a class="more" href="news.html">All updates &rarr;</a>
+</div></section>
+
+<section class="home-sec" id="overview-mood" hidden><div class="wrap">
+  <h2>Community mood</h2>
+  <div class="nw-stamp" id="smStamp"></div>
+  <div class="sm-card">
+    <div class="sm-gauge">
+      <svg id="smDial" viewBox="0 0 220 116" role="img" aria-label="Community mood gauge from bearish to bullish"></svg>
+      <div class="sm-readout"><span class="sm-score" id="smScore">–</span><span class="sm-label" id="smLabel"></span></div>
+      <div class="sm-scale"><span>Bearish</span><span>Bullish</span></div>
+    </div>
+    <div class="sm-side">
+      <div class="sm-stat"><div class="cn">Votes, last 7 days</div><div class="sm-v sm-small" id="smCounts">–</div></div>
+      <div class="sm-stat"><div class="cn">RIO price, same 7 days</div><div class="sm-v" id="smPrice">–</div></div>
+      <p class="sm-read" id="smRead"></p>
+      <svg class="sm-trend" id="smTrend" viewBox="0 0 240 56" role="img"></svg>
+      <div class="sm-cap" id="smTrendCap"></div>
+    </div>
+  </div>
+  <p class="nw-note">AI read of community posts in the Realio Telegram groups and on X. One vote per person per day; team, admins and bots excluded. Not investment advice. <a href="methodology.html#mood">How it works</a></p>
 </div></section>
 
 <section class="home-sec" id="staking"><div class="wrap">
@@ -144,5 +164,6 @@
 <script src="holders.js?v=26"></script>
 <script src="network.js?v=22"></script>
 <script src="news.js?v=4"></script>
+<script src="sentiment.js?v=1"></script>
 </body>
 </html>
