@@ -56,7 +56,9 @@
        "chat": "Realio Network Official",
        "ts": "2026-09-29T01:48:00Z"
       }
-     ]
+     ],
+     "topic": "algorand-stellar-holders",
+     "key": true
     }
    ]
   },
@@ -95,7 +97,8 @@
        "chat": "Freehold Official",
        "ts": "2026-09-26T19:18:00Z"
       }
-     ]
+     ],
+     "topic": "incident-updates-location"
     },
     {
      "project": "Realio",
@@ -112,7 +115,9 @@
        "chat": "Realio Network Official",
        "ts": "2026-09-26T15:24:00Z"
       }
-     ]
+     ],
+     "topic": "base-bridge",
+     "key": true
     },
     {
      "project": "Freehold",
@@ -146,7 +151,9 @@
        "chat": "Realio Network Official",
        "ts": "2026-09-25T17:03:00Z"
       }
-     ]
+     ],
+     "topic": "staked-rio-frozen",
+     "key": true
     },
     {
      "project": "Districts",
@@ -163,7 +170,9 @@
        "chat": "Freehold Official",
        "ts": "2026-09-25T18:47:00Z"
       }
-     ]
+     ],
+     "topic": "districts-bridge",
+     "key": true
     },
     {
      "project": "Freehold",
@@ -227,7 +236,9 @@
        "chat": "Realio Network Official",
        "ts": "2026-09-24T14:44:00Z"
       }
-     ]
+     ],
+     "topic": "incident-recovery",
+     "key": true
     },
     {
      "project": "Realio",
@@ -239,7 +250,8 @@
        "chat": "Realio Network Official",
        "ts": "2026-09-24T22:48:00Z"
       }
-     ]
+     ],
+     "topic": "realio-bridge"
     },
     {
      "project": "Districts",
@@ -268,7 +280,9 @@
        "chat": "Realio Network Official",
        "ts": "2026-09-23T17:59:00Z"
       }
-     ]
+     ],
+     "topic": "scam-warning-dms",
+     "key": true
     },
     {
      "project": "Freehold",

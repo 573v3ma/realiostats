@@ -12,6 +12,7 @@
 
   const el = (tag, cls, text) => { const e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; };
   const dayLabel = iso => { const d = new Date(iso + "T12:00:00Z"); return isNaN(d) ? iso : `${DOW[d.getUTCDay()]} ${d.getUTCDate()} ${MON[d.getUTCMonth()]}`; };
+  const KEY_DAYS = 21, KEY_MAX = 6;
   const hhmm = ts => { const d = new Date(ts); return isNaN(d) ? "" : d.toISOString().slice(11,16) + " UTC"; };
 
   function sourceNode(s){
@@ -40,6 +41,46 @@
     return li;
   }
 
+  // Items flagged key in the last KEY_DAYS days, newest item per topic wins
+  // (a newer non-key item on the same topic retires the older key one).
+  // The latest day is left out because it is shown in full below.
+  function keyItems(days){
+    const cutoff = Date.parse(days[0].date + "T00:00:00Z") - KEY_DAYS * 864e5;
+    const seen = new Set(), out = [];
+    days.forEach((d, i) => {
+      if(Date.parse(d.date + "T00:00:00Z") < cutoff) return;
+      (Array.isArray(d.items) ? d.items : []).forEach(it => {
+        const t = typeof it.topic === "string" ? it.topic : null;
+        if(t && seen.has(t)) return;
+        if(t) seen.add(t);
+        if(i > 0 && it.key === true) out.push({it, date: d.date});
+      });
+    });
+    return out.slice(0, KEY_MAX);
+  }
+
+  function keyNode(k){
+    const li = el("li", "nw-item nw-key");
+    const head = el("div", "nw-head");
+    const p = PROJECTS.includes(k.it.project) ? k.it.project : "Realio";
+    head.append(el("span", "nw-pill nw-" + p.toLowerCase(), p), el("span", "nw-title", k.it.title || ""));
+    li.append(head);
+    const row = el("div", "nw-srcs");
+    row.append(el("span", "nw-kdate", dayLabel(k.date)));
+    (Array.isArray(k.it.sources) ? k.it.sources : []).map(sourceNode).filter(Boolean).forEach(n => row.append(n));
+    li.append(row);
+    return li;
+  }
+
+  function keyBlock(days){
+    const keys = keyItems(days);
+    if(!keys.length) return null;
+    const box = el("div", "nw-keys");
+    box.append(el("h3", "nw-sub", "Key recent updates"));
+    const ul = el("ul", "nw-list"); keys.forEach(k => ul.append(keyNode(k))); box.append(ul);
+    return box;
+  }
+
   function dayNode(day, showHeading){
     const box = el("div", "nw-day");
     if(showHeading) box.append(el("h3", "nw-date", dayLabel(day.date)));
@@ -63,11 +104,18 @@
         stamp.textContent = (ageDays > 1 ? "Last digest " : "") + dayLabel(latest.date) + " · previous 24 hours";
         if(ageDays > 1) stamp.classList.add("nw-stale");
       }
+      const kb = keyBlock(days);
+      if(kb){ home.append(kb); home.append(el("h3", "nw-sub nw-sub-day", "Latest digest")); }
       home.append(dayNode(latest, false));
       document.getElementById("overview-news").hidden = false;
     }
 
     const arch = document.getElementById("newsArchive");
+    const keyCard = document.getElementById("newsKey");
+    if(keyCard){
+      const kb = keyBlock(days);
+      if(kb){ keyCard.textContent = ""; keyCard.append(kb); keyCard.hidden = false; }
+    }
     if(arch){ arch.textContent = ""; days.forEach(d => arch.append(dayNode(d, true))); }
   }
 

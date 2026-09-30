@@ -15,7 +15,8 @@ DRAFT.json (private, never committed):
     {"key":"t1","kind":"tg","chat_id":-1002432247183,"sender":"Derek Boirun","admin":true,"ts":"...Z","text":"full message"}
   ],
   "items": [
-    {"project":"Realio","title":"...","text":"...","sources":["x1","t1"]}
+    {"project":"Realio","title":"...","text":"...","sources":["x1","t1"],
+     "key":true,"topic":"algorand-stellar-holders"}
   ]
 }
 
@@ -28,6 +29,9 @@ Guarantees on what reaches the public file:
     the source date, so nothing numeric can be invented
   * Telegram message text and sender names are never published, only the
     group name and time
+  * optional "key" (bool) marks news that matters beyond the day; the site
+    shows key items from the last 21 days, newest per "topic" (lowercase
+    slug), so a newer item on the same topic replaces or retires an older one
 An item failing any check is dropped and reported; the rest still publish.
 """
 import glob, json, os, re, subprocess, sys, tempfile
@@ -122,10 +126,22 @@ def check_item(it, srcmap, date):
                 pub.append({"kind": "tg", "chat": TG_OK[cid], "ts": ts})
         else:
             errs.append(f"{k}: unknown kind")
+    key, topic = it.get("key", False), it.get("topic")
+    if not isinstance(key, bool):
+        errs.append("key must be true/false")
+    if topic is not None and not (isinstance(topic, str) and re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", topic) and len(topic) <= 40):
+        errs.append(f"bad topic {topic!r}")
+    if key and not topic:
+        errs.append("key item needs a topic")
     stray = nums_in(title + " " + text) - allowed
     if stray:
         errs.append(f"numbers not in sources: {sorted(stray)}")
-    return errs, {"project": it.get("project"), "title": title, "text": text, "sources": pub}
+    out = {"project": it.get("project"), "title": title, "text": text, "sources": pub}
+    if key is True:
+        out["key"] = True
+    if topic:
+        out["topic"] = topic
+    return errs, out
 
 
 def validate(draft):

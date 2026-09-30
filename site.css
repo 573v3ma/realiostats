@@ -457,3 +457,9 @@
 .nw-note{font-size:12px;color:var(--faint);margin-top:14px}
 .nw-day + .nw-day{margin-top:34px}
 .nw-date{font-size:17px;margin:0 0 12px;font-weight:600}
+.nw-sub{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.nw-sub-day{margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
+.nw-key{padding:12px 0}
+.nw-key .nw-title{font-size:15px}
+.nw-kdate{color:var(--body)}
+.nw-keycard{margin-bottom:22px}
