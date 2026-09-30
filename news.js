@@ -67,7 +67,14 @@
     li.append(head);
     const row = el("div", "nw-srcs");
     row.append(el("span", "nw-kdate", dayLabel(k.date)));
-    (Array.isArray(k.it.sources) ? k.it.sources : []).map(sourceNode).filter(Boolean).forEach(n => row.append(n));
+    // one entry per channel, no times: the full detail is in the day below
+    const seen = new Set();
+    (Array.isArray(k.it.sources) ? k.it.sources : []).forEach(s => {
+      const id = s && (s.kind === "x" ? "x:" + s.handle : "tg:" + s.chat);
+      if(!id || seen.has(id)) return;
+      const n = sourceNode(Object.assign({}, s, {ts: null}));
+      if(n){ seen.add(id); row.append(n); }
+    });
     li.append(row);
     return li;
   }
