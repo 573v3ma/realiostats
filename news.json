@@ -1,6 +1,23 @@
 {
- "updated": "2026-09-29T06:43:40Z",
+ "updated": "2026-09-30T08:28:34Z",
  "days": [
+  {
+   "date": "2026-09-30",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold KYC decisions sit with the verification provider",
+     "text": "Derek says he cannot help with individual KYC problems on Freehold, because verification is up to the provider, Sumsub.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-09-29T20:13:00Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-09-29",
    "items": [
