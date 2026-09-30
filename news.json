@@ -32,7 +32,9 @@
        "id": "2104572673023934954",
        "ts": "2026-09-28T14:03:20Z"
       }
-     ]
+     ],
+     "topic": "freehold-collection",
+     "key": true
     },
     {
      "project": "Freehold",
@@ -44,7 +46,9 @@
        "chat": "Freehold Official",
        "ts": "2026-09-28T15:33:00Z"
       }
-     ]
+     ],
+     "topic": "freehold-private-projects",
+     "key": true
     },
     {
      "project": "Realio",
@@ -80,7 +84,8 @@
        "chat": "Freehold Official",
        "ts": "2026-09-28T00:10:00Z"
       }
-     ]
+     ],
+     "topic": "freehold-project-portal"
     }
    ]
   },
@@ -185,7 +190,9 @@
        "id": "2103532776070816078",
        "ts": "2026-09-25T17:11:10Z"
       }
-     ]
+     ],
+     "topic": "freehold-tokenization-studio",
+     "key": true
     },
     {
      "project": "Freehold",
@@ -197,7 +204,9 @@
        "chat": "Freehold Official",
        "ts": "2026-09-25T22:28:00Z"
       }
-     ]
+     ],
+     "topic": "freehold-rst-support",
+     "key": true
     },
     {
      "project": "Realio",

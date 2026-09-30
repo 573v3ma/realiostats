@@ -12,7 +12,9 @@
 
   const el = (tag, cls, text) => { const e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; };
   const dayLabel = iso => { const d = new Date(iso + "T12:00:00Z"); return isNaN(d) ? iso : `${DOW[d.getUTCDay()]} ${d.getUTCDate()} ${MON[d.getUTCMonth()]}`; };
-  const KEY_DAYS = 21, KEY_MAX = 6;
+  // Freehold is where the team's development now happens, so its key items
+  // lead the list (up to FH_MAX), then Realio and Districts fill the rest.
+  const KEY_DAYS = 21, KEY_MAX = 7, FH_MAX = 4;
   const hhmm = ts => { const d = new Date(ts); return isNaN(d) ? "" : d.toISOString().slice(11,16) + " UTC"; };
 
   function sourceNode(s){
@@ -56,7 +58,9 @@
         if(i > 0 && it.key === true) out.push({it, date: d.date});
       });
     });
-    return out.slice(0, KEY_MAX);
+    const fh = out.filter(k => k.it.project === "Freehold").slice(0, FH_MAX);
+    const rest = out.filter(k => k.it.project !== "Freehold").slice(0, KEY_MAX - fh.length);
+    return fh.concat(rest);
   }
 
   function keyNode(k){
