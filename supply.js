@@ -818,41 +818,47 @@ function renderFloatRows(){
   if(!el || !FLOAT_F) return;
   const f = FLOAT_F;
   const pc = n => f.circ ? (100*n/f.circ).toFixed(1)+"%" : "—";
-  const sub = (n, lead) => lead || pc(n);
+  const rpd = floatRioPerDay();
+  const dd = n => { if(!(rpd > 0)) return ""; const d = n/rpd;
+    return d < 1 ? "under a day of volume" : Math.round(d)+" day"+(Math.round(d)===1?"":"s")+" of volume"; };
   const hasStake = f.staked != null;
+  const other = f.circ - f.liquidChains;
 
-  const rows = [
-    {n:f.circ, lead:"circulating", cls:"is-official",
-     k:"All RIO in public hands",
-     x:"Summed once across all seven chains, net of Realio-controlled wallets. This is the "
-      +'<a href="#top">headline figure</a> at the top of this page. The four lines below split it by how '
-      +"quickly it could reach a market."},
+  // Same three parts as the overview cards, biggest first, under the total.
+  // Each shows two ratios: share of circulating, and days of trading it equals.
+  const parts = [
+    {n:f.liquidChains - f.withMarket, cls:"",
+     k:"Held in private BSC & ETH wallets",
+     x:"Mostly holders' own wallets on BNB Chain and Ethereum. Minutes from an exchange deposit, and a DEX "
+      +"swap needs no deposit at all. Includes <b>"+fmtM(M(f.dead))+"</b> on exchanges that list RIO but "
+      +"show no functioning market."},
+
+    {n:other, cls:"",
+     k:"Held in private wallets on native & other chains",
+     x:"Realio Network"+(hasStake ? ", including <b>"+fmtM(M(f.staked))+"</b> staked (a 7-day unbond before it can move)," : "")
+      +" plus Algorand, Stellar and Solana. A bridge away from the main venues."},
 
     {n:f.withMarket, cls:"is-final",
-     k:'On an exchange or DEX pool <span class="rtag">ready to trade</span>',
+     k:'Held on exchanges & DEXs <span class="rtag">ready to trade</span>',
      x:"Exchange wallets and DEX pool liquidity on venues with a working market. A lower bound: it counts "
-      +"only wallets we could identify from public explorer tags."},
+      +"only wallets we could identify from public explorer tags."}
+  ].sort((a,b) => b.n - a.n);
 
-    {n:f.liquidChains - f.withMarket, cls:"",
-     k:"Other wallets on BNB Chain and Ethereum",
-     x:"Mostly holders' own wallets. Minutes from an exchange deposit, and a DEX swap needs no deposit at "
-      +"all. Includes <b>"+fmtM(M(f.dead))+"</b> on exchanges that list RIO but show no functioning market."},
+  const rows = [
+    {n:f.circ, cls:"is-official", total:true,
+     k:"All RIO in public hands",
+     x:"Summed once across all seven chains, net of Realio-controlled wallets. This is the "
+      +'<a href="#top">headline figure</a> at the top of this page. The three lines below split it, biggest first.'},
+    ...parts
+  ];
 
-    hasStake ? {n:f.staked, cls:"",
-     k:"Staked on Realio Network",
-     x:"Bonded to validators. Selling it takes a 7-day unbond, then a bridge to BNB Chain or Ethereum."} : null,
-
-    {n:f.elsewhere, cls:"",
-     k:hasStake ? "Everywhere else" : "On other chains",
-     x:(hasStake ? "Unstaked RIO on Realio Network, plus " : "Realio Network, staked and unstaked, plus ")
-      +"Algorand, Stellar and Solana. A bridge away from the main venues."}
-  ].filter(Boolean);
-
-  el.innerHTML = rows.map(r =>
-    `<div class="rung ${r.cls}">
-       <div><div class="rv">${fmtM(M(r.n))}</div><span class="rvsub">${sub(r.n, r.lead)}</span></div>
+  el.innerHTML = rows.map(r => {
+    const ratios = [r.total ? "circulating" : pc(r.n)+" of circulating", dd(r.n)].filter(Boolean)
+      .map(t => `<span class="rvsub">${t}</span>`).join("");
+    return `<div class="rung ${r.cls}">
+       <div><div class="rv">${fmtM(M(r.n))}</div>${ratios}</div>
        <div><div class="rk">${r.k}</div><div class="rx">${r.x}</div></div>
-     </div>`).join("");
+     </div>`;}).join("");
 
   const h = FLOAT_H || {};
   document.getElementById("floatCap").innerHTML =

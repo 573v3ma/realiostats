@@ -520,3 +520,7 @@
   .nav.has-burger.open nav a::after{ display:none; }
   .nav.has-burger.open .theme-btn{ top:-45px; } /* open panel becomes its containing block */
 }
+
+/* supply page liquidity ladder: two ratio lines need a wider number column */
+@media (min-width:641px){ #floatLadder .rung{ grid-template-columns:184px 1fr; } }
+#floatLadder .rung .rvsub + .rvsub{ margin-top:1px; }
