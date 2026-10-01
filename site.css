@@ -524,3 +524,12 @@
 /* supply page liquidity ladder: two ratio lines need a wider number column */
 @media (min-width:641px){ #floatLadder .rung{ grid-template-columns:184px 1fr; } }
 #floatLadder .rung .rvsub + .rvsub{ margin-top:1px; }
+
+/* supply page chain cards: two per row on phones */
+@media(max-width:560px){
+  .chains{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .chains .chip{ padding:15px 14px 13px; }
+  .chains .chip .cn{ font-size:10.5px; letter-spacing:.07em; }
+  .chains .chip .cv{ font-size:23px; margin:8px 0 2px; }
+  .chains .chip .cx{ font-size:11px; }
+}
