@@ -1,6 +1,75 @@
 {
- "updated": "2026-09-30T08:28:34Z",
+ "updated": "2026-10-01T04:19:51Z",
  "days": [
+  {
+   "date": "2026-10-01",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold promotes Tokenization Studio as a single non-custodial workflow",
+     "text": "Freehold says its Tokenization Studio takes an asset to a live token in one non-custodial workflow, with no build team needed. The studio is free to start.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2105363274426470873",
+       "ts": "2026-09-30T18:24:55Z"
+      }
+     ],
+     "topic": "freehold-tokenization-studio"
+    },
+    {
+     "project": "Realio",
+     "title": "Derek: frozen staking addresses, legal claim process still being worked on",
+     "text": "Derek says staking addresses used through the original Realio web app were frozen by a validator network update. Work to let users legally claim ownership of those addresses is ongoing, and he says it is all solely to protect user assets.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-30T22:52:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "staked-rio-frozen"
+    },
+    {
+     "project": "Realio",
+     "title": "Derek explains how supply caps can change on each chain",
+     "text": "Derek says the supply cap on the native network is coded in and would need all validators to agree to change. On Ethereum and BSC, a change would need a new token contract. He did not give a combined cap figure.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-30T21:46:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "supply-cap"
+    },
+    {
+     "project": "Realio",
+     "title": "Derek: the wallet flagged as a team wallet is not one",
+     "text": "Derek says a wallet circulating as a team wallet is not one. He asks holders to stop labelling whale wallets as team wallets, because it makes those wallets targets for address spoofing scams.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-30T14:15:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-30T14:18:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-09-30T14:19:00Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-09-30",
    "items": [
