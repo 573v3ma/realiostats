@@ -792,7 +792,7 @@ function renderFloatRead(){
   el.innerHTML = t;
 }
 
-// Overview: the same four-way split as the ladder, as one row of chips.
+// Overview: the same split as the ladder, as one row of chips.
 // Staked and unstaked native RIO are folded into "Other chains" so it is always
 // four cards that add up to circulating.
 function renderFloatChips(){
@@ -801,12 +801,13 @@ function renderFloatChips(){
   const f = FLOAT_F;
   const pc = n => f.circ ? (100*n/f.circ).toFixed(1)+"%" : "—";
   const other = f.circ - f.liquidChains;
-  const cards = [
-    {k:"Circulating", n:f.circ, x:"all RIO in public hands"},
-    {k:"Ready to trade", n:f.withMarket, x:pc(f.withMarket)+" · on exchanges and DEXs", cls:"is-final"},
-    {k:"Other BNB & ETH wallets", n:f.liquidChains - f.withMarket, x:pc(f.liquidChains - f.withMarket)+" · minutes from a market"},
-    {k:"Other chains", n:other, x:pc(other)+" · a bridge away, incl. staked"}
-  ];
+  // The three parts are sorted biggest first, under the circulating total.
+  const parts = [
+    {k:"Held in private BSC & ETH wallets", n:f.liquidChains - f.withMarket, x:pc(f.liquidChains - f.withMarket)+" · minutes from a market"},
+    {k:"Held in private wallets on native & other chains", n:other, x:pc(other)+" · a bridge away, incl. staked"},
+    {k:"Held on exchanges & DEXs", n:f.withMarket, x:pc(f.withMarket)+" · ready to trade", cls:"is-final"}
+  ].sort((a,b) => b.n - a.n);
+  const cards = [{k:"Circulating", n:f.circ, x:"all RIO in public hands"}, ...parts];
   el.innerHTML = cards.map(c =>
     `<div class="chip ${c.cls||""}"><div class="cn">${c.k}</div><div class="cv">${fmtM(M(c.n))}</div><div class="cx">${c.x}</div></div>`).join("");
 }
