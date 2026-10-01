@@ -1,3 +1,36 @@
+/* Mobile nav: hamburger. Builds the toggle from JS so the seven pages need no
+   markup change, and without JS the CSS fallback (wrapped link row) still
+   applies because the collapse rules are scoped to .nav.has-burger. */
+(function(){
+  function init(){
+    const bar = document.querySelector("header .nav");
+    const nav = bar && bar.querySelector("nav");
+    if(!nav || bar.querySelector(".burger")) return;
+    if(!nav.id) nav.id = "siteNav";
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "burger";
+    btn.setAttribute("aria-label", "Open menu");
+    btn.setAttribute("aria-expanded", "false");
+    btn.setAttribute("aria-controls", nav.id);
+    btn.innerHTML = '<span></span><span></span><span></span>';
+    bar.insertBefore(btn, nav);
+    bar.classList.add("has-burger");
+    const set = open => {
+      bar.classList.toggle("open", open);
+      btn.setAttribute("aria-expanded", String(open));
+      btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    };
+    btn.addEventListener("click", e => { e.stopPropagation(); set(!bar.classList.contains("open")); });
+    document.addEventListener("click", e => { if(!bar.contains(e.target)) set(false); });
+    document.addEventListener("keydown", e => { if(e.key === "Escape" && bar.classList.contains("open")){ set(false); btn.focus(); } });
+    nav.addEventListener("click", e => { if(e.target.closest("a")) set(false); });
+    window.matchMedia("(min-width:721px)").addEventListener("change", m => { if(m.matches) set(false); });
+  }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
 /* realiostats shared core: formatters, chart watermark, footer helper,
    and the one loader every page uses to read the daily supply snapshot.
    Extracted verbatim from the original single-file index.html. */
