@@ -512,13 +512,13 @@
   .nav.has-burger .theme-btn{ right:62px; top:15px; }
   .nav.has-burger nav{ width:auto; }
   .nav.has-burger nav a{ display:none; }
-  .nav.has-burger.open nav{ position:absolute; left:0; right:0; top:60px; display:flex; flex-direction:column;
-    align-items:stretch; gap:0; padding:6px 20px 14px; background:var(--bg);
-    border-bottom:1px solid var(--line); box-shadow:0 12px 24px rgba(0,0,0,.18); }
-  .nav.has-burger.open nav a{ display:block; font-size:15px; padding:12px 0; border-bottom:1px solid var(--line); }
+  .nav.has-burger.open nav{ position:absolute; left:auto; right:20px; top:54px; width:220px; display:flex; flex-direction:column;
+    align-items:stretch; gap:0; padding:4px 16px; background:var(--bg); text-align:right;
+    border:1px solid var(--line-strong); border-radius:12px; box-shadow:0 14px 28px rgba(0,0,0,.28); }
+  .nav.has-burger.open nav a{ display:block; font-size:15px; padding:11px 0; border-bottom:1px solid var(--line); }
   .nav.has-burger.open nav a:last-of-type{ border-bottom:0; }
   .nav.has-burger.open nav a::after{ display:none; }
-  .nav.has-burger.open .theme-btn{ top:-45px; } /* open panel becomes its containing block */
+  .nav.has-burger.open .theme-btn{ top:-39px; right:42px; } /* open panel becomes its containing block */
 }
 
 /* supply page liquidity ladder: two ratio lines need a wider number column */
