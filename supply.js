@@ -863,10 +863,10 @@ function renderFloatRows(){
   const h = FLOAT_H || {};
   document.getElementById("floatCap").innerHTML =
     "Chain totals and the staked figure are read live on-chain every day (staked = RIO held by Realio's "
-    +"multistaking module, including any mid-unbond). The exchange and DEX figure comes from "
-    +"<code>holders.json</code>, a dated snapshot of public explorer name tags"
-    +(h.as_of ? " last refreshed <b>"+h.as_of+"</b>" : "")
-    +", because wallet labels are not in any free API. Days of trading use reported 24h volume across all "
+    +"multistaking module, including any mid-unbond). The exchange and DEX figure is the live balance of "
+    +"the exchange and DEX wallets labelled on BscScan and Etherscan, re-read every week"
+    +(h.as_of ? " (last <b>"+h.as_of+"</b>)" : "")
+    +". Unlabelled exchange wallets are missed, so it is a lower bound. Days of trading use reported 24h volume across all "
     +"venues; if some of that volume is inflated, real liquidity is thinner still. This section describes "
     +"where circulating supply sits, not a different supply figure.";
 }
@@ -897,7 +897,7 @@ function renderHolders(latest, h){
     const tB = bnb ? (100*tot/bnb).toFixed(0)+"%" : "—";
     const tC = circ ? (100*tot/circ).toFixed(1)+"%" : "—";
     body.innerHTML = rows +
-      `<tr class="lq-total"><td>Identified exchanges</td><td>${wtot}</td><td>${fmtM(M(tot))}</td><td>${tB}</td><td>${tC}</td></tr>`;
+      `<tr class="lq-total"><td>Identified exchanges & DEX pools</td><td>${wtot}</td><td>${fmtM(M(tot))}</td><td>${tB}</td><td>${tC}</td></tr>`;
     document.getElementById("bscHoldersSub").innerHTML =
       `Held in exchange wallets, which custody user funds. Not exhaustive: smaller labelled wallets sit below the top holders, so the real exchange-held total is a little higher.`;
   }
@@ -960,8 +960,18 @@ loadSupply().then(({arr, latest})=>{
   // states the actual liquid figure inline rather than only linking to it.
   // Same computeFloat() the holders page uses, so the two can never disagree.
   // Liquid float: dated venue snapshot, percentages computed live. Silent if absent.
-  fetch("./holders.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
-    .then(h=>renderHolders(latest,h)).catch(()=>{});
+  // holders.json is the wallet registry; holders-evm.json "venues" carries the
+  // weekly live balances of those wallets (fetch_venues.py) and wins when present.
+  const getJ = u => fetch(u,{cache:"no-store"}).then(r=>r.ok?r.json():null).catch(()=>null);
+  Promise.all([getJ("./holders.json"), getJ("./holders-evm.json")]).then(([h, evm])=>{
+    const v = evm && evm.venues;
+    if(h && v){
+      h = Object.assign({}, h, {as_of: v.as_of});
+      if(Array.isArray(v.bsc_exchanges)) h.bsc_exchanges = v.bsc_exchanges;
+      if(Array.isArray(v.eth_holders)) h.eth_holders = v.eth_holders;
+    }
+    renderHolders(latest, h);
+  }).catch(()=>{});
   return fetch("./volume-history.json",{cache:"no-store"})
     .then(r=>r.ok?r.json():null)
     .then(v=>{ VOLHIST = v; renderVolumeTrend(v); FLOAT_VOL = v; renderFloatRead(); })

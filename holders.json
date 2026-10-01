@@ -1,48 +1,98 @@
 {
- "as_of": "2026-08-24",
- "source": "BscScan and Etherscan public name tags Active-market tags cross-checked against the CoinGecko ticker list.",
- "note": "Balances read from explorer labels on the date shown. Exchange wallets custody user funds; they are not owned by the exchange. Wallets rotate over time, so figures drift between updates. Verify live on the linked explorers.",
- "bsc_exchanges": [
-  {
-   "entity": "KuCoin",
-   "wallets": 5,
-   "rio": 34697466
-  },
-  {
-   "entity": "MEXC",
-   "wallets": 2,
-   "rio": 12676268
-  },
-  {
-   "entity": "OKX",
-   "wallets": 1,
-   "rio": 8244988,
-   "note": "no active market"
-  },
-  {
-   "entity": "CoinSpot",
-   "wallets": 1,
-   "rio": 2007694,
-   "note": "no active market"
-  }
- ],
- "eth_holders": [
-  {
-   "holder": "Uniswap (V3 + V4 pools)",
-   "type": "DEX liquidity",
-   "rio": 2922857
-  },
-  {
-   "holder": "Base bridge",
-   "type": "Bridge, backs Base",
-   "rio": 2015572
-  },
-  {
-   "holder": "Mercado Bitcoin",
-   "type": "Exchange",
-   "rio": 543054,
-   "note": "no active market"
-  }
- ],
- "eth_dispersed_note": "Ethereum's largest holders are DEX pools and the Base bridge, not exchange wallets. Around 92% of ETH RIO is spread across retail addresses, with no single dominant holder."
+  "as_of": "2026-10-01",
+  "source": "BscScan and Etherscan public name tags (wallet registry). Live balances refreshed weekly by fetch_venues.py into holders-evm.json. Active-market tags cross-checked against the CoinGecko ticker list.",
+  "note": "Registry of labelled exchange and DEX wallets. The rio figures here are the 1 Oct 2026 reading and only a fallback; the site uses the weekly live balances in holders-evm.json (venues). Exchange wallets custody user funds; they are not owned by the exchange. Wallets rotate, so re-check the explorer top-holder lists every month or two.",
+  "bsc_exchanges": [
+    {
+      "entity": "KuCoin",
+      "rio": 33884002,
+      "addresses": [
+        "0x2677C4c8757dA1857CC7cc4071E0E0Dd32ccb975",
+        "0x17A30350771d02409046A683b18Fe1C13cCFC4A8",
+        "0x8dac80CE96F69F9762Bc450faa4d7FBd5891Ae18",
+        "0xb8e6D31e7B212b2b7250EE9c26C56cEBBFBe6B23",
+        "0x53f78A071d04224B8e254E243fFfc6D9f2f3Fa23"
+      ],
+      "wallets": 5
+    },
+    {
+      "entity": "MEXC",
+      "rio": 8122692,
+      "addresses": [
+        "0x4982085C9e2F89F2eCb8131Eca71aFAD896e89CB",
+        "0x2e8F79aD740de90dC5F5A9F0D8D9661a60725e64"
+      ],
+      "wallets": 2
+    },
+    {
+      "entity": "DEX pools (PancakeSwap, Uniswap)",
+      "rio": 1258012,
+      "addresses": [
+        "0xf46eaa0c84f916b45295c999da8fd99c3dd6012e",
+        "0x1d96f607a40d3af1206b4bb46fb0c84d20dbca69",
+        "0xfd226f095148b2f9e185e13ae9cc16d51995fd4f",
+        "0xad61abe711af951a9b18e72fe334525d2239b427",
+        "0x2579ebcef1666e28519a59b7b986f79febb6be48",
+        "0x28e2Ea090877bF75740558f6BFB36A5ffeE9e9dF"
+      ],
+      "wallets": 6
+    },
+    {
+      "entity": "OKX",
+      "rio": 7610524,
+      "note": "no active market",
+      "addresses": [
+        "0xA0420C29B214d09b9ec751aa1f592c7b1fa77dA3"
+      ],
+      "wallets": 1
+    },
+    {
+      "entity": "CoinSpot",
+      "rio": 1931180,
+      "note": "no active market",
+      "addresses": [
+        "0x9239dF3E9996c776D539EB9f01A8aE8E7957b3c3"
+      ],
+      "wallets": 1
+    },
+    {
+      "entity": "Bitrue",
+      "rio": 244567,
+      "note": "no active market",
+      "addresses": [
+        "0x868f027A5e3Bd1cD29606a6681C3ddb7D3dD9b67"
+      ],
+      "wallets": 1
+    }
+  ],
+  "eth_holders": [
+    {
+      "holder": "MEXC",
+      "type": "Exchange",
+      "rio": 49318933,
+      "addresses": [
+        "0x3cc936b795a188f0e246cbb2d74c5bd190aecf18",
+        "0x9642b23ed1e01df1092b92641051881a322f5d4e"
+      ]
+    },
+    {
+      "holder": "Uniswap (V2, V3 + V4 pools)",
+      "type": "DEX liquidity",
+      "rio": 1974261,
+      "addresses": [
+        "0xba2a013b29631d3277bbbce80c970d06c1bda0c3",
+        "0xf0ed3f0e24209c8dd5fe7a52b9c1feeb9ec5afd0",
+        "0x000000000004444c5dc75cb358380d2e3de08a90"
+      ]
+    },
+    {
+      "holder": "Base bridge",
+      "type": "Bridge, backs Base",
+      "rio": 2127281,
+      "addresses": [
+        "0x3154cf16ccdb4c6d922629664174b904d80f2c35"
+      ]
+    }
+  ],
+  "eth_dispersed_note": "Ethereum's largest holders are MEXC's exchange wallets (holding the RIO MEXC moved from Algorand in Sep 2026), then the Base bridge and Uniswap pools."
 }

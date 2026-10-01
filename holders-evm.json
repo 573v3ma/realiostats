@@ -405,5 +405,61 @@
         }
       ]
     }
+  },
+  "venues": {
+    "as_of": "2026-10-01",
+    "source": "Live balanceOf of the labelled exchange and DEX wallets listed in holders.json.",
+    "bsc_exchanges": [
+      {
+        "entity": "KuCoin",
+        "wallets": 5,
+        "rio": 33883982.38
+      },
+      {
+        "entity": "MEXC",
+        "wallets": 2,
+        "rio": 8122691.7
+      },
+      {
+        "entity": "DEX pools (PancakeSwap, Uniswap)",
+        "wallets": 6,
+        "rio": 1258011.92
+      },
+      {
+        "entity": "OKX",
+        "note": "no active market",
+        "wallets": 1,
+        "rio": 7610523.96
+      },
+      {
+        "entity": "CoinSpot",
+        "note": "no active market",
+        "wallets": 1,
+        "rio": 1931179.64
+      },
+      {
+        "entity": "Bitrue",
+        "note": "no active market",
+        "wallets": 1,
+        "rio": 244567.5
+      }
+    ],
+    "eth_holders": [
+      {
+        "holder": "MEXC",
+        "type": "Exchange",
+        "rio": 49318933.46
+      },
+      {
+        "holder": "Uniswap (V2, V3 + V4 pools)",
+        "type": "DEX liquidity",
+        "rio": 1974260.9
+      },
+      {
+        "holder": "Base bridge",
+        "type": "Bridge, backs Base",
+        "rio": 2127280.64
+      }
+    ]
   }
 }

@@ -177,6 +177,13 @@ def main():
     # Base lives in holders-chains.json but needs the same Alchemy key: every
     # public Base RPC range-limits eth_getLogs since Aug 2026. Refresh it here,
     # in the step that has the secret; fetch_chain_holders.py then keeps it.
+    # Exchange and DEX wallet balances (liquidity section). Uses the Alchemy URLs
+    # when set and public RPCs otherwise; written into holders-evm.json.
+    try:
+        import fetch_venues
+        fetch_venues.refresh_venues()
+    except Exception as e:
+        print(f"::error::venues: FAILED ({type(e).__name__}: {str(e)[:200]}), keeping previous value", file=sys.stderr)
     if os.environ.get("ALCHEMY_ETH_URL", "").strip():
         try:
             import fetch_chain_holders
