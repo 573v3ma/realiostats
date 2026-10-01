@@ -804,7 +804,7 @@ function renderFloatChips(){
   // The three parts are sorted biggest first, under the circulating total.
   const parts = [
     {k:"Held in private BSC & ETH wallets", n:f.liquidChains - f.withMarket, x:pc(f.liquidChains - f.withMarket)+" · minutes from a market"},
-    {k:"Held in private wallets on native & other chains", n:other, x:pc(other)+" · a bridge away, incl. staked"},
+    {k:"Held in private wallets on native & other chains", n:other, x:pc(other)+" · a bridge away"+(f.staked != null ? ", incl. <b>"+fmtM(M(f.staked))+"</b> staked" : "")},
     {k:"Held on exchanges & DEXs", n:f.withMarket, x:pc(f.withMarket)+" · ready to trade", cls:"is-final"}
   ].sort((a,b) => b.n - a.n);
   const cards = [{k:"Circulating", n:f.circ, x:"all RIO in public hands"}, ...parts];
