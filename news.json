@@ -1,6 +1,77 @@
 {
- "updated": "2026-10-01T04:19:51Z",
+ "updated": "2026-10-02T04:20:40Z",
  "days": [
+  {
+   "date": "2026-10-02",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Team says tokenization fee details in the old whitepaper are outdated",
+     "text": "Asked whether the fee split in the documentation still applies, Derek said it is old language from an outdated whitepaper and that things will evolve with the market and applicable regulations.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-02T01:23:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-tokenization-fees"
+    },
+    {
+     "project": "Freehold",
+     "title": "Freehold KYC: team to check with its verifier on locations missing from the list",
+     "text": "Derek says the team will check with the verification provider about a location missing from the Freehold KYC list, adding that China has its own difficulties.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-02T01:43:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Realio",
+     "title": "No further updates on the security incident",
+     "text": "Derek reposted the reminder that the latest information on the security incident is on the incident page and said there are no further updates at this time. Updates will be provided when they become available.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-01T14:56:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "incident-recovery"
+    },
+    {
+     "project": "Realio",
+     "title": "Realio warns of impersonators and says official claims process is not live yet",
+     "text": "Realio says @realio_network is its only official X account and that it will never ask for seed phrases, funds to verify assets, or wallet connections to unofficial claims sites. The official claims process will be announced through verified channels when available.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "realio_network",
+       "id": "2105679931162124539",
+       "ts": "2026-10-01T15:23:11Z"
+      }
+     ]
+    },
+    {
+     "project": "Districts",
+     "title": "Districts login issues fixed after security upgrades",
+     "text": "Districts says the temporary login issues that followed recent security and authentication upgrades are fixed. Logging in works again, with stronger security in place.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "districts_xyz",
+       "id": "2105703561988309421",
+       "ts": "2026-10-01T16:57:05Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-01",
    "items": [
