@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-02T04:20:40Z",
+ "updated": "2026-10-02T04:20:49Z",
  "days": [
   {
    "date": "2026-10-02",
@@ -29,6 +29,20 @@
        "ts": "2026-10-02T01:43:00Z"
       }
      ]
+    },
+    {
+     "project": "Realio",
+     "title": "Derek: team cannot transact with people in sanctioned countries",
+     "text": "Derek says the team legally cannot transact with people in OFAC-sanctioned countries. A decentralized way to claim anonymously will only be looked at once the current work is done and there is more bandwidth, if it is possible at all.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-01T17:32:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "algorand-stellar-holders"
     },
     {
      "project": "Realio",
