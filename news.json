@@ -1,6 +1,59 @@
 {
- "updated": "2026-10-02T04:20:49Z",
+ "updated": "2026-10-03T04:19:27Z",
  "days": [
+  {
+   "date": "2026-10-03",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold Collection opens early access requests for shares in collector cars",
+     "text": "Freehold says the Freehold Collection is a new way to own a share of extraordinary collector cars and is taking early access requests. Derek says the SP3 has reached collector car unicorn status, with U.S. spec cars going for $15m.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2106056746665980092",
+       "ts": "2026-10-02T16:20:31Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-10-02T17:15:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-collection"
+    },
+    {
+     "project": "Freehold",
+     "title": "Derek: Freehold stablecoin bridge and native DEX are coming",
+     "text": "Asked about a stablecoin bridge and a native DEX for Freehold, Derek said both are coming as well, after saying that the tokenization wave is coming.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-10-02T15:46:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-stablecoin-bridge-dex"
+    },
+    {
+     "project": "Realio",
+     "title": "Derek: no claims update, process will be slow and drawn out",
+     "text": "Derek says there is no update on claims and that the process will be slow and drawn out, with no single event where everyone gets tokens. He added that Realio v1 was hacked and no longer exists, and asked holders for patience.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-02T15:38:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "incident-recovery"
+    }
+   ]
+  },
   {
    "date": "2026-10-02",
    "items": [
