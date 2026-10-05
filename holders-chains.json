@@ -1,6 +1,6 @@
 {
-  "as_of": "2026-09-28",
-  "source": "Read from public keyless endpoints: Algorand indexer asset balances, Stellar Horizon accounts by asset, Solana getProgramAccounts on the Token-2022 mint aggregated by owner, and Base ERC-20 transfers (Alchemy) netted per address and reconciled against on-chain total supply.",
+  "as_of": "2026-10-05",
+  "source": "Read from public keyless endpoints: Algorand indexer asset balances, Stellar Horizon accounts by asset, Solana getProgramAccounts on the Token-2022 mint aggregated by owner, and Base ERC-20 Transfer logs netted per address and reconciled against on-chain total supply.",
   "notes": {
     "counting": "total counts addresses with a balance above zero, the same definition used for every other chain.",
     "stellar": "trustlines counts accounts that trust the asset, most of which hold nothing; total counts funded holders only.",
@@ -10,7 +10,7 @@
   },
   "chains": {
     "algorand": {
-      "total": 4328,
+      "total": 4327,
       "gte_100": 1356,
       "gte_1k": 768,
       "gte_10k": 151,
@@ -18,25 +18,25 @@
       "opted_in": 27866
     },
     "stellar": {
-      "total": 3149,
-      "gte_100": 1057,
-      "gte_1k": 463,
-      "gte_10k": 202,
-      "gte_100k": 80,
-      "trustlines": 15001
+      "total": 3143,
+      "gte_100": 1062,
+      "gte_1k": 471,
+      "gte_10k": 212,
+      "gte_100k": 85,
+      "trustlines": 14987
     },
     "solana": {
-      "total": 992,
+      "total": 985,
       "gte_100": 399,
-      "gte_1k": 154,
+      "gte_1k": 152,
       "gte_10k": 31,
       "gte_100k": 0,
-      "token_accounts": 2318
+      "token_accounts": 2317
     },
     "base": {
-      "total": 339,
-      "gte_100": 102,
-      "gte_1k": 55,
+      "total": 345,
+      "gte_100": 105,
+      "gte_1k": 57,
       "gte_10k": 9,
       "gte_100k": 1,
       "history": [
@@ -138,14 +138,22 @@
         },
         {
           "month": "2026-09",
-          "total": 339,
+          "total": 341,
           "gte_100": 102,
-          "gte_1k": 55,
+          "gte_1k": 57,
+          "gte_10k": 9,
+          "gte_100k": 1
+        },
+        {
+          "month": "2026-10",
+          "total": 345,
+          "gte_100": 105,
+          "gte_1k": 57,
           "gte_10k": 9,
           "gte_100k": 1
         }
       ],
-      "transfers": 6163,
+      "transfers": 6296,
       "supply_delta_pct": 0.0
     }
   }
