@@ -533,3 +533,25 @@
   .chains .chip .cv{ font-size:23px; margin:8px 0 2px; }
   .chains .chip .cx{ font-size:11px; }
 }
+
+/* Overview hero: market metrics lead, supply sits below (supply page keeps the supply-first layout) */
+.home-stat .hero-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(24px,4vw,56px);
+  margin-top:0;padding-top:0;border-top:0}
+.home-stat .hm .hmk{font-size:12px;letter-spacing:.14em;margin-bottom:14px}
+.home-stat .hm .hmv{font-size:clamp(34px,4.4vw,54px);font-weight:700;letter-spacing:-.03em;
+  display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 0}
+.home-stat .hm .hmv{flex-direction:column;align-items:flex-start;gap:10px}
+.home-stat .hm .chg{font-size:15px;margin-left:0}
+.home-stat .hm .spark{width:100%;max-width:260px;height:30px;margin-top:16px}
+.home-stat .hm .hmx{font-size:12.5px;margin-top:10px}
+.home-supply{margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08)}
+.home-supply .k{font-size:11.5px;color:var(--card-muted);font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.home-supply .hs-row{display:flex;align-items:baseline;gap:6px 16px;flex-wrap:wrap}
+.hero-stat .home-supply .num{font-size:clamp(28px,3.2vw,38px);line-height:1;letter-spacing:-.025em}
+.hero-stat .home-supply .sub{margin-top:0;font-size:13.5px}
+@media(max-width:860px){
+  .home-stat .hero-metrics{grid-template-columns:1fr;gap:26px}
+  .home-stat .hm + .hm{padding-top:22px;border-top:1px solid rgba(255,255,255,.06)}
+  .home-stat .hm .hmv{flex-direction:row;align-items:baseline;gap:0}
+  .home-stat .hm .chg{margin-left:12px}
+}

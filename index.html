@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="site.css?v=31">
+<link rel="stylesheet" href="site.css?v=32">
 </head>
 <body data-summary>
 <header><div class="wrap nav">
@@ -41,14 +41,15 @@
   <h1>Realio at a glance</h1>
   <p class="lede">The key on-chain numbers for $RIO across every chain it lives on, refreshed daily. Each block links to the full breakdown.</p>
 
-  <div class="hero-stat">
-    <div class="k">Multichain circulating supply</div>
-    <div class="num" id="multiNum">376M</div>
-    <div class="sub" id="multiSub">RIO · across 7 chains, counted once</div>
+  <div class="hero-stat home-stat">
     <div class="hero-metrics">
-      <div class="hm"><div class="hmk">RIO price</div><div class="hmv"><span id="priceNum">—</span><span class="chg" id="priceChg"></span></div><svg class="spark" id="priceSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="priceSrc">at time of refresh</div></div>
-      <div class="hm"><div class="hmk">Circulating market cap</div><div class="hmv"><span id="mcapNum">—</span><span class="chg" id="mcapChg"></span></div><svg class="spark" id="mcapSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx">circulating supply × price</div></div>
-      <div class="hm"><div class="hmk">24h trading volume</div><div class="hmv"><span id="volNum">—</span><span class="chg" id="volChg"></span></div><svg class="spark" id="volSpark" width="132" height="26" viewBox="0 0 132 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="volSrc">exchange-reported</div></div>
+      <div class="hm"><div class="hmk">RIO price</div><div class="hmv"><span id="priceNum">—</span><span class="chg" id="priceChg"></span></div><svg class="spark" id="priceSpark" width="260" height="26" viewBox="0 0 260 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="priceSrc">at time of refresh</div></div>
+      <div class="hm"><div class="hmk">Circulating market cap</div><div class="hmv"><span id="mcapNum">—</span><span class="chg" id="mcapChg"></span></div><svg class="spark" id="mcapSpark" width="260" height="26" viewBox="0 0 260 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx">circulating supply × price</div></div>
+      <div class="hm"><div class="hmk">24h trading volume</div><div class="hmv"><span id="volNum">—</span><span class="chg" id="volChg"></span></div><svg class="spark" id="volSpark" width="260" height="26" viewBox="0 0 260 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="volSrc">exchange-reported</div></div>
+    </div>
+    <div class="home-supply">
+      <div class="k">Multichain circulating supply</div>
+      <div class="hs-row"><div class="num" id="multiNum">376M</div><div class="sub" id="multiSub">RIO · across 7 chains, counted once</div></div>
     </div>
     <div class="updated">Last updated <b id="updated">—</b> · refreshes daily from a public, open-source pipeline.</div>
   </div>
