@@ -1,8 +1,8 @@
 {
- "as_of": "2026-10-04T11:37:04Z",
- "height": 19936663,
+ "as_of": "2026-10-05T13:12:47Z",
+ "height": 19952933,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 136260677.21,
+ "bonded_weight": 136261258.54,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
@@ -24,7 +24,7 @@
   },
   {
    "moniker": "Rose Validators | $DSTRX",
-   "weight": 7249904.61,
+   "weight": 7250084.0,
    "commission": 0.05,
    "jailed": false
   },
@@ -36,7 +36,7 @@
   },
   {
    "moniker": "Realio Italy \ud83c\uddee\ud83c\uddf9 \ud83c\udf0f",
-   "weight": 7054632.45,
+   "weight": 7054674.86,
    "commission": 0.05,
    "jailed": false
   },
@@ -54,25 +54,25 @@
   },
   {
    "moniker": "genznodes",
-   "weight": 6621065.0,
+   "weight": 6600465.83,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "min fee\ud83c\udf84 \ud835\udc25\ud835\udc1e\ud835\udc2c\ud835\udc27\ud835\udc22\ud835\udc24 | \ud835\udc14\ud835\udc13\ud835\udc12\ud835\udc00",
-   "weight": 5257090.11,
+   "weight": 5277690.11,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Teshy - DSTRX",
-   "weight": 4856930.93,
+   "weight": 4856945.79,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Realiostats.com \ud83d\uddfd REStake\u2705",
-   "weight": 4049014.07,
+   "weight": 4049268.25,
    "commission": 0.05,
    "jailed": false
   },
@@ -90,7 +90,7 @@
   },
   {
    "moniker": "Indonode | DSTRX | Low Fees",
-   "weight": 3579394.57,
+   "weight": 3579442.79,
    "commission": 0.05,
    "jailed": false
   },
@@ -288,7 +288,7 @@
   },
   {
    "moniker": "Sr20de | RIO \ud83d\udd25 Restake enabled",
-   "weight": 134409.94,
+   "weight": 134451.37,
    "commission": 0.05,
    "jailed": false
   },
