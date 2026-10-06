@@ -1,8 +1,8 @@
 {
- "as_of": "2026-10-05T13:12:47Z",
- "height": 19952933,
+ "as_of": "2026-10-06T12:32:25Z",
+ "height": 19967745,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 136261258.54,
+ "bonded_weight": 136736209.71,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
@@ -42,7 +42,7 @@
   },
   {
    "moniker": "Reallionaires Club | RIO",
-   "weight": 6779431.79,
+   "weight": 6836632.9,
    "commission": 0.05,
    "jailed": false
   },
@@ -60,7 +60,7 @@
   },
   {
    "moniker": "min fee\ud83c\udf84 \ud835\udc25\ud835\udc1e\ud835\udc2c\ud835\udc27\ud835\udc22\ud835\udc24 | \ud835\udc14\ud835\udc13\ud835\udc12\ud835\udc00",
-   "weight": 5277690.11,
+   "weight": 5277801.11,
    "commission": 0.05,
    "jailed": false
   },
@@ -72,7 +72,7 @@
   },
   {
    "moniker": "Realiostats.com \ud83d\uddfd REStake\u2705",
-   "weight": 4049268.25,
+   "weight": 4449268.25,
    "commission": 0.05,
    "jailed": false
   },
@@ -216,7 +216,7 @@
   },
   {
    "moniker": "\ud83d\udd25 BIERFORGE \u2692 \ud83d\udd25 REStake",
-   "weight": 576423.15,
+   "weight": 578623.15,
    "commission": 0.05,
    "jailed": false
   },
@@ -240,7 +240,7 @@
   },
   {
    "moniker": "Moonbridge",
-   "weight": 328525.19,
+   "weight": 328526.19,
    "commission": 0.05,
    "jailed": false
   },
@@ -288,7 +288,7 @@
   },
   {
    "moniker": "Sr20de | RIO \ud83d\udd25 Restake enabled",
-   "weight": 134451.37,
+   "weight": 149889.43,
    "commission": 0.05,
    "jailed": false
   },
