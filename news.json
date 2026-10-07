@@ -1,6 +1,68 @@
 {
- "updated": "2026-10-05T04:18:43Z",
+ "updated": "2026-10-07T04:20:07Z",
  "days": [
+  {
+   "date": "2026-10-07",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Derek: Freehold is now the product and the team's focus",
+     "text": "Derek says Freehold is the app and where the team's current efforts are focused, and that the earlier Realio product is gone. He asked members of the Realio Network chat to join the Freehold group.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-10-06T16:30:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-06T16:43:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-focus"
+    },
+    {
+     "project": "Freehold",
+     "title": "Freehold KYC: support tickets and the verifier decide cases, not the founder",
+     "text": "Derek says founders do not approve KYC for users. Holders with an open support ticket will be asked for information, or the third-party KYC provider cannot approve them for a valid reason. He advises following up on the ticket.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-06T19:13:00Z"
+      }
+     ]
+    },
+    {
+     "project": "Realio",
+     "title": "Derek: claims updates will be posted on Freehold, where the claims portal will be",
+     "text": "Asked about tokens lost on other wallets, Derek said the updates will be on Freehold, where the claims portal will be. No further claims details were given.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-06T18:51:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "incident-recovery"
+    },
+    {
+     "project": "Realio",
+     "title": "Derek: transaction history for tax can be pulled with a wallet address",
+     "text": "Asked for account transfer data for accounting and tax purposes, Derek said a wallet address and any block explorer or accounting software is all that is needed.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-10-07T00:24:00Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-05",
    "items": []
