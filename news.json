@@ -1,6 +1,26 @@
 {
- "updated": "2026-10-07T04:20:07Z",
+ "updated": "2026-10-08T04:19:51Z",
  "days": [
+  {
+   "date": "2026-10-08",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold has chosen the first car for the Freehold Collection",
+     "text": "The Freehold team says the first car in the Freehold Collection is documented and almost ready. It is not naming the car yet. The early access list will hear first.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2107877970753053119",
+       "ts": "2026-10-07T16:57:25Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-collection"
+    }
+   ]
+  },
   {
    "date": "2026-10-07",
    "items": [
