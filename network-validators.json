@@ -1,8 +1,8 @@
 {
- "as_of": "2026-10-07T12:25:23Z",
- "height": 19982948,
+ "as_of": "2026-10-08T12:34:47Z",
+ "height": 19998214,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 136745368.29,
+ "bonded_weight": 136803195.41,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
@@ -18,13 +18,13 @@
   },
   {
    "moniker": "Teshy 103k Bonded RIO",
-   "weight": 7338533.19,
+   "weight": 7341107.13,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Rose Validators | $DSTRX",
-   "weight": 7250240.69,
+   "weight": 7250340.55,
    "commission": 0.05,
    "jailed": false
   },
@@ -36,13 +36,13 @@
   },
   {
    "moniker": "Realio Italy \ud83c\uddee\ud83c\uddf9 \ud83c\udf0f",
-   "weight": 7054690.51,
+   "weight": 7092554.16,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Reallionaires Club | RIO",
-   "weight": 6836633.9,
+   "weight": 6854262.69,
    "commission": 0.05,
    "jailed": false
   },
@@ -72,7 +72,13 @@
   },
   {
    "moniker": "Realiostats.com \ud83d\uddfd REStake\u2705",
-   "weight": 4449537.25,
+   "weight": 4449538.43,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "KonsorTech | DSTRX",
+   "weight": 3938121.32,
    "commission": 0.05,
    "jailed": false
   },
@@ -101,12 +107,6 @@
    "jailed": false
   },
   {
-   "moniker": "Vinjan.Inc | DSTRX",
-   "weight": 3502858.58,
-   "commission": 0.05,
-   "jailed": false
-  },
-  {
    "moniker": "Rose RST Node",
    "weight": 3499069.9,
    "commission": 0.05,
@@ -121,12 +121,6 @@
   {
    "moniker": "dnsarz | DSTRX",
    "weight": 3251634.18,
-   "commission": 0.05,
-   "jailed": false
-  },
-  {
-   "moniker": "KonsorTech | DSTRX",
-   "weight": 3216266.05,
    "commission": 0.05,
    "jailed": false
   },
@@ -155,8 +149,14 @@
    "jailed": false
   },
   {
+   "moniker": "Vinjan.Inc | DSTRX",
+   "weight": 2780653.03,
+   "commission": 0.05,
+   "jailed": false
+  },
+  {
    "moniker": "Blockval",
-   "weight": 2383195.36,
+   "weight": 2383205.36,
    "commission": 0.05,
    "jailed": false
   },
