@@ -1,6 +1,24 @@
 {
- "updated": "2026-10-08T04:19:51Z",
+ "updated": "2026-10-09T04:20:00Z",
  "days": [
+  {
+   "date": "2026-10-09",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold on/off ramp: MoonPay for now, proper ramp comes later",
+     "text": "Derek says MoonPay works for both buying and selling on Freehold but does not handle high volume. A proper on/off ramp will be added after other items are completed and launched. Until then, holders can get stablecoins from Coinbase and withdraw them to Freehold.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-10-08T16:36:00Z"
+      }
+     ],
+     "topic": "freehold-onramp"
+    }
+   ]
+  },
   {
    "date": "2026-10-08",
    "items": [
