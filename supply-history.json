@@ -6440,5 +6440,115 @@
       "compromised_balance:46,081,865",
       "emission_block_time_unavailable"
     ]
+  },
+  {
+    "ts": "2026-10-10T11:40:28Z",
+    "chains": {
+      "realio_native": {
+        "total": 89156567.5417,
+        "bridge_escrow": 0.0,
+        "compromised": 5732040.9057,
+        "compromised_detail": {
+          "realio1uzkdrfnjv53rt0cf4ltszffpd7mvkpd2cv794j": 5732040.9057
+        },
+        "compromised_excluded": 0.0,
+        "compromised_in_float": 5732040.9057,
+        "circulating": 89156567.5417,
+        "staked": 69208255.473,
+        "height": 20028138,
+        "block_time_utc": "2026-10-10T11:40:15.405236081Z",
+        "block_age_s": 10.9,
+        "chain_live": true,
+        "_source": "https://realio-api.noders.services"
+      },
+      "bnb": {
+        "total_supply": 151547615.9375,
+        "_source": "https://bsc-rpc.publicnode.com",
+        "circulating": 151547615.9375
+      },
+      "ethereum": {
+        "total_supply": 123631392.7631,
+        "base_bridge_lock": 2134463.6785,
+        "_source": "https://ethereum-rpc.publicnode.com",
+        "circulating": 123631392.7631
+      },
+      "algorand": {
+        "total_supply": 100000000.0,
+        "reserve": 94230.0,
+        "bridge_wallet": 0.4468,
+        "mexc_custody": 0.4468,
+        "mexc_hot_wallet": 0.0009,
+        "mexc_total": 0.4477,
+        "reissue_return_wallet": 50292276.0,
+        "retired_live": 50292276.4477,
+        "retired_reissued": 50292275.45,
+        "compromised": 40349824.4045,
+        "compromised_detail": {
+          "RCES4II33PXVDX4ISQ3TWUZN5DP7JM6ZTDBJLARYQH53O4OLN5QTNYUJ6A": 40349824.4045
+        },
+        "compromised_excluded": 43850860.26,
+        "compromised_in_float": 1646124.74,
+        "circulating": 5762634.29,
+        "_source": "https://mainnet-api.algonode.cloud"
+      },
+      "stellar": {
+        "total_supply": 74999614.1468,
+        "treasury": 0.0,
+        "compromised": 0.0,
+        "compromised_detail": {
+          "GBDMMICWFVSSU5YIKIVWG6EP3U65R2GIF7BICN3JIBES5NVGFZFLWXKZ": 0.0
+        },
+        "compromised_excluded": 69869351.74,
+        "compromised_in_float": 476685.0,
+        "circulating": 5130262.4068,
+        "_source": "https://horizon.stellar.org"
+      },
+      "solana": {
+        "total_supply": 1061126.2314,
+        "_source": "https://api.mainnet-beta.solana.com",
+        "circulating": 1061126.2314
+      },
+      "base": {
+        "total_supply": 2133462.6785,
+        "_source": "https://base-rpc.publicnode.com",
+        "circulating": 0
+      }
+    },
+    "tradable_total": 376289599.17,
+    "native_cap": 175000000,
+    "compromised_total": 46081865.31,
+    "compromised_in_float": 7854850.65,
+    "compromised_excluded": 113720212.0,
+    "price_usd": 0.059451,
+    "price_source": "coingecko",
+    "market_cap_usd": 22370792.96,
+    "volume_24h_usd": 234831.15,
+    "volume_source": "coingecko",
+    "mint": {
+      "inflation_rate": 0.08,
+      "blocks_per_year": 6311520
+    },
+    "global_total_rio": 490104041.17,
+    "expected_annual_emission_rio": 6867474.68,
+    "expected_daily_emission_rio": 18815.0,
+    "expected_daily_emission_nominal_rio": 18815.0,
+    "block_time_s": null,
+    "emission_block_adjusted": false,
+    "bridge_caps": {
+      "evm_daily_mint_cap_bnb": 1000000.0,
+      "evm_daily_mint_cap_eth": 1000000.0,
+      "native_bridge_ratelimit": 1750000.0
+    },
+    "native_holders": {
+      "total": 4363,
+      "gte_100": 1025,
+      "gte_1k": 722,
+      "gte_10k": 371,
+      "gte_100k": 135
+    },
+    "flags": [
+      "compromised_balance:46,081,865",
+      "emission_block_time_unavailable"
+    ]
   }
 ]
