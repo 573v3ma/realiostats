@@ -1,6 +1,26 @@
 {
- "updated": "2026-10-09T04:20:00Z",
+ "updated": "2026-10-10T04:19:19Z",
  "days": [
+  {
+   "date": "2026-10-10",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold explains how the Freehold Collection works and opens early access requests",
+     "text": "Freehold outlined the Freehold Collection model: the team sources each car, every vehicle is structured as its own fractionalized ownership opportunity, and holders own a share accessible through Freehold. Early access can be requested.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2108568432924889529",
+       "ts": "2026-10-09T14:41:04Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-collection"
+    }
+   ]
+  },
   {
    "date": "2026-10-09",
    "items": [
