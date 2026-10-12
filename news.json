@@ -1,6 +1,68 @@
 {
- "updated": "2026-10-11T04:18:42Z",
+ "updated": "2026-10-12T04:19:50Z",
  "days": [
+  {
+   "date": "2026-10-12",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold car tokens: primary purchases in USDC, BTC or ETH, RIO pairs for secondary",
+     "text": "Derek says primary purchases of the team-sponsored car tokens will be made in USDC, BTC or ETH, with RIO trading pairs for secondary trading. Primary pools on the native DEX will pair with RIO. Bridging ETH and BTC is only needed for the DEX, not for token purchases.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-10-11T16:53:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-10-11T16:54:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-10-11T16:56:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-collection-payments"
+    },
+    {
+     "project": "Realio",
+     "title": "Derek: a validator shutting down does not slash or lose delegators' staked coins",
+     "text": "Asked about a validator that has announced it will shut down, Derek said delegators are not slashed and staked coins are not lost after a shutdown. He confirmed staked coins will be retrievable and said updates will come when available.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-11T16:07:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "staked-rio-frozen"
+    },
+    {
+     "project": "Realio",
+     "title": "Derek: claims are the current priority; Algorand and Stellar holders need take no action",
+     "text": "Asked whether the Freehold app or the claims process comes first, Derek said claims are the current priority. Asked whether Algorand and Stellar holders should move tokens into the Freehold wallet, he said no action is necessary.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-10-11T16:50:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-11T16:14:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "incident-recovery"
+    }
+   ]
+  },
   {
    "date": "2026-10-11",
    "items": []
