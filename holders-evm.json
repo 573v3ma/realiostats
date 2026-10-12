@@ -1,14 +1,14 @@
 {
-  "as_of": "2026-10-05",
+  "as_of": "2026-10-12",
   "source": "Reconstructed from the full ERC-20 transfer history via Alchemy getAssetTransfers, netted per address; monthly points are the holder distribution at each month-end.",
   "history_starts": "2024-10 (30 Oct 2024 migration; the current contracts carry no earlier history)",
   "chains": {
     "bnb": {
-      "total": 22878,
-      "gte_100": 11534,
-      "gte_1k": 5953,
-      "gte_10k": 1436,
-      "gte_100k": 175,
+      "total": 22958,
+      "gte_100": 11594,
+      "gte_1k": 5977,
+      "gte_10k": 1432,
+      "gte_100k": 176,
       "history": [
         {
           "month": "2024-10",
@@ -204,20 +204,20 @@
         },
         {
           "month": "2026-10",
-          "total": 22878,
-          "gte_100": 11534,
-          "gte_1k": 5953,
-          "gte_10k": 1436,
-          "gte_100k": 175
+          "total": 22958,
+          "gte_100": 11594,
+          "gte_1k": 5977,
+          "gte_10k": 1432,
+          "gte_100k": 176
         }
       ]
     },
     "ethereum": {
-      "total": 26150,
-      "gte_100": 15120,
+      "total": 26148,
+      "gte_100": 15116,
       "gte_1k": 6086,
-      "gte_10k": 1144,
-      "gte_100k": 110,
+      "gte_10k": 1149,
+      "gte_100k": 114,
       "history": [
         {
           "month": "2024-10",
@@ -413,45 +413,45 @@
         },
         {
           "month": "2026-10",
-          "total": 26150,
-          "gte_100": 15120,
+          "total": 26148,
+          "gte_100": 15116,
           "gte_1k": 6086,
-          "gte_10k": 1144,
-          "gte_100k": 110
+          "gte_10k": 1149,
+          "gte_100k": 114
         }
       ]
     }
   },
   "venues": {
-    "as_of": "2026-10-05",
+    "as_of": "2026-10-12",
     "source": "Live balanceOf of the labelled exchange and DEX wallets listed in holders.json.",
     "bsc_exchanges": [
       {
         "entity": "KuCoin",
         "wallets": 5,
-        "rio": 34127242.33
+        "rio": 34006877.5
       },
       {
         "entity": "MEXC",
         "wallets": 2,
-        "rio": 7540507.05
+        "rio": 7212164.22
       },
       {
         "entity": "DEX pools (PancakeSwap, Uniswap)",
         "wallets": 6,
-        "rio": 1531734.06
+        "rio": 1598122.18
       },
       {
         "entity": "OKX",
         "note": "no active market",
         "wallets": 1,
-        "rio": 7583787.55
+        "rio": 7530473.97
       },
       {
         "entity": "CoinSpot",
         "note": "no active market",
         "wallets": 1,
-        "rio": 1931279.76
+        "rio": 1937409.21
       },
       {
         "entity": "Bitrue",
@@ -464,17 +464,17 @@
       {
         "holder": "MEXC",
         "type": "Exchange",
-        "rio": 50212401.87
+        "rio": 50054760.59
       },
       {
         "holder": "Uniswap (V2, V3 + V4 pools)",
         "type": "DEX liquidity",
-        "rio": 2302429.42
+        "rio": 2405702.33
       },
       {
         "holder": "Base bridge",
         "type": "Bridge, backs Base",
-        "rio": 2128104.85
+        "rio": 2134463.68
       }
     ]
   }
