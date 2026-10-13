@@ -1,6 +1,24 @@
 {
- "updated": "2026-10-12T04:19:50Z",
+ "updated": "2026-10-13T04:20:33Z",
  "days": [
+  {
+   "date": "2026-10-13",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold: issuers set transfer rules up front when tokenizing an asset",
+     "text": "Freehold says that when an asset is tokenized on the platform, the issuer sets the transfer rules at the start: who can hold it, who can trade it and under what conditions. It describes getting started as free.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2109684018983649292",
+       "ts": "2026-10-12T16:34:00Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-12",
    "items": [
