@@ -1,6 +1,24 @@
 {
- "updated": "2026-10-13T04:20:33Z",
+ "updated": "2026-10-14T04:19:55Z",
  "days": [
+  {
+   "date": "2026-10-14",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Derek: Freehold claims portal is unrelated to the RIO price",
+     "text": "Derek Boirun told the Official Telegram group the Freehold claims portal has nothing to do with the price of RIO and asked members to stop spreading speculation linking the two. He said such posts will be deleted.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-13T16:16:00Z"
+      }
+     ],
+     "topic": "freehold-claims-portal"
+    }
+   ]
+  },
   {
    "date": "2026-10-13",
    "items": [
