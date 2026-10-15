@@ -1,6 +1,44 @@
 {
- "updated": "2026-10-14T04:19:55Z",
+ "updated": "2026-10-15T04:19:44Z",
  "days": [
+  {
+   "date": "2026-10-15",
+   "items": [
+    {
+     "project": "Realio",
+     "title": "Derek: a validator shutting down could risk slashing; team asks it to stay up longer",
+     "text": "Derek Boirun says he may have misunderstood earlier and that there could be a risk of slashing. He asked a team member to request that the validator keep running a little longer, so people have time to claim their wallets and unstake.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-14T16:47:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-14T16:48:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "staked-rio-frozen"
+    },
+    {
+     "project": "Realio",
+     "title": "Derek: team building a better block explorer for locked v1 staking accounts",
+     "text": "Derek says the team is building a better block explorer so holders can see the v1 accounts that were staking and got locked. He is not sure it will be ready before the claims portal.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-14T14:46:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "v1-account-explorer"
+    }
+   ]
+  },
   {
    "date": "2026-10-14",
    "items": [
