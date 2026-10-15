@@ -1,8 +1,8 @@
 {
- "as_of": "2026-10-14T10:57:40Z",
- "height": 20088724,
+ "as_of": "2026-10-15T10:39:10Z",
+ "height": 20103795,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 136832266.77,
+ "bonded_weight": 136806671.05,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
@@ -24,7 +24,7 @@
   },
   {
    "moniker": "Teshy 103k Bonded RIO",
-   "weight": 7341107.13,
+   "weight": 7315374.5,
    "commission": 0.05,
    "jailed": false
   },
@@ -42,19 +42,19 @@
   },
   {
    "moniker": "Reallionaires Club | RIO",
-   "weight": 6855327.75,
+   "weight": 6855346.32,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Marx-Realio",
-   "weight": 6734177.9,
+   "weight": 6734750.4,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "genznodes",
-   "weight": 6598852.68,
+   "weight": 6598280.18,
    "commission": 0.05,
    "jailed": false
   },
@@ -156,7 +156,7 @@
   },
   {
    "moniker": "Blockval",
-   "weight": 2383205.36,
+   "weight": 2383215.36,
    "commission": 0.05,
    "jailed": false
   },
@@ -192,7 +192,7 @@
   },
   {
    "moniker": "StakeTrust",
-   "weight": 652891.34,
+   "weight": 652940.17,
    "commission": 0.05,
    "jailed": false
   },
@@ -264,7 +264,7 @@
   },
   {
    "moniker": "Apollo",
-   "weight": 288713.96,
+   "weight": 288773.46,
    "commission": 0.05,
    "jailed": false
   },
