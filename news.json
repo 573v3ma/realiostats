@@ -1,6 +1,62 @@
 {
- "updated": "2026-10-15T04:19:44Z",
+ "updated": "2026-10-16T04:20:21Z",
  "days": [
+  {
+   "date": "2026-10-16",
+   "items": [
+    {
+     "project": "Realio",
+     "title": "Team completes phase 2 of the recovery plan, staking claims are next",
+     "text": "Eduardo says the team has completed phase 2 of the recovery plan and is now focused on the part that lets users claim their staking positions. He says this will eventually be available on the dashboard.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-15T17:26:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "incident-recovery"
+    },
+    {
+     "project": "Realio",
+     "title": "No redelegation from offline compromised validators until recovery is complete",
+     "text": "Eduardo says wallets compromised in the incident cannot redelegate away from an offline validator until the recovery process is complete. Derek says rewards keep accruing while the network and the validator are online. The team asked validators to shut down without causing slashing.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-15T12:10:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-15T17:21:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-15T17:24:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "staked-rio-frozen"
+    },
+    {
+     "project": "Realio",
+     "title": "Derek says holders are closer to getting access to their tokens",
+     "text": "Asked in the Official Telegram group whether holders are closer to getting access to their tokens, Derek answered yes. No timeline was given.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-15T22:10:00Z"
+      }
+     ],
+     "topic": "incident-recovery-access"
+    }
+   ]
+  },
   {
    "date": "2026-10-15",
    "items": [
