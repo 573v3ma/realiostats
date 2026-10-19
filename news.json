@@ -1,6 +1,25 @@
 {
- "updated": "2026-10-18T04:19:55Z",
+ "updated": "2026-10-19T04:19:15Z",
  "days": [
+  {
+   "date": "2026-10-19",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Derek: claims portal coming soon, UI almost done",
+     "text": "Asked about claims, Derek says the portal should be ready soon and the team is focused on it. It needed some mainnet updates and the UI is almost done. KYC'd v1 accounts will be easier to match to a Freehold account; other accounts need a manual review that may take longer.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-18T16:01:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "incident-recovery"
+    }
+   ]
+  },
   {
    "date": "2026-10-18",
    "items": []
