@@ -1,8 +1,8 @@
 {
- "as_of": "2026-10-19T11:43:47Z",
- "height": 20165510,
+ "as_of": "2026-10-20T10:45:36Z",
+ "height": 20180194,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 136878276.22,
+ "bonded_weight": 136890236.67,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
@@ -24,7 +24,7 @@
   },
   {
    "moniker": "Teshy RIO",
-   "weight": 7315375.5,
+   "weight": 7317219.17,
    "commission": 0.05,
    "jailed": false
   },
@@ -72,7 +72,7 @@
   },
   {
    "moniker": "Realiostats.com \ud83d\uddfd REStake\u2705",
-   "weight": 4369751.77,
+   "weight": 4370069.77,
    "commission": 0.05,
    "jailed": false
   },
@@ -102,7 +102,7 @@
   },
   {
    "moniker": "NodesHub | DSTRX ",
-   "weight": 3520758.59,
+   "weight": 3530420.59,
    "commission": 0.05,
    "jailed": false
   },
@@ -126,7 +126,7 @@
   },
   {
    "moniker": "Decentrio",
-   "weight": 3181017.86,
+   "weight": 3181112.86,
    "commission": 0.05,
    "jailed": false
   },
@@ -282,7 +282,7 @@
   },
   {
    "moniker": "Sr20de | RIO \ud83d\udd25 Restake enabled",
-   "weight": 149889.43,
+   "weight": 149931.22,
    "commission": 0.05,
    "jailed": false
   },
