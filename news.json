@@ -1,6 +1,25 @@
 {
- "updated": "2026-10-20T06:39:36Z",
+ "updated": "2026-10-21T04:19:35Z",
  "days": [
+  {
+   "date": "2026-10-21",
+   "items": [
+    {
+     "project": "Realio",
+     "title": "Derek: team is building a better block explorer",
+     "text": "Asked how to get staking history for tax purposes, Derek says the team is working on a better block explorer and that it is needed. He says it was not a priority for the small team, which is taking on the extra work internally.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-10-20T18:57:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "v1-account-explorer"
+    }
+   ]
+  },
   {
    "date": "2026-10-20",
    "items": []
