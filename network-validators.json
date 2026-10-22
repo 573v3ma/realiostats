@@ -1,12 +1,12 @@
 {
- "as_of": "2026-10-21T10:56:56Z",
- "height": 20195624,
+ "as_of": "2026-10-22T10:56:33Z",
+ "height": 20210924,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 136906580.96,
+ "bonded_weight": 136907784.09,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
-   "weight": 7582838.42,
+   "weight": 7582838.92,
    "commission": 0.05,
    "jailed": false
   },
@@ -24,7 +24,7 @@
   },
   {
    "moniker": "Teshy RIO",
-   "weight": 7317267.66,
+   "weight": 7317395.09,
    "commission": 0.05,
    "jailed": false
   },
@@ -42,7 +42,7 @@
   },
   {
    "moniker": "Reallionaires Club | RIO",
-   "weight": 6856256.31,
+   "weight": 6857330.31,
    "commission": 0.05,
    "jailed": false
   },
@@ -126,7 +126,7 @@
   },
   {
    "moniker": "Decentrio",
-   "weight": 3181112.86,
+   "weight": 3181113.86,
    "commission": 0.05,
    "jailed": false
   },
@@ -162,7 +162,7 @@
   },
   {
    "moniker": "cryptobtcbuyer | Low fees \u26a1",
-   "weight": 1764638.53,
+   "weight": 1764638.73,
    "commission": 0.05,
    "jailed": false
   },
