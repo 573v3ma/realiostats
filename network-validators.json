@@ -1,8 +1,8 @@
 {
- "as_of": "2026-10-23T10:48:24Z",
- "height": 20226150,
+ "as_of": "2026-10-24T10:04:00Z",
+ "height": 20240995,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 136908456.43,
+ "bonded_weight": 136786850.61,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
@@ -24,7 +24,7 @@
   },
   {
    "moniker": "Teshy RIO",
-   "weight": 7317513.86,
+   "weight": 7317634.16,
    "commission": 0.05,
    "jailed": false
   },
@@ -36,7 +36,7 @@
   },
   {
    "moniker": "Realio Italy \ud83c\uddee\ud83c\uddf9 \ud83c\udf0f",
-   "weight": 7092879.92,
+   "weight": 7092999.92,
    "commission": 0.05,
    "jailed": false
   },
@@ -156,7 +156,7 @@
   },
   {
    "moniker": "Blockval",
-   "weight": 2383271.95,
+   "weight": 2383324.09,
    "commission": 0.05,
    "jailed": false
   },
@@ -174,7 +174,7 @@
   },
   {
    "moniker": "hubprovider",
-   "weight": 829290.56,
+   "weight": 829317.56,
    "commission": 0.05,
    "jailed": false
   },
@@ -203,12 +203,6 @@
    "jailed": false
   },
   {
-   "moniker": "[NODERS]",
-   "weight": 598918.16,
-   "commission": 0.05,
-   "jailed": false
-  },
-  {
    "moniker": "breskulpeak.com",
    "weight": 588297.53,
    "commission": 0.05,
@@ -230,6 +224,12 @@
    "moniker": "ITRocket",
    "weight": 544896.15,
    "commission": 0.1,
+   "jailed": false
+  },
+  {
+   "moniker": "[NODERS]",
+   "weight": 471419.16,
+   "commission": 0.05,
    "jailed": false
   },
   {
@@ -282,7 +282,7 @@
   },
   {
    "moniker": "Sr20de | RIO \ud83d\udd25 Restake enabled",
-   "weight": 149931.22,
+   "weight": 150504.97,
    "commission": 0.05,
    "jailed": false
   },
@@ -300,7 +300,7 @@
   },
   {
    "moniker": "SerGo",
-   "weight": 43071.63,
+   "weight": 48071.63,
    "commission": 0.1,
    "jailed": false
   },
