@@ -1,6 +1,24 @@
 {
- "updated": "2026-10-23T04:19:15Z",
+ "updated": "2026-10-24T04:19:38Z",
  "days": [
+  {
+   "date": "2026-10-24",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold team to look into KYC issues reported by Balkans-region users",
+     "text": "Derek says non-US exchanges follow different OFAC standards than the ones Freehold has to meet, and that the Balkans region can be problematic with various compliance groups. The team will inquire about the KYC failures raised in the Freehold group.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-10-23T23:21:00Z"
+      }
+     ],
+     "topic": "freehold-kyc"
+    }
+   ]
+  },
   {
    "date": "2026-10-23",
    "items": []
