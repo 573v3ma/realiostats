@@ -1,6 +1,25 @@
 {
- "updated": "2026-10-26T05:18:10Z",
+ "updated": "2026-10-27T05:18:56Z",
  "days": [
+  {
+   "date": "2026-10-27",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold: investor whitelist and transfer rules for tokens kept on-chain",
+     "text": "Freehold says issuers can whitelist investors and set transfer rules, with the record of who holds a token and how much kept on-chain instead of in a spreadsheet. Getting started is free.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2114775210012619193",
+       "ts": "2026-10-26T17:44:35Z"
+      }
+     ],
+     "topic": "freehold-tokenization-studio"
+    }
+   ]
+  },
   {
    "date": "2026-10-26",
    "items": []
@@ -761,90 +780,6 @@
        "kind": "tg",
        "chat": "Realio Network Official",
        "ts": "2026-09-26T16:44:00Z"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "date": "2026-09-26",
-   "items": [
-    {
-     "project": "Realio",
-     "title": "Staked RIO was frozen, not stolen",
-     "text": "Derek says staked coins are still in the wallets that were staking them. Those wallets were frozen on the network so they could not be stolen. When they will be returned is still to be determined.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "ts": "2026-09-25T18:00:00Z"
-      },
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "ts": "2026-09-25T17:03:00Z"
-      }
-     ],
-     "topic": "staked-rio-frozen",
-     "key": true
-    },
-    {
-     "project": "Districts",
-     "title": "Districts bridge is active again",
-     "text": "Derek says the Districts bridge is now active, and bridged assets can be sent on to MEXC.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "ts": "2026-09-25T15:58:00Z"
-      },
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "ts": "2026-09-25T18:47:00Z"
-      }
-     ],
-     "topic": "districts-bridge",
-     "key": true
-    },
-    {
-     "project": "Freehold",
-     "title": "Freehold Tokenization Studio is open to anyone",
-     "text": "Freehold invites owners of rare assets such as cars, watches, buildings or portfolios to try fractional ownership in its Tokenization Studio, which is free to start.",
-     "sources": [
-      {
-       "kind": "x",
-       "handle": "freehold_wallet",
-       "id": "2103532776070816078",
-       "ts": "2026-09-25T17:11:10Z"
-      }
-     ],
-     "topic": "freehold-tokenization-studio",
-     "key": true
-    },
-    {
-     "project": "Freehold",
-     "title": "RST support on Freehold expected relatively soon",
-     "text": "RST cannot be whitelisted on Freehold yet, but Derek says much of the work to onboard its asset controls is already done.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "ts": "2026-09-25T22:28:00Z"
-      }
-     ],
-     "topic": "freehold-rst-support",
-     "key": true
-    },
-    {
-     "project": "Realio",
-     "title": "The old Realio platform will not return",
-     "text": "Derek confirms the old Realio platform is gone for good.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "ts": "2026-09-25T16:53:00Z"
       }
      ]
     }
