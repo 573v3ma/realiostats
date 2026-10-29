@@ -1,6 +1,48 @@
 {
- "updated": "2026-10-28T05:18:35Z",
+ "updated": "2026-10-29T05:19:08Z",
  "days": [
+  {
+   "date": "2026-10-29",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold tells its waitlist to watch their inbox for updates coming soon",
+     "text": "Freehold posted a reminder that people on its list should keep an eye on their inbox for updates coming soon. No details or date were given.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2115484497215164835",
+       "ts": "2026-10-28T16:43:02Z"
+      }
+     ],
+     "topic": "freehold-waitlist"
+    },
+    {
+     "project": "Realio",
+     "title": "Derek explains why large companies resist third-party tokenized stocks",
+     "text": "Asked about companies objecting to their stock being tokenized on an exchange, Derek says they see no benefit in a tokenized version they cannot control or see into, only added risk. He adds that Robinhood's stock tokens are not available to US persons.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-28T16:31:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-28T16:31:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-10-28T17:21:00Z"
+      }
+     ],
+     "topic": "stock-tokenization-views"
+    }
+   ]
+  },
   {
    "date": "2026-10-28",
    "items": []
@@ -714,29 +756,6 @@
      ],
      "topic": "algorand-stellar-holders",
      "key": true
-    }
-   ]
-  },
-  {
-   "date": "2026-09-28",
-   "items": [
-    {
-     "project": "Freehold",
-     "title": "Freehold will curate its public project portal",
-     "text": "Derek says Freehold will choose which projects appear on the public portal, favouring those that fit the brand and are likely to succeed. Other issuers can still create a private project and share it directly.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "ts": "2026-09-28T00:09:00Z"
-      },
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "ts": "2026-09-28T00:10:00Z"
-      }
-     ],
-     "topic": "freehold-project-portal"
     }
    ]
   }
