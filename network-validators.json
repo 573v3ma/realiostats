@@ -1,8 +1,8 @@
 {
- "as_of": "2026-10-28T11:55:27Z",
- "height": 20303388,
+ "as_of": "2026-10-29T12:02:52Z",
+ "height": 20318768,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 136789059.41,
+ "bonded_weight": 136790003.1,
  "validators": [
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
@@ -24,7 +24,7 @@
   },
   {
    "moniker": "Teshy RIO",
-   "weight": 7318112.24,
+   "weight": 7318231.81,
    "commission": 0.05,
    "jailed": false
   },
@@ -36,13 +36,13 @@
   },
   {
    "moniker": "Realio Italy \ud83c\uddee\ud83c\uddf9 \ud83c\udf0f",
-   "weight": 7093066.98,
+   "weight": 7093093.48,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Reallionaires Club | RIO",
-   "weight": 6858204.05,
+   "weight": 6858220.49,
    "commission": 0.05,
    "jailed": false
   },
@@ -66,13 +66,13 @@
   },
   {
    "moniker": "Teshy - DSTRX",
-   "weight": 4923081.14,
+   "weight": 4923861.14,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Realiostats.com \ud83d\uddfd REStake\u2705",
-   "weight": 4370898.12,
+   "weight": 4370899.3,
    "commission": 0.05,
    "jailed": false
   },
