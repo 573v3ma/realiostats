@@ -1,6 +1,31 @@
 {
- "updated": "2026-10-30T05:18:31Z",
+ "updated": "2026-10-31T05:18:20Z",
  "days": [
+  {
+   "date": "2026-10-31",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Bridges are now live in the Freehold mobile app, starting with RIO and Base",
+     "text": "Freehold says bridges are live, beginning with RIO and Base bridges. More tokens and networks will roll out in phases, and each one will be announced when it goes live. Derek told the Freehold group to update the app and try it.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2116268509458276646",
+       "ts": "2026-10-30T20:38:25Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-10-30T20:31:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-bridges"
+    }
+   ]
+  },
   {
    "date": "2026-10-30",
    "items": []
@@ -693,23 +718,6 @@
        "kind": "tg",
        "chat": "Realio Network Official",
        "ts": "2026-09-30T14:19:00Z"
-      }
-     ]
-    }
-   ]
-  },
-  {
-   "date": "2026-09-30",
-   "items": [
-    {
-     "project": "Freehold",
-     "title": "Freehold KYC decisions sit with the verification provider",
-     "text": "Derek says he cannot help with individual KYC problems on Freehold, because verification is up to the provider, Sumsub.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "ts": "2026-09-29T20:13:00Z"
       }
      ]
     }
