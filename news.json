@@ -1,6 +1,23 @@
 {
- "updated": "2026-11-01T05:18:44Z",
+ "updated": "2026-11-02T05:33:49Z",
  "days": [
+  {
+   "date": "2026-11-02",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold bridge also deployed to the web wallet, Derek says",
+     "text": "Asked whether the bridge that went live in the Freehold mobile app also works in the web wallet, Derek says he believes it was deployed there shortly after the app release.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-11-01T17:02:00Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-11-01",
    "items": []
@@ -570,91 +587,6 @@
      ],
      "key": true,
      "topic": "incident-recovery"
-    }
-   ]
-  },
-  {
-   "date": "2026-10-02",
-   "items": [
-    {
-     "project": "Freehold",
-     "title": "Team says tokenization fee details in the old whitepaper are outdated",
-     "text": "Asked whether the fee split in the documentation still applies, Derek said it is old language from an outdated whitepaper and that things will evolve with the market and applicable regulations.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "ts": "2026-10-02T01:23:00Z"
-      }
-     ],
-     "key": true,
-     "topic": "freehold-tokenization-fees"
-    },
-    {
-     "project": "Freehold",
-     "title": "Freehold KYC: team to check with its verifier on locations missing from the list",
-     "text": "Derek says the team will check with the verification provider about a location missing from the Freehold KYC list, adding that China has its own difficulties.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "ts": "2026-10-02T01:43:00Z"
-      }
-     ]
-    },
-    {
-     "project": "Realio",
-     "title": "Derek: team cannot transact with people in sanctioned countries",
-     "text": "Derek says the team legally cannot transact with people in OFAC-sanctioned countries. A decentralized way to claim anonymously will only be looked at once the current work is done and there is more bandwidth, if it is possible at all.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "ts": "2026-10-01T17:32:00Z"
-      }
-     ],
-     "key": true,
-     "topic": "algorand-stellar-holders"
-    },
-    {
-     "project": "Realio",
-     "title": "No further updates on the security incident",
-     "text": "Derek reposted the reminder that the latest information on the security incident is on the incident page and said there are no further updates at this time. Updates will be provided when they become available.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "ts": "2026-10-01T14:56:00Z"
-      }
-     ],
-     "key": true,
-     "topic": "incident-recovery"
-    },
-    {
-     "project": "Realio",
-     "title": "Realio warns of impersonators and says official claims process is not live yet",
-     "text": "Realio says @realio_network is its only official X account and that it will never ask for seed phrases, funds to verify assets, or wallet connections to unofficial claims sites. The official claims process will be announced through verified channels when available.",
-     "sources": [
-      {
-       "kind": "x",
-       "handle": "realio_network",
-       "id": "2105679931162124539",
-       "ts": "2026-10-01T15:23:11Z"
-      }
-     ]
-    },
-    {
-     "project": "Districts",
-     "title": "Districts login issues fixed after security upgrades",
-     "text": "Districts says the temporary login issues that followed recent security and authentication upgrades are fixed. Logging in works again, with stronger security in place.",
-     "sources": [
-      {
-       "kind": "x",
-       "handle": "districts_xyz",
-       "id": "2105703561988309421",
-       "ts": "2026-10-01T16:57:05Z"
-      }
-     ]
     }
    ]
   }
