@@ -1,6 +1,50 @@
 {
- "updated": "2026-11-02T05:33:49Z",
+ "updated": "2026-11-03T05:34:51Z",
  "days": [
+  {
+   "date": "2026-11-03",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Derek says the Freehold claims portal is almost ready, expected within a week or two",
+     "text": "Derek Boirun told the Freehold Official group that the claims portal is almost ready and should be available in the next week or two.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-11-02T14:58:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-claims-portal"
+    },
+    {
+     "project": "Freehold",
+     "title": "Freehold explains how to bridge RIO and DSTRX between networks in the wallet",
+     "text": "Freehold posted a short guide: open the wallet, tap Bridge, choose the token and the networks, then check the amount and fees and confirm. More tokens and networks will follow in phases.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2117310226835894400",
+       "ts": "2026-11-02T17:37:50Z"
+      }
+     ]
+    },
+    {
+     "project": "Realio",
+     "title": "Derek reminds holders that Freehold is now the team's primary project",
+     "text": "Derek reminded the Official group that Freehold is now the team's primary project and asked members to join the Freehold Telegram group.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-11-02T19:35:00Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-11-02",
    "items": [
@@ -534,59 +578,6 @@
        "ts": "2026-10-03T17:18:00Z"
       }
      ]
-    }
-   ]
-  },
-  {
-   "date": "2026-10-03",
-   "items": [
-    {
-     "project": "Freehold",
-     "title": "Freehold Collection opens early access requests for shares in collector cars",
-     "text": "Freehold says the Freehold Collection is a new way to own a share of extraordinary collector cars and is taking early access requests. Derek says the SP3 has reached collector car unicorn status, with U.S. spec cars going for $15m.",
-     "sources": [
-      {
-       "kind": "x",
-       "handle": "freehold_wallet",
-       "id": "2106056746665980092",
-       "ts": "2026-10-02T16:20:31Z"
-      },
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "ts": "2026-10-02T17:15:00Z"
-      }
-     ],
-     "key": true,
-     "topic": "freehold-collection"
-    },
-    {
-     "project": "Freehold",
-     "title": "Derek: Freehold stablecoin bridge and native DEX are coming",
-     "text": "Asked about a stablecoin bridge and a native DEX for Freehold, Derek said both are coming as well, after saying that the tokenization wave is coming.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "ts": "2026-10-02T15:46:00Z"
-      }
-     ],
-     "key": true,
-     "topic": "freehold-stablecoin-bridge-dex"
-    },
-    {
-     "project": "Realio",
-     "title": "Derek: no claims update, process will be slow and drawn out",
-     "text": "Derek says there is no update on claims and that the process will be slow and drawn out, with no single event where everyone gets tokens. He added that Realio v1 was hacked and no longer exists, and asked holders for patience.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "ts": "2026-10-02T15:38:00Z"
-      }
-     ],
-     "key": true,
-     "topic": "incident-recovery"
     }
    ]
   }
