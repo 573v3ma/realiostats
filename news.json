@@ -1,6 +1,23 @@
 {
- "updated": "2026-11-03T05:34:51Z",
+ "updated": "2026-11-04T05:33:15Z",
  "days": [
+  {
+   "date": "2026-11-04",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Derek points holders to the Freehold Telegram chat as the team's new home",
+     "text": "Asked in the Realio Official group where he was, Derek said he is in the Freehold chat, which he called the team's new home.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-11-03T16:35:00Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-11-03",
    "items": [
@@ -563,23 +580,6 @@
   {
    "date": "2026-10-05",
    "items": []
-  },
-  {
-   "date": "2026-10-04",
-   "items": [
-    {
-     "project": "Freehold",
-     "title": "Derek: there is no Freehold credit card",
-     "text": "Asked whether Freehold has a credit card, Derek said no.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "ts": "2026-10-03T17:18:00Z"
-      }
-     ]
-    }
-   ]
   }
  ]
 }
