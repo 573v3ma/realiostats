@@ -1,6 +1,24 @@
 {
- "updated": "2026-11-06T05:28:27Z",
+ "updated": "2026-11-07T05:30:03Z",
  "days": [
+  {
+   "date": "2026-11-07",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold says issuers can start on the platform for free",
+     "text": "Freehold says issuers can create an issuer wallet, define their token and set its rules at no cost, then see how the offering works before taking it to investors.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2118772705885344076",
+       "ts": "2026-11-06T18:29:12Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-11-06",
    "items": [
@@ -519,26 +537,6 @@
       }
      ],
      "topic": "freehold-onramp"
-    }
-   ]
-  },
-  {
-   "date": "2026-10-08",
-   "items": [
-    {
-     "project": "Freehold",
-     "title": "Freehold has chosen the first car for the Freehold Collection",
-     "text": "The Freehold team says the first car in the Freehold Collection is documented and almost ready. It is not naming the car yet. The early access list will hear first.",
-     "sources": [
-      {
-       "kind": "x",
-       "handle": "freehold_wallet",
-       "id": "2107877970753053119",
-       "ts": "2026-10-07T16:57:25Z"
-      }
-     ],
-     "key": true,
-     "topic": "freehold-collection"
     }
    ]
   }
