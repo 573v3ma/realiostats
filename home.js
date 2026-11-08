@@ -73,8 +73,11 @@
     const ch = (last.v / first.v - 1) * 100;
     const span = RANGE === "all" ? "since " + first.d : "in " + RANGE + " days";
     box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="RIO price ${esc(span)}, from $${first.v.toFixed(4)} to $${last.v.toFixed(4)}">`
+      // area under the line: green fading to nothing at the bottom (stop colours
+      // come from CSS so the gradient follows the light and dark themes)
+      + `<defs><linearGradient id="bnPriceFill" x1="0" y1="0" x2="0" y2="1"><stop class="g0" offset="0"/><stop class="g1" offset="1"/></linearGradient></defs>`
       + grid
-      + `<path class="area" d="${line} L${X(t1).toFixed(1)},${bot} L0,${bot} Z"/>`
+      + `<path class="area" d="${line} L${X(t1).toFixed(1)},${bot} L0,${bot} Z" fill="url(#bnPriceFill)"/>`
       + `<path class="line" d="${solid}"/>`
       + (dashed ? `<path class="gap" d="${dashed}"><title>No daily snapshot for these days</title></path>` : "") + pins
       + `<circle class="last" cx="${X(last.t).toFixed(1)}" cy="${Y(last.v).toFixed(1)}" r="4.5"/></svg>`;

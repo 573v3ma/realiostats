@@ -56,7 +56,9 @@
 .bn-chart .grid{stroke:var(--line)}
 .bn-chart .axis{fill:var(--faint);font:11px Inter,sans-serif}
 .bn-chart .line{fill:none;stroke:var(--green);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
-.bn-chart .area{fill:var(--mint-soft)}
+.bn-chart .g0{stop-color:var(--green);stop-opacity:.28}
+.bn-chart .g1{stop-color:var(--green);stop-opacity:0}
+:root[data-theme="light"] .bn-chart .g0{stop-opacity:.22}
 .bn-chart .gap{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:4 5;vector-effect:non-scaling-stroke;opacity:.7}
 .bn-chart .last{fill:var(--green)}
 .bn-chart .pin line{stroke-dasharray:3 3}
