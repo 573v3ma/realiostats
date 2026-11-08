@@ -16,12 +16,30 @@
   const short = a => a && a.length > 16 ? a.slice(0, 6) + "…" + a.slice(-4) : (a || "");
   const signM = n => (n > 0 ? "+" : n < 0 ? "−" : "") + fmtM(M(Math.abs(n)));
 
-  /* ---------- price chart (snapshot price, one point per daily reading) ---------- */
-  let PRICE_PTS = [], RANGE = "90";
+  /* ---------- price chart ----------
+     Plotted from CoinGecko's daily price history (one year, no missing days),
+     the same source as the live price above it. Until that arrives, or if it
+     cannot be reached, the chart uses the site's own daily snapshots, which
+     have gaps; those are bridged with a dashed segment, never invented. */
+  let PRICE_PTS = [], RANGE = "90", PRICE_SRC = "snapshots";
+  const toPt = (t, v) => { const d = new Date(t); return {t, v, d: d.getUTCDate() + " " + MON[d.getUTCMonth()] + (d.getUTCFullYear() !== new Date().getUTCFullYear() ? " " + d.getUTCFullYear() : "")}; };
+  function loadPriceHistory(){
+    return fetch("https://api.coingecko.com/api/v3/coins/realio-network/market_chart?vs_currency=usd&days=365&interval=daily", {cache: "no-store"})
+      .then(r => r.ok ? r.json() : null)
+      .then(j => {
+        const p = j && Array.isArray(j.prices) ? j.prices.filter(x => Array.isArray(x) && x[1] > 0) : [];
+        if(p.length < 30) return;
+        PRICE_PTS = p.map(x => toPt(x[0], x[1]));
+        PRICE_SRC = "coingecko";
+        drawPrice();
+      })
+      .catch(() => {});
+  }
   function drawPrice(){
     const box = $("bnChart");
     const now = PRICE_PTS.length ? PRICE_PTS[PRICE_PTS.length - 1].t : Date.now();
-    const pts = RANGE === "all" ? PRICE_PTS : PRICE_PTS.filter(p => p.t >= now - (+RANGE) * 864e5);
+    const from = now - (+RANGE) * 864e5;
+    const pts = PRICE_PTS.filter(p => p.t >= from);
     const badge = $("bnRangeChg");
     if(pts.length < 2){ box.innerHTML = ""; badge.textContent = ""; return; }
     // Drawn at the box's real pixel size: the card stretches to the height of the
@@ -56,7 +74,9 @@
     const last = pts[pts.length - 1];
     const first = pts[0];
     const ch = (last.v / first.v - 1) * 100;
-    const span = RANGE === "all" ? "since " + first.d : "in " + RANGE + " days";
+    // name the real span: if the data does not reach back to the range start
+    // (snapshot fallback), say "since <date>" rather than claim the full range
+    const span = first.t - from > 3 * 864e5 ? "since " + first.d : RANGE === "365" ? "in 1 year" : "in " + RANGE + " days";
     box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="RIO price ${esc(span)}, from $${first.v.toFixed(4)} to $${last.v.toFixed(4)}">`
       // area under the line: green fading to nothing at the bottom (stop colours
       // come from CSS so the gradient follows the light and dark themes)
@@ -86,6 +106,8 @@
     drawPrice();
   }));
 
+  loadPriceHistory();
+
   /* ---------- bars ---------- */
   function bar(el, legendEl, parts, labelMin){
     const total = parts.reduce((a, p) => a + p.v, 0) || 1;
@@ -100,11 +122,10 @@
 
   /* ---------- supply snapshot: chart, chain bar, integrity, strip ---------- */
   const supplyP = loadSupply().then(({arr, latest}) => {
-    PRICE_PTS = arr.filter(r => typeof r.price_usd === "number" && r.price_usd > 0).map(r => {
-      const t = Date.parse(r.ts), d = new Date(t);
-      return {t, v: r.price_usd, d: d.getUTCDate() + " " + MON[d.getUTCMonth()]};
-    });
-    drawPrice();
+    if(PRICE_SRC === "snapshots"){
+      PRICE_PTS = arr.filter(r => typeof r.price_usd === "number" && r.price_usd > 0).map(r => toPt(Date.parse(r.ts), r.price_usd));
+      drawPrice();
+    }
 
     $("bnCircTitle").textContent = fmtM(M(latest.tradable_total));
     const ch = latest.chains || {};
