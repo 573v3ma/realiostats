@@ -42,12 +42,26 @@ jobs:
         continue-on-error: true
         run: python fetch_network.py
 
+      # Every transfer of 100k+ RIO in the last 30 days, all chains. Keyless and
+      # incremental (cursors live in large-transfers.json). Informational only,
+      # so a failure or a slow public endpoint must never block the snapshot.
+      # BNB/Ethereum/Base use the same Alchemy secrets as the weekly holder job
+      # when present (a full 30-day rescan each day); without them the script
+      # falls back to keyless public RPCs. Other chains are keyless either way.
+      - name: Refresh large transfers
+        continue-on-error: true
+        timeout-minutes: 20
+        env:
+          ALCHEMY_BNB_URL: ${{ secrets.ALCHEMY_BNB_URL }}
+          ALCHEMY_ETH_URL: ${{ secrets.ALCHEMY_ETH_URL }}
+        run: python fetch_large_transfers.py
+
       - name: Commit snapshot if changed
         run: |
           git config user.name  "realiostats-bot"
           git config user.email "actions@users.noreply.github.com"
-          FILES="supply-history.json volume-history.json network-history.json network-validators.json"
-          if ! git diff --quiet -- $FILES; then
+          FILES="supply-history.json volume-history.json network-history.json network-validators.json large-transfers.json"
+          if [ -n "$(git status --porcelain -- $FILES)" ]; then
             git add $FILES
             git commit -m "supply snapshot $(date -u +%Y-%m-%d)"
             git push
