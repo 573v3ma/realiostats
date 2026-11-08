@@ -17,31 +17,49 @@
   const signM = n => (n > 0 ? "+" : n < 0 ? "−" : "") + fmtM(M(Math.abs(n)));
 
   /* ---------- price chart ----------
-     Plotted from CoinGecko's daily price history (one year, no missing days),
-     the same source as the live price above it. Until that arrives, or if it
-     cannot be reached, the chart uses the site's own daily snapshots, which
-     have gaps; those are bridged with a dashed segment, never invented. */
+     Plotted from CoinGecko's daily price history (no missing days), the same
+     source as the live price above it, for the last 90 days only. Its older
+     history is not trustworthy for RIO: from February to 27 March 2026 it shows
+     $0.20-0.25 on days the market traded at $0.03-0.10 (community quotes in
+     the Realio Telegram groups agree with the lower figures), so no range
+     reaches back that far. Each CoinGecko day that also has a site snapshot is
+     cross-checked against it, and a day more than GUARD off is replaced by the
+     snapshot price (normal disagreement is a few percent: daily close versus a
+     midday reading). Until CoinGecko answers, or if it cannot be reached, the
+     snapshots alone are drawn, gaps bridged with a dashed segment. */
   let PRICE_PTS = [], RANGE = "90", PRICE_SRC = "snapshots";
+  let CG_RAW = null, SNAP_DAY = null;
+  const GUARD = 0.35;
+  const dayKey = t => new Date(t).toISOString().slice(0, 10);
+  function rebuildPrices(){
+    if(!CG_RAW) return;
+    PRICE_PTS = CG_RAW.map(([t, v]) => {
+      const s = SNAP_DAY && SNAP_DAY[dayKey(t)];
+      return toPt(t, s && Math.abs(v / s - 1) > GUARD ? s : v);
+    });
+    PRICE_SRC = "coingecko";
+    drawPrice();
+  }
   const toPt = (t, v) => { const d = new Date(t); return {t, v, d: d.getUTCDate() + " " + MON[d.getUTCMonth()] + (d.getUTCFullYear() !== new Date().getUTCFullYear() ? " " + d.getUTCFullYear() : "")}; };
   // The history is kept in this browser for FRESH_H hours, so repeat visits do
   // not call CoinGecko again, and a copy up to STALE_D days old still draws the
   // chart when CoinGecko is rate limiting this visitor (its free API answers a
   // blocked request with no CORS header, which reads as a failed fetch).
-  const CACHE_KEY = "rs-price-hist-v1", FRESH_H = 6, STALE_D = 7;
+  const CACHE_KEY = "rs-price-hist-v2", FRESH_H = 6, STALE_D = 7;
+  try { localStorage.removeItem("rs-price-hist-v1"); } catch(e){}   // the old one-year copy
   const readCache = () => { try { const c = JSON.parse(localStorage.getItem(CACHE_KEY) || "null"); return c && Array.isArray(c.prices) ? c : null; } catch(e){ return null; } };
   const usePrices = p => {
     p = (p || []).filter(x => Array.isArray(x) && x[1] > 0);
     if(p.length < 30) return false;
-    PRICE_PTS = p.map(x => toPt(x[0], x[1]));
-    PRICE_SRC = "coingecko";
-    drawPrice();
+    CG_RAW = p;
+    rebuildPrices();
     return true;
   };
   function loadPriceHistory(){
     const cached = readCache();
     const age = cached ? Date.now() - cached.ts : Infinity;
     if(age < FRESH_H * 36e5 && usePrices(cached.prices)) return Promise.resolve();
-    return fetch("https://api.coingecko.com/api/v3/coins/realio-network/market_chart?vs_currency=usd&days=365&interval=daily", {cache: "no-store"})
+    return fetch("https://api.coingecko.com/api/v3/coins/realio-network/market_chart?vs_currency=usd&days=92&interval=daily", {cache: "no-store"})
       .then(r => r.ok ? r.json() : null)
       .then(j => {
         if(j && usePrices(j.prices)){
@@ -93,7 +111,7 @@
     const ch = (last.v / first.v - 1) * 100;
     // name the real span: if the data does not reach back to the range start
     // (snapshot fallback), say "since <date>" rather than claim the full range
-    const span = first.t - from > 3 * 864e5 ? "since " + first.d : RANGE === "365" ? "in 1 year" : "in " + RANGE + " days";
+    const span = first.t - from > 3 * 864e5 ? "since " + first.d : "in " + RANGE + " days";
     box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="RIO price ${esc(span)}, from $${first.v.toFixed(4)} to $${last.v.toFixed(4)}">`
       // area under the line: green fading to nothing at the bottom (stop colours
       // come from CSS so the gradient follows the light and dark themes)
@@ -139,10 +157,13 @@
 
   /* ---------- supply snapshot: chart, chain bar, integrity, strip ---------- */
   const supplyP = loadSupply().then(({arr, latest}) => {
+    const snaps = arr.filter(r => typeof r.price_usd === "number" && r.price_usd > 0);
+    SNAP_DAY = {};
+    snaps.forEach(r => { SNAP_DAY[dayKey(Date.parse(r.ts))] = r.price_usd; });
     if(PRICE_SRC === "snapshots"){
-      PRICE_PTS = arr.filter(r => typeof r.price_usd === "number" && r.price_usd > 0).map(r => toPt(Date.parse(r.ts), r.price_usd));
+      PRICE_PTS = snaps.map(r => toPt(Date.parse(r.ts), r.price_usd));
       drawPrice();
-    }
+    } else rebuildPrices();   // CoinGecko arrived first: apply the cross-check now
 
     $("bnCircTitle").textContent = fmtM(M(latest.tradable_total));
     const ch = latest.chains || {};
