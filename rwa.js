@@ -162,9 +162,14 @@
   function anchorToRwa(){
     const el = document.getElementById("rwa");
     let stop = false;
-    const go = () => { if(!stop) el.scrollIntoView({block: "start"}); };
+    // instant, not the site's smooth scrolling: a smooth scroll over the whole
+    // archive is slow, restarts on every re-anchor, and stalls in background tabs
+    const go = () => { if(!stop) el.scrollIntoView({block: "start", behavior: "instant"}); };
     ["wheel", "touchstart", "keydown", "mousedown"].forEach(e => addEventListener(e, () => { stop = true; }, {once: true, passive: true}));
+    go();
     requestAnimationFrame(go);
+    // timers as well: frame and resize callbacks do not run in a background tab
+    [300, 1000, 2000, 3500].forEach(ms => setTimeout(go, ms));
     if(window.ResizeObserver){
       const ro = new ResizeObserver(go);
       ro.observe(document.body);

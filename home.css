@@ -49,8 +49,10 @@
 .bn-tabs{display:flex;gap:2px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px}
 .bn-tabs button{font:500 13px Inter,sans-serif;color:var(--muted);background:transparent;border:0;border-radius:999px;padding:0 12px;min-height:32px;cursor:pointer}
 .bn-tabs button[aria-pressed="true"]{background:var(--line);color:var(--ink)}
-.bn-chart{margin-top:14px}
-.bn-chart svg{display:block;width:100%;height:auto;overflow:visible}
+.bn-hero{display:flex;flex-direction:column}
+.bn-chart{margin-top:14px;flex:1 1 auto;position:relative;min-height:236px}
+.bn-chart svg{position:absolute;inset:0;display:block;width:100%;height:100%;overflow:visible}
+@media (max-width:640px){.bn-chart{min-height:200px}}
 .bn-chart .grid{stroke:var(--line)}
 .bn-chart .axis{fill:var(--faint);font:11px Inter,sans-serif}
 .bn-chart .line{fill:none;stroke:var(--green);stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}

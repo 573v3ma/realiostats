@@ -30,7 +30,12 @@
     const pts = RANGE === "all" ? PRICE_PTS : PRICE_PTS.filter(p => p.t >= now - (+RANGE) * 864e5);
     const badge = $("bnRangeChg");
     if(pts.length < 2){ box.innerHTML = ""; badge.textContent = ""; return; }
-    const W = 800, H = 236, top = 14, bot = 214;
+    // Drawn at the box's real pixel size: the card stretches to the height of the
+    // column beside it and the chart takes up whatever is left, without
+    // distorting text or dots.
+    const W = Math.max(280, Math.round(box.clientWidth || 800));
+    const H = Math.max(200, Math.round(box.clientHeight || 236));
+    const top = 14, bot = H - 24;
     const lo0 = Math.min(...pts.map(p => p.v)), hi0 = Math.max(...pts.map(p => p.v));
     const pad = (hi0 - lo0) * 0.08 || hi0 * 0.05;
     const lo = lo0 - pad, hi = hi0 + pad;
@@ -86,6 +91,17 @@
       a.append(b, p.label); leg.append(a);
     });
     leg.append(src);
+  }
+  // Redraw when the chart box changes size (window resize, the mood card or the
+  // news loading and changing the row height). Only on a real size change.
+  if(window.ResizeObserver){
+    let lastW = 0, lastH = 0, queued = false;
+    new ResizeObserver(([e]) => {
+      const w = Math.round(e.contentRect.width), h = Math.round(e.contentRect.height);
+      if(Math.abs(w - lastW) < 2 && Math.abs(h - lastH) < 2) return;
+      lastW = w; lastH = h;
+      if(!queued){ queued = true; setTimeout(() => { queued = false; if(PRICE_PTS.length) drawPrice(); }, 60); }
+    }).observe($("bnChart"));
   }
   document.querySelectorAll(".bn-tabs button").forEach(b => b.addEventListener("click", () => {
     RANGE = b.dataset.r;
