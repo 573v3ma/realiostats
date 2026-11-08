@@ -196,6 +196,24 @@ let FLOW_CHART = null;
 const flowCls = d => d > 0 ? "up" : d < 0 ? "down" : "flat";
 const flowStr = d => (d > 0 ? "+" : "") + fmtM(M(d));
 
+/* Net staking flow between two snapshots. Bonded tokens alone are the wrong
+   measure: when a validator is jailed or drops out of the active set, its whole
+   stake moves from bonded to not_bonded with nobody unstaking a coin (31 Oct
+   2026: genznodes jailed, 3.76M, read as a -3.3M "outflow" on a day people
+   staked about +450k). So the flow is the change in stake that is still
+   delegated: bonded plus stake sitting on inactive validators. A new unbond
+   still counts as an outflow the day it starts (it leaves both terms for the
+   unbonding queue). Rows from before 29 Sep 2026 lack on_inactive_validators;
+   for those pairs fall back to bonded + not_bonded, which also ignores jailing
+   but only shows an unstake once its unbond completes. */
+const delegatedStake = (s, withInactive) =>
+  s.bonded_weight + ((withInactive ? s.on_inactive_validators : s.not_bonded) || 0);
+function stakeFlow(a, b) {
+  const sa = a.staking, sb = b.staking;
+  const withInactive = sa.on_inactive_validators != null && sb.on_inactive_validators != null;
+  return delegatedStake(sb, withInactive) - delegatedStake(sa, withInactive);
+}
+
 function renderStakingFlow(hist, tradableTotal) {
   const wrap = document.getElementById("staking");
   if (!wrap || !Array.isArray(hist) || hist.length === 0) return;
@@ -211,12 +229,15 @@ function renderStakingFlow(hist, tradableTotal) {
   // or the first reading while history is still shorter than that.
   const cutoff = new Date(latest.ts) - 30 * 86400000;
   const base30 = rows.filter(r => new Date(r.ts) <= cutoff + 12 * 3600000).pop() || first;
-  const netTotal = rows.length > 1 ? latest.staking.bonded_weight - base30.staking.bonded_weight : 0;
+  // Summed day by day, so a window that straddles the 29 Sep schema change
+  // still uses the best measure each pair allows.
+  const win = rows.slice(rows.indexOf(base30));
+  const netTotal = win.slice(1).reduce((a, r, i) => a + stakeFlow(win[i], r), 0);
   const days = rows.length > 1
     ? Math.min(30, Math.max(1, Math.round((new Date(latest.ts) - new Date(base30.ts)) / 86400000))) : 0;
 
   const prev = rows.length > 1 ? rows[rows.length - 2] : null;
-  const netDay = prev ? latest.staking.bonded_weight - prev.staking.bonded_weight : null;
+  const netDay = prev ? stakeFlow(prev, latest) : null;
   const gapH = prev ? Math.round((new Date(latest.ts) - new Date(prev.ts)) / 3600000) : null;
   const dayLabel = gapH == null ? "24h" : Math.abs(gapH - 24) <= 3 ? "24h" : gapH + "h";
 
@@ -258,7 +279,7 @@ function renderStakingFlow(hist, tradableTotal) {
 
   const labels = rows.map(r => new Date(r.ts).toLocaleDateString("en-GB", { day: "numeric", month: "short" }));
   const bonded = rows.map(r => +M(r.staking.bonded_weight).toFixed(3));
-  const dayFlow = rows.map((r, i) => i === 0 ? null : +(r.staking.bonded_weight - rows[i - 1].staking.bonded_weight).toFixed(0));
+  const dayFlow = rows.map((r, i) => i === 0 ? null : +stakeFlow(rows[i - 1], r).toFixed(0));
 
   // Two panels on one canvas sharing the date axis (Chart.js stacked scales):
   // bonded weight as a soft area on top, net daily flow as rounded bars in a
@@ -337,8 +358,10 @@ function renderStakingFlow(hist, tradableTotal) {
       ? "Tracking started " + new Date(first.ts).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
         + ", so the trend is thin for now. "
       : "")
-    + "Top: total bonded weight. Bottom: the net change each day. Rewards are not auto-bonded on Realio, so moves here are real "
-    + "delegation activity, not compounding. Net only: a day of heavy staking and unstaking that cancels out looks flat.";
+    + "Top: total bonded weight. Bottom: net staking each day, the change in stake still delegated (to active or inactive "
+    + "validators), so a validator being jailed or leaving the active set lowers the top line without counting as an outflow. "
+    + "Rewards are not auto-bonded on Realio, so moves here are real delegation activity, not compounding. Net only: a day of "
+    + "heavy staking and unstaking that cancels out looks flat.";
 }
 
 /* Dollar value of the bonded base at current prices. Bonded weight is a mix of
