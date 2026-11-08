@@ -1,12 +1,12 @@
 {
- "as_of": "2026-11-08T12:33:11Z",
- "height": 20472222,
+ "as_of": "2026-11-08T15:50:14Z",
+ "height": 20474319,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 134822433.33,
+ "bonded_weight": 134822620.85,
  "validators": [
   {
    "moniker": "Teshy RIO",
-   "weight": 7819433.79,
+   "weight": 7819555.93,
    "commission": 0.05,
    "jailed": false
   },
@@ -18,7 +18,7 @@
   },
   {
    "moniker": "Rose Validators | $DSTRX",
-   "weight": 7362105.79,
+   "weight": 7362147.46,
    "commission": 0.05,
    "jailed": false
   },
@@ -42,7 +42,7 @@
   },
   {
    "moniker": "Reallionaires Club | RIO",
-   "weight": 6986972.13,
+   "weight": 6986995.73,
    "commission": 0.05,
    "jailed": false
   },
@@ -228,7 +228,7 @@
   },
   {
    "moniker": "Kynraze | Low fees",
-   "weight": 361505.29,
+   "weight": 361505.39,
    "commission": 0.05,
    "jailed": false
   },

@@ -4437,26 +4437,26 @@
   "flags": []
  },
  {
-  "ts": "2026-11-08T12:33:11Z",
+  "ts": "2026-11-08T15:50:14Z",
   "lcd": "https://realio-api.noders.services",
-  "height": 20472222,
+  "height": 20474319,
   "native_cap": 175000000,
-  "ario_supply": 90920176.51,
-  "unminted": 84079823.49,
+  "ario_supply": 90922411.32,
+  "unminted": 84077588.68,
   "mint": {
    "inflation_rate": 0.08,
    "blocks_per_year": 6311520.0,
    "assumed_block_time_s": 4.9966
   },
-  "block_time_s": 5.6475,
+  "block_time_s": 5.6467,
   "block_time_span": 20000,
-  "block_adjust_factor": 0.884744,
-  "annual_emission_nominal": 6726385.88,
-  "annual_emission_adjusted": 5951127.16,
-  "daily_emission_adjusted": 16304.46,
+  "block_adjust_factor": 0.88487,
+  "annual_emission_nominal": 6726207.09,
+  "annual_emission_adjusted": 5951816.84,
+  "daily_emission_adjusted": 16306.35,
   "community_tax": 0.02,
   "staking": {
-   "bonded_weight": 134822433.33,
+   "bonded_weight": 134822620.85,
    "not_bonded": 6341147.52,
    "on_inactive_validators": 6336997.69,
    "unbonding": 4149.83,
@@ -4468,13 +4468,13 @@
     {
      "denom": "ario",
      "label": "RIO",
-     "amount": 70651406.57,
+     "amount": 70651552.41,
      "pct_of_pool": 49.88
     },
     {
      "denom": "erc20:0xb841F365D5221Bed66d60E69094418D8C2aa5A44",
      "label": "DSTRX",
-     "amount": 38462851.3,
+     "amount": 38462892.97,
      "pct_of_pool": 27.15
     },
     {
@@ -4484,7 +4484,7 @@
      "pct_of_pool": 22.97
     }
    ],
-   "multistaking_pool_total": 141647647.44,
+   "multistaking_pool_total": 141647834.95,
    "rio_pct_of_pool": 49.88,
    "pool_vs_staked_delta_pct": 0.343
   },
@@ -4500,12 +4500,12 @@
   },
   "yield_ladder": {
    "mint_parameter": 0.08,
-   "official_apr": 0.049891,
-   "block_adjusted": 0.04414,
-   "after_community_tax": 0.043258,
-   "after_min_commission": 0.041095,
-   "after_med_commission": 0.041095,
-   "after_max_commission": 0.038932
+   "official_apr": 0.049889,
+   "block_adjusted": 0.044146,
+   "after_community_tax": 0.043263,
+   "after_min_commission": 0.041099,
+   "after_med_commission": 0.041099,
+   "after_max_commission": 0.038936
   },
   "flags": []
  }
