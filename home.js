@@ -23,17 +23,34 @@
      have gaps; those are bridged with a dashed segment, never invented. */
   let PRICE_PTS = [], RANGE = "90", PRICE_SRC = "snapshots";
   const toPt = (t, v) => { const d = new Date(t); return {t, v, d: d.getUTCDate() + " " + MON[d.getUTCMonth()] + (d.getUTCFullYear() !== new Date().getUTCFullYear() ? " " + d.getUTCFullYear() : "")}; };
+  // The history is kept in this browser for FRESH_H hours, so repeat visits do
+  // not call CoinGecko again, and a copy up to STALE_D days old still draws the
+  // chart when CoinGecko is rate limiting this visitor (its free API answers a
+  // blocked request with no CORS header, which reads as a failed fetch).
+  const CACHE_KEY = "rs-price-hist-v1", FRESH_H = 6, STALE_D = 7;
+  const readCache = () => { try { const c = JSON.parse(localStorage.getItem(CACHE_KEY) || "null"); return c && Array.isArray(c.prices) ? c : null; } catch(e){ return null; } };
+  const usePrices = p => {
+    p = (p || []).filter(x => Array.isArray(x) && x[1] > 0);
+    if(p.length < 30) return false;
+    PRICE_PTS = p.map(x => toPt(x[0], x[1]));
+    PRICE_SRC = "coingecko";
+    drawPrice();
+    return true;
+  };
   function loadPriceHistory(){
+    const cached = readCache();
+    const age = cached ? Date.now() - cached.ts : Infinity;
+    if(age < FRESH_H * 36e5 && usePrices(cached.prices)) return Promise.resolve();
     return fetch("https://api.coingecko.com/api/v3/coins/realio-network/market_chart?vs_currency=usd&days=365&interval=daily", {cache: "no-store"})
       .then(r => r.ok ? r.json() : null)
       .then(j => {
-        const p = j && Array.isArray(j.prices) ? j.prices.filter(x => Array.isArray(x) && x[1] > 0) : [];
-        if(p.length < 30) return;
-        PRICE_PTS = p.map(x => toPt(x[0], x[1]));
-        PRICE_SRC = "coingecko";
-        drawPrice();
+        if(j && usePrices(j.prices)){
+          try { localStorage.setItem(CACHE_KEY, JSON.stringify({ts: Date.now(), prices: j.prices})); } catch(e){}
+          return;
+        }
+        throw new Error("no history");
       })
-      .catch(() => {});
+      .catch(() => { if(cached && age < STALE_D * 864e5) usePrices(cached.prices); });
   }
   function drawPrice(){
     const box = $("bnChart");
