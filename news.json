@@ -1,6 +1,67 @@
 {
- "updated": "2026-11-07T05:30:03Z",
+ "updated": "2026-11-08T15:52:42Z",
  "days": [
+  {
+   "date": "2026-11-08",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Ferrari 488 Pista named as the first tokenized collector car on Freehold",
+     "text": "Derek revealed the launch vehicle for Freehold's tokenized collector car offering: a Ferrari 488 Pista with less than 400 miles from new. He says the launch is coming soon, with more details to follow shortly.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "derekboirun",
+       "id": "2119218310596399279",
+       "ts": "2026-11-07T23:59:53Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-11-07T20:06:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-collection"
+    },
+    {
+     "project": "Freehold",
+     "title": "Derek explains how Freehold car tokens will work",
+     "text": "Each car gets a fixed token supply set at issuance, with unsold tokens and sale proceeds placed in a liquidity pool. A third-party custodian stores the car, and holders later vote on whether to sell it at auction, with proceeds shared pro rata.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-11-07T21:29:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-11-07T21:41:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-car-token-structure"
+    },
+    {
+     "project": "Freehold",
+     "title": "Car tokens to trade via Swap in Freehold, with RIO pairs on the native chain",
+     "text": "Derek says holders will be able to buy car tokens from other holders through Swap in Freehold, and that on the native chain every market has a RIO pair by default. Lending markets using car tokens as collateral are planned as liquidity develops.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-11-07T21:48:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-11-08T01:50:00Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-11-07",
    "items": [
@@ -519,24 +580,6 @@
      ],
      "key": true,
      "topic": "freehold-collection"
-    }
-   ]
-  },
-  {
-   "date": "2026-10-09",
-   "items": [
-    {
-     "project": "Freehold",
-     "title": "Freehold on/off ramp: MoonPay for now, proper ramp comes later",
-     "text": "Derek says MoonPay works for both buying and selling on Freehold but does not handle high volume. A proper on/off ramp will be added after other items are completed and launched. Until then, holders can get stablecoins from Coinbase and withdraw them to Freehold.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "ts": "2026-10-08T16:36:00Z"
-      }
-     ],
-     "topic": "freehold-onramp"
     }
    ]
   }
