@@ -139,6 +139,9 @@
 .bn-cta .wallet{font-size:12px}
 
 /* large transfers */
+.bn-lt-right{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.bn-lt-live{font-size:12px;font-weight:600}
+.bn-new{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);margin-left:6px}
 .bn-lt{width:100%;border-collapse:collapse;font-size:13px}
 .bn-lt th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;text-align:left;padding:0 14px 10px 0;border-bottom:1px solid var(--line);white-space:nowrap}
 .bn-lt td{padding:11px 14px 11px 0;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--body)}

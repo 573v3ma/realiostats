@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="site.css?v=34">
-<link rel="stylesheet" href="home.css?v=5">
+<link rel="stylesheet" href="home.css?v=6">
 </head>
 <body data-summary>
 <header><div class="wrap bn-wide nav">
@@ -212,7 +212,10 @@
   <section class="bn-card bn-c12" id="bnTransfers" hidden>
     <div class="bn-top">
       <div><h2>Large transfers</h2><div class="bn-sub" style="margin-top:2px">Every move of 100,000 RIO or more in the last 30 days, all seven chains.</div></div>
-      <a href="holders.html#transfers" id="bnLtAll">All transfers &rarr;</a>
+      <div class="bn-lt-right">
+        <span class="bn-live bn-lt-live" id="bnLtLive" hidden><span class="bn-dot"></span><span id="bnLtLiveTxt">Live</span></span>
+        <a href="holders.html#transfers" id="bnLtAll">All transfers &rarr;</a>
+      </div>
     </div>
     <div class="bn-tiles bn-t4" id="bnLtTiles"></div>
     <div class="bn-scroll" style="margin-top:16px">
@@ -251,6 +254,6 @@
 <script src="news.js?v=4"></script>
 <script src="rwa.js?v=5"></script>
 <script src="sentiment.js?v=1"></script>
-<script src="home.js?v=7"></script>
+<script src="home.js?v=8"></script>
 </body>
 </html>

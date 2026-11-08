@@ -328,10 +328,24 @@
     const inner = label ? esc(label) : `<span class="addr">${esc(short(a))}</span>`;
     return ok ? `<a href="${esc(c.addr + a)}" target="_blank" rel="noopener" title="${esc(a)}" style="color:inherit">${inner}</a>` : inner;
   }
-  getJ("./large-transfers.json").then(d => {
-    const T = d && Array.isArray(d.transfers) ? d.transfers.slice().sort((a, b) => b.ts - a.ts) : [];
+  // Daily 30-day list (GitHub job) plus anything the live Worker found since
+  // (realiostats.com/api/live-transfers, checked every minute on all seven chains).
+  Promise.all([getJ("./large-transfers.json"), getJ("/api/live-transfers")]).then(([d, live]) => {
+    const daily = d && Array.isArray(d.transfers) ? d.transfers : [];
+    const seen = new Set(daily.map(t => t.id));
+    daily.forEach(t => seen.add(t.chain + "|" + String(t.tx).toLowerCase() + "|" + Math.round(t.amount)));
+    const fresh = live && Array.isArray(live.transfers) ? live.transfers.filter(t => t && t.ts && !seen.has(t.id)
+      && !seen.has(t.chain + "|" + String(t.tx).toLowerCase() + "|" + Math.round(t.amount))).map(t => ({...t, live: true})) : [];
+    const T = daily.concat(fresh).sort((a, b) => b.ts - a.ts);
     if(!T.length) return;
-    const asOf = Date.parse(d.as_of) || Date.now();
+    const chk = live && Date.parse(live.checked);
+    if(chk && Date.now() - chk < 10 * 6e4){
+      const c = new Date(chk);
+      $("bnLtLiveTxt").textContent = "Live · checked " + String(c.getUTCHours()).padStart(2, "0") + ":" + String(c.getUTCMinutes()).padStart(2, "0") + " UTC";
+      $("bnLtLive").title = "Checked every minute on all seven chains. Bridge legs are paired in the daily update.";
+      $("bnLtLive").hidden = false;
+    }
+    const asOf = fresh.length || chk ? Date.now() : (Date.parse(d && d.as_of) || Date.now());
     const wk = T.filter(t => t.ts * 1000 >= asOf - 7 * 864e5);
     const sum = a => a.reduce((s, t) => s + t.amount, 0);
     const dep = sum(T.filter(t => t.kind === "deposit")), wd = sum(T.filter(t => t.kind === "withdrawal"));
@@ -350,7 +364,7 @@
       const k = KIND[r.kind] || KIND.wallet;
       const amt = Math.round(r.amount).toLocaleString("en-US");
       const amtCell = c.tx && r.tx ? `<a href="${esc(c.tx + r.tx)}" target="_blank" rel="noopener" style="color:inherit">${amt}</a>` : amt;
-      return `<tr><td>${time}</td><td>${esc(c.name)}</td><td class="num">${amtCell}</td><td>${party(r, "from")}</td><td>${party(r, "to")}</td><td><span class="bn-kind ${k[1]}">${k[0]}</span></td></tr>`;
+      return `<tr><td>${time}${r.live ? '<span class="bn-new" title="Found by the live check, added to the full list at the next daily update">new</span>' : ""}</td><td>${esc(c.name)}</td><td class="num">${amtCell}</td><td>${party(r, "from")}</td><td>${party(r, "to")}</td><td><span class="bn-kind ${k[1]}">${k[0]}</span></td></tr>`;
     }).join("");
     $("bnTransfers").hidden = false;
   });

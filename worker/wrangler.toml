@@ -1,0 +1,17 @@
+# Deployed as Worker "realiostats-live" (account of realiostats.com).
+name = "realiostats-live"
+main = "live-transfers.js"
+compatibility_date = "2026-10-01"
+workers_dev = false
+routes = [{ pattern = "realiostats.com/api/*", zone_name = "realiostats.com" }]
+
+[triggers]
+crons = ["* * * * *"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "realiostats-live"
+database_id = "e92da947-f004-4f6c-8dd7-16a622da1de7"
+
+[observability]
+enabled = true
