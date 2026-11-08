@@ -463,6 +463,26 @@
 .nw-key .nw-title{font-size:15px}
 .nw-kdate{color:var(--body)}
 .nw-keycard{margin-bottom:22px}
+/* RWA industry watch */
+.rw-market{margin-bottom:18px}
+.rw-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:760px){.rw-tiles{grid-template-columns:1fr}}
+.rw-tile .cx.rw-up{color:var(--green-ink)}
+.rw-tile .cx.rw-down{color:var(--burn)}
+.rw-asof{margin:10px 0 0}
+.rw-why{margin:6px 0 0;font-size:14px;color:var(--body);line-height:1.6}
+.rw-why b{color:var(--ink);font-weight:600}
+.rw-item .nw-srcs a{color:var(--muted);text-decoration:underline;text-underline-offset:2px}
+.rw-item .nw-srcs a:hover{color:var(--ink)}
+.rw-re{color:#93c5fd;background:rgba(59,130,246,.14)}
+.rw-co{color:#f9a8d4;background:rgba(236,72,153,.14)}
+.rw-rg{color:#fcd34d;background:rgba(245,158,11,.14)}
+.rw-ch{color:var(--green-ink);background:var(--mint-soft)}
+.rw-mk{color:var(--body);background:rgba(148,163,184,.16)}
+:root[data-theme="light"] .rw-re{color:#1d4ed8;background:#dbeafe}
+:root[data-theme="light"] .rw-co{color:#9d174d;background:#fce7f3}
+:root[data-theme="light"] .rw-rg{color:#92400e;background:#fef3c7}
+:root[data-theme="light"] .rw-mk{color:#334155;background:#e2e8f0}
 
 /* ---- community mood gauge (sentiment.js / sentiment.json, added 30 Sep 2026) ---- */
 .sm-card{border:1px solid var(--line);border-radius:var(--radius);padding:clamp(18px,3vw,28px);background:var(--bg);box-shadow:var(--shadow-sm);
