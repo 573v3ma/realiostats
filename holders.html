@@ -9,7 +9,7 @@
 <link rel="icon" href="/favicon.ico" sizes="any" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-<meta name="description" content="How many wallets hold RIO on each of the seven chains, at the 100, 1,000, 10,000 and 100,000 RIO tiers, with monthly evolution since the 2024 migration." />
+<meta name="description" content="How many wallets hold RIO on each of the seven chains, at the 100, 1,000, 10,000 and 100,000 RIO tiers, with monthly evolution since the 2024 migration, and every transfer of 100,000 RIO or more in the last 30 days." />
 <link rel="canonical" href="https://realiostats.com/holders.html" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,7 +39,7 @@
 <div class="wrap page-lede">
   <div class="eyebrow">Independent · community-led · not affiliated with the Realio team</div>
   <h1>Who holds RIO, chain by chain</h1>
-  <p class="lede">How many wallets hold RIO, how many hold a meaningful amount, and how that base has changed since the 2024 migration. For where the tradable float sits by venue, see <a href="supply.html#liquidity">the supply page</a>.</p>
+  <p class="lede">How many wallets hold RIO, how many hold a meaningful amount, and how that base has changed since the 2024 migration, plus every <a href="#transfers">transfer of 100,000 RIO or more</a> in the last 30 days. For where the tradable float sits by venue, see <a href="supply.html#liquidity">the supply page</a>.</p>
 </div>
 
 
@@ -64,6 +64,21 @@
   </div>
 </div></section>
 
+<section id="transfers"><div class="wrap">
+  <h2>Large transfers</h2>
+  <p class="sec-lede">Every transfer of 100,000 RIO or more in the last 30 days, on all seven chains. Exchange wallets, bridges and Realio module accounts are named where we know the address; anything else is shown as an address you can open in the explorer. A bridge move shows up twice, once as it leaves one chain and once as it arrives on the other, and the two legs are paired where the amounts and times match.</p>
+  <div class="hb-metricrow" id="ltChainRow"></div>
+  <div class="hb-metricrow" id="ltTypeRow"></div>
+  <p class="lq-sub" id="ltSummary" style="margin:0 0 12px"></p>
+  <div class="ptbl-wrap"><table class="ptbl">
+    <thead><tr><th>Time (UTC)</th><th style="text-align:left">Chain</th><th>Amount (RIO)</th><th style="text-align:left">From</th><th style="text-align:left">To</th><th style="text-align:left">Type</th><th>Tx</th></tr></thead>
+    <tbody id="ltBody"><tr><td colspan="7" class="hb-pending">Loading transfers</td></tr></tbody>
+  </table></div>
+  <div style="margin-top:12px"><button type="button" class="hb-mbtn" id="ltMore" hidden>Show all</button></div>
+  <p class="lq-sub" id="ltNote"></p>
+  <p class="cap">Read daily from public chain data (<a href="https://github.com/573v3ma/realiostats/blob/main/fetch_large_transfers.py" target="_blank" rel="noopener">fetch_large_transfers.py</a>). BNB Chain, Ethereum and Base are read through the same Alchemy access as the holder counts, because free public nodes keep only part of the history; the script falls back to keyless public nodes without it. The other four chains need no key. Labels are a floor: an unnamed address can still be an exchange we have not identified. Staking, unstaking and reward claims on the native chain are not transfers and are left out. A swap routed through several contracts can show as more than one row in the same transaction. RIO on Algorand and Stellar no longer trades on a live market after the 25 August theft (<a href="incident.html">incident report</a>), so moves there are listed for completeness.</p>
+</div></section>
+
 <footer><div class="wrap">
   <div class="support">
     <h3>Support this project</h3>
@@ -84,5 +99,6 @@
 
 <script src="core.js?v=24"></script>
 <script src="holders.js?v=26"></script>
+<script src="transfers.js?v=1"></script>
 </body>
 </html>
