@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Tokenized RWA market figures for the RWA industry watch card.
 
-Run daily by the GitHub Action (stdlib only, no key). Reads the public
+Run daily by publish_rwa.py during the Realio brief, so the market figures and
+the stories land in one commit (it can also run on its own). Stdlib only, no
+key. It is not in the GitHub Action: the repo token cannot change workflow
+files, and RWA.xyz is more likely to block a datacenter IP. Reads the public
 RWA.xyz pages, which serve their headline figures in the page HTML:
 
   app.rwa.xyz              Distributed Asset Value (tokenized RWAs, stablecoins
@@ -15,7 +18,7 @@ Fails safe. Every figure must parse and sit in a plausible range, and a move
 of more than MAX_JUMP in a day against the last good reading is held back and
 reported rather than published. On any failure the previous file is left
 untouched and the script exits 0, so the card keeps showing the last good
-value with its real as_of date and the supply snapshot is never blocked.
+value with its real as_of date and the story publish is never blocked.
 
 "Distributed" is used on purpose: RWA.xyz's "Represented" value also counts
 assets that only have a record on-chain, which is about ten times larger and

@@ -56,19 +56,11 @@ jobs:
           ALCHEMY_ETH_URL: ${{ secrets.ALCHEMY_ETH_URL }}
         run: python fetch_large_transfers.py
 
-      # Tokenized RWA market figures for the RWA industry watch card, read from
-      # RWA.xyz's public pages. Fails safe: on a fetch error, a layout change or
-      # an implausible jump it keeps the previous rwa-market.json and exits 0.
-      - name: Refresh RWA market figures
-        continue-on-error: true
-        timeout-minutes: 5
-        run: python fetch_rwa_market.py
-
       - name: Commit snapshot if changed
         run: |
           git config user.name  "realiostats-bot"
           git config user.email "actions@users.noreply.github.com"
-          FILES="supply-history.json volume-history.json network-history.json network-validators.json large-transfers.json rwa-market.json"
+          FILES="supply-history.json volume-history.json network-history.json network-validators.json large-transfers.json"
           if [ -n "$(git status --porcelain -- $FILES)" ]; then
             git add $FILES
             git commit -m "supply snapshot $(date -u +%Y-%m-%d)"

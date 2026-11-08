@@ -36,8 +36,8 @@ Guarantees on what reaches the public file:
     +1 if published in the 24 hours before the draft date ends
 An item failing any check is dropped and reported; the rest still publish.
 Published items in a day are ordered newest first by publication time, then
-by score. rwa.json keeps KEEP_DAYS days. Market figures are not in this file:
-the daily Action writes them to rwa-market.json.
+by score. rwa.json keeps KEEP_DAYS days. On --publish the market figures in
+rwa-market.json are refreshed too (fetch_rwa_market.py) and committed with it.
 """
 import glob, json, os, re, subprocess, sys, tempfile
 from datetime import datetime, timedelta, timezone
@@ -279,13 +279,28 @@ def clone(target, draft_path):
     return token, work, branch
 
 
+def refresh_market(work):
+    """Refresh rwa-market.json in the clone with fetch_rwa_market.py (fails safe:
+    on any problem it keeps the file as it is). Done here rather than in the
+    GitHub Action so both RWA files land in one commit from one writer."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    try:
+        import fetch_rwa_market as frm
+    except ImportError:
+        print("rwa-market: fetch_rwa_market.py not found next to this script, market figures not refreshed")
+        return
+    frm.OUT = os.path.join(work, "rwa-market.json")
+    frm.main()
+
+
 def publish(day, token, work, branch):
     path = os.path.join(work, "rwa.json")
     new = merge(read_json(path), day)
     with open(path, "w", encoding="utf-8") as f:
         json.dump(new, f, ensure_ascii=False, indent=1)
         f.write("\n")
-    sh(["git", "add", "rwa.json"], work)
+    refresh_market(work)
+    sh(["git", "add", "rwa.json"] + (["rwa-market.json"] if os.path.exists(os.path.join(work, "rwa-market.json")) else []), work)
     rc, _ = sh(["git", "diff", "--cached", "--quiet"], work, check=False)
     if rc == 0:
         print("rwa.json unchanged, nothing to push")
