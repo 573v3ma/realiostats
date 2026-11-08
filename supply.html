@@ -95,6 +95,10 @@
     <span class="idot" id="iDot"></span>
     <span id="iText">Building the daily baseline. As readings accrue, this confirms whether circulating RIO supply is growing within the scheduled emission and flags anything above it.</span>
   </div>
+  <div class="whatmoved" id="whatMoved" hidden>
+    <div class="wm-read" id="wmRead"></div>
+    <div class="wm-chips" id="wmChips"></div>
+  </div>
   <p class="cap">Read live from Realio's on-chain mint module. Expected issuance allows for the chain's real block time, about 5.67 seconds against the 5 its parameter assumes, which puts real issuance about 12% below the nominal rate. Bridging moves RIO between chains without creating any, so only emission minus burns changes the total.</p>
 </div></section>
 
@@ -231,6 +235,6 @@
 </div></footer>
 
 <script src="core.js?v=24"></script>
-<script src="supply.js?v=27"></script>
+<script src="supply.js?v=28"></script>
 </body>
 </html>

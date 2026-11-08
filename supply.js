@@ -183,14 +183,13 @@ function computeWhatMoved(arr, expectedDaily){
   if(!(days > 0)) return null;
 
   // Per-chain deltas as daily rates. Algorand is shown on the team-adjusted
-  // basis (reserve+bridge added back) so releasing pre-existing RIO into float
-  // does not masquerade as new supply, matching the net-new figure.
+  // basis (same teamHeld() add-back as netNewSupply, so reserve plus the
+  // excluded compromised bucket) so releasing pre-existing RIO into float does
+  // not masquerade as new supply and the chips sum to the net-new figure.
   const perChain = CHAINS.map(c=>{
     let d;
     if(c.key === "algorand"){
-      const teamA = (a.chains.algorand.reserve||0);
-      const teamB = (b.chains.algorand.reserve||0);
-      d = (circOf(b,"algorand")+teamB) - (circOf(a,"algorand")+teamA);
+      d = (circOf(b,"algorand")+(teamHeld(b)||0)) - (circOf(a,"algorand")+(teamHeld(a)||0));
     } else if(c.key === "base"){
       d = 0; // backing locked on Ethereum, always counts 0
     } else {
@@ -355,8 +354,9 @@ function renderMcapTrend(arr){
 // deltas (Tier 1) and a plain-language observed-vs-expected read (Tier 2).
 function renderWhatMoved(arr, expectedDaily){
   const box = document.getElementById("whatMoved");
+  if(!box) return; // the home page shares render() but has no block
   const wm = computeWhatMoved(arr, expectedDaily);
-  if(!wm || !wm.perChain.length){ if(box) box.hidden = true; return; }
+  if(!wm || !wm.perChain.length){ box.hidden = true; return; }
   box.hidden = false;
 
   document.getElementById("wmChips").innerHTML = wm.perChain.map(x=>{
@@ -518,6 +518,7 @@ function render(latest, liveSeries, fullArr){
       it.textContent="Circulating RIO supply grew faster than the ~"+pct+"% schedule over the measured window, worth a closer look.";
     }
   }
+  renderWhatMoved(fullArr, ed);
 
   const grid = document.getElementById("chainGrid");
   grid.innerHTML = CHAINS.map(c=>{
