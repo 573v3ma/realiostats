@@ -16,9 +16,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="site.css?v=33">
+<link rel="stylesheet" href="home.css?v=1">
 </head>
 <body data-summary>
-<header><div class="wrap nav">
+<header><div class="wrap bn-wide nav">
   <a class="brand" href="index.html"><span class="dot"></span> realiostats</a>
   <nav>
     <a href="index.html" class="is-active">Overview</a>
@@ -36,119 +37,193 @@
   </nav>
 </div></header>
 
-<div class="wrap hero home-hero" id="top">
-  <div class="eyebrow">Independent · community-led · not affiliated with the Realio team</div>
-  <h1>Realio at a glance</h1>
-  <p class="lede">The key on-chain numbers for $RIO across every chain it lives on, refreshed daily. Each block links to the full breakdown.</p>
+<main class="wrap bn-wide bn-main" id="top">
 
-  <div class="hero-stat home-stat">
-    <div class="hero-metrics">
-      <div class="hm"><div class="hmk">RIO price</div><div class="hmv"><span id="priceNum">—</span><span class="chg" id="priceChg"></span></div><svg class="spark" id="priceSpark" width="260" height="26" viewBox="0 0 260 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="priceSrc">at time of refresh</div></div>
-      <div class="hm"><div class="hmk">Circulating market cap</div><div class="hmv"><span id="mcapNum">—</span><span class="chg" id="mcapChg"></span></div><svg class="spark" id="mcapSpark" width="260" height="26" viewBox="0 0 260 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx">circulating supply × price</div></div>
-      <div class="hm"><div class="hmk">24h trading volume</div><div class="hmv"><span id="volNum">—</span><span class="chg" id="volChg"></span></div><svg class="spark" id="volSpark" width="260" height="26" viewBox="0 0 260 26" preserveAspectRatio="none" aria-hidden="true"></svg><div class="hmx" id="volSrc">exchange-reported</div></div>
-    </div>
-    <div class="home-supply">
-      <div class="k">Multichain circulating supply</div>
-      <div class="hs-row"><div class="num" id="multiNum">376M</div><div class="sub" id="multiSub">RIO · across 7 chains, counted once</div></div>
-    </div>
-    <div class="updated">Last updated <b id="updated">—</b> · refreshes daily from a public, open-source pipeline.</div>
+<div class="bn-head">
+  <div>
+    <div class="eyebrow">Independent · community-led · not affiliated with the Realio team</div>
+    <h1>Realio at a glance</h1>
   </div>
-  <a class="more" href="supply.html">Full supply breakdown &rarr;</a>
+  <a class="more" href="methodology.html#method">How every number is calculated &rarr;</a>
 </div>
 
-<section class="home-sec" id="overview-mood" hidden><div class="wrap">
-  <h2>Community mood</h2>
-  <div class="nw-stamp" id="smStamp"></div>
-  <div class="sm-card">
-    <div class="sm-gauge">
-      <svg id="smDial" viewBox="0 0 220 116" role="img" aria-label="Community mood gauge from bearish to bullish"></svg>
-      <div class="sm-readout"><span class="sm-score" id="smScore">–</span><span class="sm-label" id="smLabel"></span></div>
-      <div class="sm-scale"><span>Bearish</span><span>Bullish</span></div>
+<div class="bn-strip" aria-label="Network pulse">
+  <span class="bn-live" id="bnLive"><span class="bn-dot"></span><span id="bnLiveTxt">Realio native chain</span></span>
+  <span>Block <b class="mono" id="bnHeight">–</b></span>
+  <span><b id="bnBlockTime">–</b> per block</span>
+  <span><b id="bnVals">–</b></span>
+  <span>Native emission <b id="bnEmit">–</b></span>
+  <span class="bn-upd">Updated <b id="updated">–</b> · refreshed daily from a public, open-source pipeline</span>
+</div>
+
+<div class="bn-grid">
+
+  <!-- price, market cap, volume, supply -->
+  <section class="bn-card bn-c8" aria-labelledby="bnPriceK">
+    <div class="bn-price-head">
+      <div>
+        <div class="bn-k" id="bnPriceK">RIO price</div>
+        <div class="bn-price"><span id="priceNum">–</span><span class="chg" id="priceChg"></span><span class="bn-badge" id="bnRangeChg"></span></div>
+      </div>
+      <div class="bn-tabs" role="group" aria-label="Chart range">
+        <button type="button" data-r="7" aria-pressed="false">7D</button>
+        <button type="button" data-r="30" aria-pressed="false">30D</button>
+        <button type="button" data-r="90" aria-pressed="true">90D</button>
+        <button type="button" data-r="all" aria-pressed="false">All</button>
+      </div>
     </div>
-    <div class="sm-side">
-      <div class="sm-stat"><div class="cn">Votes, last 7 days</div><div class="sm-v sm-small" id="smCounts">–</div></div>
-      <div class="sm-stat"><div class="cn">RIO price, same 7 days</div><div class="sm-v" id="smPrice">–</div></div>
-      <p class="sm-read" id="smRead"></p>
-      <svg class="sm-trend" id="smTrend" viewBox="0 0 240 56" role="img"></svg>
-      <div class="sm-cap" id="smTrendCap"></div>
+    <div class="bn-chart" id="bnChart"></div>
+    <div class="bn-pins" id="bnPins"><span class="src" id="priceSrc"></span></div>
+    <div class="bn-metrics">
+      <div><div class="bn-k">Circulating market cap</div><div class="v"><span id="mcapNum">–</span><span class="chg" id="mcapChg"></span></div><div class="bn-sub">circulating supply × price</div></div>
+      <div><div class="bn-k">24h trading volume</div><div class="v"><span id="volNum">–</span><span class="chg" id="volChg"></span></div>
+        <svg class="spark" id="volSpark" width="260" height="26" viewBox="0 0 260 26" preserveAspectRatio="none" aria-hidden="true"></svg>
+        <div class="bn-sub" id="volSrc">exchange-reported</div></div>
+      <div><div class="bn-k">Multichain circulating supply</div><div class="v" id="multiNum">–</div><div class="bn-sub" id="multiSub">RIO · across 7 chains, counted once</div></div>
+    </div>
+  </section>
+
+  <div class="bn-col bn-c4">
+    <section class="bn-card bn-mood" id="overview-mood" hidden>
+      <div class="bn-top" style="margin-bottom:10px"><h2>Community mood</h2><div class="nw-stamp" id="smStamp"></div></div>
+      <div class="sm-card">
+        <div class="sm-gauge">
+          <svg id="smDial" viewBox="0 0 220 116" role="img" aria-label="Community mood gauge from bearish to bullish"></svg>
+          <div class="sm-readout"><span class="sm-score" id="smScore">–</span><span class="sm-label" id="smLabel"></span></div>
+          <div class="sm-scale"><span>Bearish</span><span>Bullish</span></div>
+        </div>
+        <div class="sm-side">
+          <div class="sm-stat"><div class="cn">Votes, last 7 days</div><div class="sm-v sm-small" id="smCounts">–</div></div>
+          <div class="sm-stat"><div class="cn">RIO price, same 7 days</div><div class="sm-v" id="smPrice">–</div></div>
+          <p class="sm-read" id="smRead"></p>
+          <svg class="sm-trend" id="smTrend" viewBox="0 0 240 56" role="img"></svg>
+          <div class="sm-cap" id="smTrendCap"></div>
+        </div>
+      </div>
+      <p class="nw-note" style="margin-top:10px">AI read of Telegram and X posts, one vote per person per day. <a href="methodology.html#mood">How it works</a></p>
+    </section>
+
+    <div class="bn-minis">
+      <a class="bn-card bn-mini" href="network.html#staking" style="color:inherit;text-decoration:none">
+        <div class="bn-k">Native RIO staked</div>
+        <div class="bn-ring">
+          <svg viewBox="0 0 86 86" role="img" id="bnRing" aria-label="Share of native RIO staked"><circle class="bg" cx="43" cy="43" r="34" fill="none" stroke-width="12"/><circle class="fg" id="bnRingFg" cx="43" cy="43" r="34" fill="none" stroke-width="12" stroke-linecap="round" transform="rotate(-90 43 43)" stroke-dasharray="213.6" stroke-dashoffset="213.6"/></svg>
+          <span class="v" style="margin:0" id="bnStakedPct">–</span>
+        </div>
+        <div class="s">of circulating native RIO</div>
+      </a>
+      <a class="bn-card bn-mini" href="network.html#staking" style="color:inherit;text-decoration:none">
+        <div class="bn-k">Net staking, 30d</div>
+        <div class="v" id="bnNet30">–</div>
+        <div class="s" id="bnUnbond">&nbsp;</div>
+      </a>
+      <a class="bn-card bn-mini" href="holders.html" style="color:inherit;text-decoration:none">
+        <div class="bn-k">Holders</div>
+        <div class="v" id="bnHolders">–</div>
+        <div class="s">wallets, every chain</div>
+        <div class="s" id="bnHoldTrend"></div>
+      </a>
+      <a class="bn-card bn-mini" href="supply.html#emissions" style="color:inherit;text-decoration:none">
+        <div class="bn-k">Supply integrity</div>
+        <div class="bn-ok"><span class="idot" id="bnIntDot"></span><span class="v" id="bnIntTxt">Checking</span></div>
+        <div class="s" id="bnIntSub">&nbsp;</div>
+      </a>
     </div>
   </div>
-  <p class="nw-note">AI read of community posts in the Realio Telegram groups and on X. One vote per person per day; team, admins and bots excluded. Not investment advice. <a href="methodology.html#mood">How it works</a></p>
-</div></section>
 
-<section class="home-sec" id="overview-news" hidden><div class="wrap">
-  <h2>Official updates</h2>
-  <div class="nw-stamp" id="newsStamp"></div>
-  <div class="nw-card" id="newsHome"></div>
-  <p class="nw-note">AI summary of posts from official Realio, Freehold and Districts channels. Always check the source before acting.</p>
-  <a class="more" href="news.html">All updates &rarr;</a>
-</div></section>
-
-<section class="home-sec" id="overview-rwa" hidden><div class="wrap">
-  <h2>RWA industry watch</h2>
-  <div class="nw-stamp" id="rwaStamp"></div>
-  <div id="rwaHome"></div>
-  <p class="nw-note">Tokenization news that could move Realio, Freehold or RIO, picked daily from a fixed list of outlets. A story only makes it in when it has a clear link to Realio. AI-assisted selection; always read the source before acting.</p>
-  <a class="more" href="news.html#rwa">All RWA stories &rarr;</a>
-</div></section>
-
-<section class="home-sec" id="staking"><div class="wrap">
-  <h2>Staking flow</h2>
-  <div class="emit flow-row3" id="flowChipsTop"></div>
-  <div class="emit flow-row3" id="flowChipsMid"></div>
-  <a class="more" href="network.html#staking">Staking flow and yield &rarr;</a>
-</div></section>
-
-<section class="home-sec" id="overview-holders"><div class="wrap">
-  <h2>Holders</h2>
-  <div class="chartcard" id="hbEvmCard" hidden>
-    <div class="hb-metricrow" id="hbMetricRow">
-      <button type="button" class="hb-mbtn" data-m="gte_100">100+ RIO</button>
-      <button type="button" class="hb-mbtn" data-m="gte_1k">1,000+ RIO</button>
-      <button type="button" class="hb-mbtn" data-m="gte_10k">10,000+ RIO</button>
-      <button type="button" class="hb-mbtn" data-m="gte_100k">100,000+ RIO</button>
-      <button type="button" class="hb-mbtn is-on" data-m="total">All holders</button>
+  <!-- news, right under the main blocks -->
+  <section class="bn-card bn-news bn-c6" id="overview-news" hidden>
+    <div class="bn-panel-head">
+      <div class="bn-top" style="margin:0"><h2>Official updates</h2><a href="news.html">All updates &rarr;</a></div>
+      <div class="nw-stamp" id="newsStamp"></div>
     </div>
-    <div class="chartwrap"><canvas id="hbEvmCanvas"></canvas></div>
-    <p class="cap">Wallets holding RIO, month by month since the October 2024 migration, stacked to the total. Realio Native has only been measured since August 2026; before that, the fainter line holds its first reading as a placeholder. The August 2026 dip is the 25 August theft, which emptied about 3,600 wallets (<a href="incident.html">incident report</a>).</p>
-  </div>
-  <a class="more" href="holders.html">Holders on every chain &rarr;</a>
-</div></section>
-
-<section class="home-sec" id="overview-chart"><div class="wrap">
-  <h2>Circulating supply over time</h2>
-  <div class="chartcard">
-    <div class="rangebar" id="evoRange" role="group" aria-label="Chart range">
-      <button type="button" class="on" data-range="mig" aria-pressed="true" onclick="setEvoRange('mig')">Since the migration</button>
-      <button type="button" data-range="all" aria-pressed="false" onclick="setEvoRange('all')">Full history, from 2020</button>
+    <div class="bn-feed">
+      <div class="nw-card" id="newsHome"></div>
+      <p class="nw-note">AI summary of posts from official Realio, Freehold and Districts channels. Always check the source before acting.</p>
     </div>
-    <div class="chartwrap"><canvas id="evo"></canvas></div>
-    <p class="cap">RIO in public hands, chain by chain, stacked to the total. Realio-controlled wallets are excluded at every date.</p>
-  </div>
-  <a class="more" href="supply.html#chart">How supply has evolved &rarr;</a>
-</div></section>
+  </section>
 
-<section class="home-sec" id="overview-liquidity"><div class="wrap">
-  <h2>How liquid is RIO?</h2>
-  <div class="emit flow-row3 emit-row4" id="floatChips"></div>
-  <p class="lq-read" id="floatRead" style="margin-top:20px"></p>
-  <a class="more" href="supply.html#liquidity">Where the supply sits &rarr;</a>
-</div></section>
+  <section class="bn-card bn-news bn-c6" id="overview-rwa" hidden>
+    <div class="bn-panel-head">
+      <div class="bn-top" style="margin:0"><h2>RWA industry watch</h2><a href="news.html#rwa">All RWA stories &rarr;</a></div>
+      <div class="nw-stamp" id="rwaStamp"></div>
+    </div>
+    <div class="bn-feed">
+      <div id="rwaHome"></div>
+      <p class="nw-note">Tokenization news that could move Realio, Freehold or RIO, picked daily from a fixed list of outlets, only when there is a clear link to Realio. AI-assisted selection; always read the source.</p>
+    </div>
+  </section>
 
-<section class="home-sec" id="overview-integrity"><div class="wrap">
-  <h2>Emissions &amp; supply integrity</h2>
-  <div class="emit flow-row3 emit-row4">
-    <div class="chip"><div class="cn">Emission rate</div><div class="cv" id="emRate">—</div><div class="cx" id="emRateNote">of unminted native supply, per year</div></div>
-    <div class="chip"><div class="cn">Expected new RIO</div><div class="cv" id="emDaily">—</div><div class="cx" id="emAnnual">per day</div></div>
-    <div class="chip"><div class="cn">Native emission cap</div><div class="cv">175M</div><div class="cx">native chain only, ~38-year schedule</div></div>
-    <div class="chip"><div class="cn">Observed last 24h</div><div class="cv" id="emObs24">—</div><div class="cx" id="emObs24Note">awaiting a second reading</div></div>
+  <!-- where the supply sits -->
+  <section class="bn-card bn-float bn-c7">
+    <div class="bn-top"><h2>Where the <span id="bnCircTitle">circulating</span> RIO lives</h2><a href="supply.html#liquidity">Where the supply sits &rarr;</a></div>
+    <div class="bn-sec">
+      <div class="bn-k" style="margin-bottom:8px">By chain</div>
+      <div class="bn-bar" id="bnChainBar" role="img" aria-label="Circulating RIO by chain"></div>
+      <div class="bn-legend" id="bnChainLegend"></div>
+    </div>
+    <div class="bn-sec">
+      <div class="bn-k" style="margin-bottom:8px">How liquid</div>
+      <div id="floatChips"></div>
+    </div>
+    <div class="bn-sec" id="bnVenueSec" hidden>
+      <div class="bn-k" style="margin-bottom:8px">Who holds the <span id="bnVenueTotal">tradable</span> RIO</div>
+      <div class="bn-bar thin" id="bnVenueBar" role="img" aria-label="Tradable RIO by venue"></div>
+      <div class="bn-legend" id="bnVenueLegend"></div>
+    </div>
+    <p class="lq-read" id="floatRead"></p>
+  </section>
+
+  <div class="bn-col bn-c5">
+    <section class="bn-card">
+      <div class="bn-top"><h2>Staking pool and new supply</h2><a href="supply.html#emissions">Emissions &rarr;</a></div>
+      <div class="bn-sec" id="bnPoolSec" hidden>
+        <div class="bn-k" style="margin-bottom:4px">What is staked · <span id="bnPoolTotal"></span> weight</div>
+        <div class="bn-sub" style="margin-bottom:10px">Realio stakes three assets side by side.</div>
+        <div class="bn-bar" id="bnPoolBar" role="img" aria-label="Staking pool by asset"></div>
+        <div class="bn-legend" id="bnPoolLegend"></div>
+      </div>
+      <div class="bn-sec" id="bnMintSec" hidden style="border-top:1px solid var(--line);padding-top:18px">
+        <div class="bn-k" style="margin-bottom:4px">Native RIO minted so far</div>
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px"><span class="v" style="font-family:'Space Grotesk';font-size:26px;font-weight:700;color:var(--ink)" id="bnMinted">–</span><span class="bn-sub" id="bnMintedSub"></span></div>
+        <div class="bn-progress" role="img" id="bnMintBar"><span id="bnMintFill" style="width:0"></span></div>
+        <div class="bn-tiles bn-t3" style="margin-top:14px">
+          <div class="bn-tile"><div class="v" id="bnPerDay">–</div><div class="bn-sub">RIO minted a day</div></div>
+          <div class="bn-tile"><div class="v" id="bnPerYear">–</div><div class="bn-sub">a year at today's pace</div></div>
+          <div class="bn-tile"><div class="v" id="bnLeft">–</div><div class="bn-sub">still to be minted</div></div>
+        </div>
+        <div class="bn-integrity"><span class="idot" id="iDot"></span><span id="iText">Checking today's reading against the scheduled emission.</span></div>
+      </div>
+    </section>
+
+    <section class="bn-cta">
+      <h2>Stake with realiostats</h2>
+      <p>Delegating to our validator, Realiostats.com, keeps this site free and independent. Entirely optional, and it never changes the numbers.</p>
+      <div class="btns">
+        <a class="btn" href="https://app.realio.network/validator/realiovaloper1namfyxy3s4ty7f4vwyc7plmmcqxayam89qkwym" target="_blank" rel="noopener">Stake now</a>
+        <span class="wallet">realio1aewslaq…568g</span>
+      </div>
+    </section>
   </div>
-  <div class="integrity">
-    <span class="idot" id="iDot"></span>
-    <span id="iText">Checking today's reading against the scheduled emission.</span>
-  </div>
-  <a class="more" href="supply.html#emissions">Emissions and supply integrity &rarr;</a>
-</div></section>
+
+  <!-- large transfers -->
+  <section class="bn-card bn-c12" id="bnTransfers" hidden>
+    <div class="bn-top">
+      <div><h2>Large transfers</h2><div class="bn-sub" style="margin-top:2px">Every move of 100,000 RIO or more in the last 30 days, all seven chains.</div></div>
+      <a href="holders.html#transfers" id="bnLtAll">All transfers &rarr;</a>
+    </div>
+    <div class="bn-tiles bn-t4" id="bnLtTiles"></div>
+    <div class="bn-scroll" style="margin-top:16px">
+      <table class="bn-lt">
+        <thead><tr><th scope="col">Time (UTC)</th><th scope="col">Chain</th><th scope="col" style="text-align:right">Amount (RIO)</th><th scope="col">From</th><th scope="col">To</th><th scope="col">Type</th></tr></thead>
+        <tbody id="bnLtBody"></tbody>
+      </table>
+    </div>
+    <p class="bn-sub" style="margin:12px 0 0">A withdrawal leaves an exchange; a deposit goes into one. Moves between two wallets of the same exchange are listed but not counted as flows. Labels are a floor: an unnamed address can still be an exchange.</p>
+  </section>
+
+</div>
+</main>
 
 <footer><div class="wrap">
   <div class="support">
@@ -170,10 +245,10 @@
 
 <script src="core.js?v=24"></script>
 <script src="supply.js?v=28"></script>
-<script src="holders.js?v=26"></script>
 <script src="network.js?v=23"></script>
 <script src="news.js?v=4"></script>
 <script src="rwa.js?v=2"></script>
 <script src="sentiment.js?v=1"></script>
+<script src="home.js?v=1"></script>
 </body>
 </html>
