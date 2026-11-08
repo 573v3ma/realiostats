@@ -151,6 +151,24 @@
       if(days.length) days.forEach(d => arch.append(dayNode(d)));
       else arch.append(el("p", "nw-quiet", "The first stories are on their way."));
       document.getElementById("rwa").hidden = false;
+      if(location.hash === "#rwa") anchorToRwa();
+    }
+  }
+
+  // The section starts hidden, so a news.html#rwa link finds nothing to jump to
+  // when the page loads, and the official archive above it (news.js) can render
+  // later and push it down. Scroll to it once shown and keep it in place while
+  // content above loads, for a few seconds or until the reader scrolls.
+  function anchorToRwa(){
+    const el = document.getElementById("rwa");
+    let stop = false;
+    const go = () => { if(!stop) el.scrollIntoView({block: "start"}); };
+    ["wheel", "touchstart", "keydown", "mousedown"].forEach(e => addEventListener(e, () => { stop = true; }, {once: true, passive: true}));
+    requestAnimationFrame(go);
+    if(window.ResizeObserver){
+      const ro = new ResizeObserver(go);
+      ro.observe(document.body);
+      setTimeout(() => ro.disconnect(), 4000);
     }
   }
 
