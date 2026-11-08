@@ -63,10 +63,7 @@
 :root[data-theme="light"] .bn-chart .g0{stop-opacity:.22}
 .bn-chart .gap{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:4 5;vector-effect:non-scaling-stroke;opacity:.7}
 .bn-chart .last{fill:var(--green)}
-.bn-chart .pin line{stroke-dasharray:3 3}
-.bn-chart .pin text{font:700 11px Inter,sans-serif;fill:var(--bg)}
 .bn-pins{display:flex;gap:6px 20px;flex-wrap:wrap;margin-top:8px;font-size:12.5px;color:var(--muted)}
-.bn-pins b{margin-right:4px}
 .bn-pins .src{margin-left:auto}
 .bn-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;border-top:1px solid var(--line);margin-top:16px;padding-top:16px}
 .bn-metrics .v{font-family:"Space Grotesk";font-size:23px;font-weight:600;letter-spacing:-.02em;color:var(--ink);margin-top:2px}

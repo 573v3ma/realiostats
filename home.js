@@ -16,12 +16,6 @@
   const short = a => a && a.length > 16 ? a.slice(0, 6) + "…" + a.slice(-4) : (a || "");
   const signM = n => (n > 0 ? "+" : n < 0 ? "−" : "") + fmtM(M(Math.abs(n)));
 
-  // Curated pins for the price chart: events the site itself documents.
-  const PINS = [
-    {date: "2026-08-25", label: "25 Aug · the theft on Algorand, Stellar and native", href: "incident.html", color: "#f59e0b"},
-    {date: "2026-09-11", label: "11 Sep · MEXC's Algorand RIO reissued on Ethereum", href: "supply.html#excluded", color: "#8b9cf7"}
-  ];
-
   /* ---------- price chart (snapshot price, one point per daily reading) ---------- */
   let PRICE_PTS = [], RANGE = "90";
   function drawPrice(){
@@ -35,7 +29,7 @@
     // distorting text or dots.
     const W = Math.max(280, Math.round(box.clientWidth || 800));
     const H = Math.max(200, Math.round(box.clientHeight || 236));
-    const top = 14, bot = H - 24;
+    const top = 14, bot = H - 6;
     const lo0 = Math.min(...pts.map(p => p.v)), hi0 = Math.max(...pts.map(p => p.v));
     const pad = (hi0 - lo0) * 0.08 || hi0 * 0.05;
     const lo = lo0 - pad, hi = hi0 + pad;
@@ -59,15 +53,6 @@
       return `<line class="grid" x1="0" y1="${y.toFixed(1)}" x2="${W}" y2="${y.toFixed(1)}"/>`
         + (f !== 0.5 ? `<text class="axis" x="${W}" y="${(y - 5).toFixed(1)}" text-anchor="end">$${v.toFixed(3)}</text>` : "");
     }).join("");
-    const pins = PINS.map((p, i) => {
-      const t = Date.parse(p.date + "T12:00:00Z");
-      if(t < t0 || t > t1) return "";
-      const near = pts.reduce((a, b) => Math.abs(b.t - t) < Math.abs(a.t - t) ? b : a);
-      const x = X(t).toFixed(1), y = Y(near.v).toFixed(1);
-      return `<g class="pin"><line x1="${x}" y1="${y}" x2="${x}" y2="${bot + 6}" stroke="${p.color}"/>`
-        + `<circle cx="${x}" cy="${y}" r="5" fill="var(--alt)" stroke="${p.color}" stroke-width="2"/>`
-        + `<circle cx="${x}" cy="${bot + 12}" r="9" fill="${p.color}"/><text x="${x}" y="${bot + 16}" text-anchor="middle">${i + 1}</text></g>`;
-    }).join("");
     const last = pts[pts.length - 1];
     const first = pts[0];
     const ch = (last.v / first.v - 1) * 100;
@@ -79,21 +64,10 @@
       + grid
       + `<path class="area" d="${line} L${X(t1).toFixed(1)},${bot} L0,${bot} Z" fill="url(#bnPriceFill)"/>`
       + `<path class="line" d="${solid}"/>`
-      + (dashed ? `<path class="gap" d="${dashed}"><title>No daily snapshot for these days</title></path>` : "") + pins
+      + (dashed ? `<path class="gap" d="${dashed}"><title>No daily snapshot for these days</title></path>` : "")
       + `<circle class="last" cx="${X(last.t).toFixed(1)}" cy="${Y(last.v).toFixed(1)}" r="4.5"/></svg>`;
     badge.textContent = (ch >= 0 ? "▲ " : "▼ ") + pct1(ch).replace(/\.0%$/, "%") + " " + span;
     badge.className = "bn-badge" + (ch < 0 ? " is-down" : "");
-    // pin legend (keeps the price source span at the end)
-    const leg = $("bnPins"), src = $("priceSrc");
-    leg.textContent = "";
-    PINS.forEach((p, i) => {
-      const t = Date.parse(p.date + "T12:00:00Z");
-      if(t < t0 || t > t1) return;
-      const a = document.createElement("a"); a.href = p.href; a.style.color = "inherit";
-      const b = document.createElement("b"); b.textContent = String(i + 1); b.style.color = p.color;
-      a.append(b, p.label); leg.append(a);
-    });
-    leg.append(src);
   }
   // Redraw when the chart box changes size (window resize, the mood card or the
   // news loading and changing the row height). Only on a real size change.
