@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="site.css?v=37">
-<link rel="stylesheet" href="home.css?v=6">
+<link rel="stylesheet" href="home.css?v=7">
 </head>
 <body data-summary>
 <header><div class="wrap bn-wide nav">
@@ -67,15 +67,18 @@
         <div class="bn-k" id="bnPriceK">RIO price</div>
         <div class="bn-price"><span id="priceNum">–</span><span class="chg" id="priceChg"></span><span class="bn-badge" id="bnRangeChg"></span></div>
       </div>
-      <div class="bn-tabs" role="group" aria-label="Chart range">
-        <button type="button" data-r="7" aria-pressed="false">7D</button>
-        <button type="button" data-r="30" aria-pressed="false">30D</button>
-        <button type="button" data-r="90" aria-pressed="true">90D</button>
-
+      <div class="bn-ctrls">
+        <button type="button" class="bn-ind-btn" id="bnIndBtn" aria-pressed="true" title="Show the 50-day and 200-day averages and the 90-day average traded price">Averages</button>
+        <div class="bn-tabs" role="group" aria-label="Chart range">
+          <button type="button" data-r="7" aria-pressed="false">7D</button>
+          <button type="button" data-r="30" aria-pressed="false">30D</button>
+          <button type="button" data-r="90" aria-pressed="true">90D</button>
+          <button type="button" data-r="365" aria-pressed="false" hidden>1Y</button>
+        </div>
       </div>
     </div>
     <div class="bn-chart" id="bnChart"></div>
-    <div class="bn-pins" id="bnPins"><span class="src" id="priceSrc"></span></div>
+    <div class="bn-pins" id="bnPins"><span class="bn-ovleg" id="bnOvLeg" hidden></span><span class="src" id="priceSrc"></span></div>
     <div class="bn-metrics">
       <div><div class="bn-k">Circulating market cap</div><div class="v"><span id="mcapNum">–</span><span class="chg" id="mcapChg"></span></div><div class="bn-sub">circulating supply × price</div></div>
       <div><div class="bn-k">24h trading volume</div><div class="v"><span id="volNum">–</span><span class="chg" id="volChg"></span></div>
@@ -132,6 +135,27 @@
       </a>
     </div>
   </div>
+
+  <!-- price indicators, right under the chart -->
+  <section class="bn-card bn-c12 bn-ind" id="bnIndicators" hidden>
+    <div class="bn-top">
+      <div><h2>Where the price sits</h2><div class="bn-sub" style="margin-top:2px" id="bnIndAsOf">Daily closes from KuCoin RIO-USDT, plus today's live price.</div></div>
+      <a href="methodology.html#indicators">How to read these &rarr;</a>
+    </div>
+    <div class="bn-ind-g">
+      <div class="bn-k">Short swing <span class="bn-ind-h">days to two weeks</span></div>
+      <div class="bn-ind-tiles" id="bnIndShort"></div>
+    </div>
+    <div class="bn-ind-g">
+      <div class="bn-k">Long swing <span class="bn-ind-h">weeks to months</span></div>
+      <div class="bn-ind-tiles" id="bnIndLong"></div>
+    </div>
+    <div class="bn-ind-g" id="bnIndChainG" hidden>
+      <div class="bn-k">On-chain context <span class="bn-ind-h">what the chains show</span></div>
+      <div class="bn-ind-tiles" id="bnIndChain"></div>
+    </div>
+    <p class="bn-ind-note"><b>Readings, not buy or sell signals.</b> <span id="bnIndNote"></span> <a href="methodology.html#indicators">See the full backtest</a>. Not financial advice.</p>
+  </section>
 
   <!-- news, right under the main blocks -->
   <section class="bn-card bn-news bn-c6" id="overview-news" hidden>
@@ -254,6 +278,7 @@
 <script src="news.js?v=6"></script>
 <script src="rwa.js?v=6"></script>
 <script src="sentiment.js?v=1"></script>
-<script src="home.js?v=8"></script>
+<script src="indicators.js?v=1"></script>
+<script src="home.js?v=9"></script>
 </body>
 </html>

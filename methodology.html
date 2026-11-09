@@ -53,6 +53,28 @@
   </div>
 </div></section>
 
+<section id="indicators"><div class="wrap">
+  <h2>Price indicators, and how far to trust them</h2>
+  <p class="sec-lede">The home page shows where RIO's price sits against its own history: moving averages, RSI, Bollinger bands, the average price traders paid, and the one-year range. They describe the market. They are not buy or sell signals, and the backtest below shows why that distinction matters for RIO in particular.</p>
+  <div class="rules">
+    <div class="rule"><h3>Where the prices come from</h3><p>Every closed daily candle of RIO-USDT on KuCoin since 26 April 2024, refreshed each morning. KuCoin is one venue, but its daily closes match this site's own daily price readings within a few percent. CoinGecko's history is not used for these, because its RIO prices for February to late March 2026 are wrong. Today's live price is added as a provisional close until the day ends.</p></div>
+    <div class="rule"><h3>Short swing: days to two weeks</h3><p><b>RSI</b> (14 days) compares recent up days with down days: under 30 is called oversold, over 70 overbought. <b>Bollinger bands</b> sit two standard deviations either side of the 20-day average, so a close outside them is an unusually large move. The <b>typical daily swing</b> is the average high-to-low range over 14 days, a guide to how far price moves on a normal day.</p></div>
+    <div class="rule"><h3>Long swing: weeks to months</h3><p>The <b>50-day and 200-day averages</b> show the medium and long-term trend, and whether each is rising or falling. The <b>90-day traded price</b> (VWAP) is the dollars traded divided by the RIO traded on KuCoin: what buyers actually paid on average. <b>Trend</b> uses the same rule as a simple trading bot: price above its 30-day average and that average higher than a week ago is an uptrend, the mirror image a downtrend.</p></div>
+    <div class="rule"><h3>On-chain context</h3><p>Net exchange flow is RIO withdrawn from exchanges minus RIO deposited, counting only transfers of 100,000 RIO or more over 30 days. Unbonding RIO is stake on its way out of the validators: it becomes free to sell within seven days. Both come from the same data as the large-transfers list and the staking page.</p></div>
+  </div>
+
+  <h3 style="margin:40px 0 6px">The backtest: what happened after each reading</h3>
+  <p class="cap" style="margin:0 0 16px">Every day each rule was true, from <span id="btSpan">the first day with a 200-day average to yesterday</span>, and the price change over the next 7 and 30 days. The baseline row is every day, so a rule only says something if it differs clearly from that row. Recomputed in your browser from the same file the home page uses.</p>
+  <div class="ptbl-wrap">
+    <table class="ptbl">
+      <thead><tr><th scope="col">Reading</th><th scope="col">Days</th><th scope="col">Episodes</th><th scope="col">Median, 7 days</th><th scope="col">Median, 30 days</th><th scope="col">Up after 30 days</th></tr></thead>
+      <tbody id="btTable"><tr><td colspan="6" class="hb-pending">Loading the price history</td></tr></tbody>
+    </table>
+  </div>
+  <p class="lq-read" id="btRead"></p>
+  <p class="cap">An episode is a run of signal days with no gap of more than 30 days, so one long oversold stretch counts once. That is the honest sample size, and it is small: a handful of episodes in a market that fell most of the way over the period. A rule that failed in a falling market can work in a rising one, so read this as a record of what happened, not a forecast. Not financial advice.</p>
+</div></section>
+
 <section id="faq"><div class="wrap">
   <h2>Frequently asked questions</h2>
   <p class="sec-lede">The questions RIO holders ask most, answered plainly. Where we cannot be certain, we say so rather than guess.</p>
@@ -102,5 +124,6 @@
 </div></footer>
 
 <script src="core.js?v=26"></script>
+<script src="indicators.js?v=1"></script>
 </body>
 </html>

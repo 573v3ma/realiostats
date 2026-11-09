@@ -17,18 +17,26 @@
   const signM = n => (n > 0 ? "+" : n < 0 ? "−" : "") + fmtM(M(Math.abs(n)));
 
   /* ---------- price chart ----------
-     Plotted from CoinGecko's daily price history (no missing days), the same
-     source as the live price above it, for the last 90 days only. Its older
-     history is not trustworthy for RIO: from February to 27 March 2026 it shows
+     7D to 90D are plotted from CoinGecko's daily price history (no missing
+     days), the same source as the live price above it. Its older history is
+     not trustworthy for RIO: from February to 27 March 2026 it shows
      $0.20-0.25 on days the market traded at $0.03-0.10 (community quotes in
-     the Realio Telegram groups agree with the lower figures), so no range
-     reaches back that far. Each CoinGecko day that also has a site snapshot is
-     cross-checked against it, and a day more than GUARD off is replaced by the
-     snapshot price (normal disagreement is a few percent: daily close versus a
-     midday reading). Until CoinGecko answers, or if it cannot be reached, the
-     snapshots alone are drawn, gaps bridged with a dashed segment. */
+     the Realio Telegram groups agree with the lower figures), so CoinGecko is
+     never asked for more than 92 days. Each CoinGecko day that also has a site
+     snapshot is cross-checked against it, and a day more than GUARD off is
+     replaced by the snapshot price (normal disagreement is a few percent:
+     daily close versus a midday reading).
+     The 1Y range, the averages drawn over the line and the "Where the price
+     sits" card come from price-history.json instead: KuCoin's closed daily
+     candles since April 2024, which match the snapshots (see indicators.js).
+     1Y joins KuCoin's closes onto the front of the CoinGecko series, so its
+     right-hand end is the same live line as the shorter ranges.
+     Until CoinGecko answers, or if it cannot be reached, the KuCoin closes and
+     the snapshots are drawn, gaps bridged with a dashed segment. */
   let PRICE_PTS = [], RANGE = "90", PRICE_SRC = "snapshots";
-  let CG_RAW = null, SNAP_DAY = null;
+  let CG_RAW = null, SNAP_DAY = null, HIST = null;
+  let OV_ON = true;
+  try { OV_ON = localStorage.getItem("rs-ind-ov") !== "0"; } catch(e){}
   const GUARD = 0.35;
   const dayKey = t => new Date(t).toISOString().slice(0, 10);
   function rebuildPrices(){
@@ -39,6 +47,7 @@
     });
     PRICE_SRC = "coingecko";
     drawPrice();
+    renderIndicators();
   }
   const toPt = (t, v) => { const d = new Date(t); return {t, v, d: d.getUTCDate() + " " + MON[d.getUTCMonth()] + (d.getUTCFullYear() !== new Date().getUTCFullYear() ? " " + d.getUTCFullYear() : "")}; };
   // The history is kept in this browser for FRESH_H hours, so repeat visits do
@@ -70,26 +79,59 @@
       })
       .catch(() => { if(cached && age < STALE_D * 864e5) usePrices(cached.prices); });
   }
+  // The newest price we hold, passed to the indicators as today's provisional close.
+  const livePt = () => PRICE_PTS.length ? PRICE_PTS[PRICE_PTS.length - 1] : null;
+  // KuCoin closes in front of the newer series: before CoinGecko's first day,
+  // or (snapshot fallback) before the first snapshot after KuCoin's last close.
+  function longPts(){
+    if(!HIST) return PRICE_PTS;
+    const kc = HIST.t.map((t, i) => toPt(t, HIST.c[i]));
+    if(PRICE_SRC === "coingecko" && PRICE_PTS.length){
+      const first = PRICE_PTS[0].t - 12 * 36e5;
+      return kc.filter(p => p.t < first).concat(PRICE_PTS);
+    }
+    const lastK = kc[kc.length - 1].t + 12 * 36e5;
+    return kc.concat(PRICE_PTS.filter(p => p.t > lastK));
+  }
+  const OVERLAYS = [
+    {key: "sma50", cls: "ov50", name: "50-day average"},
+    {key: "sma200", cls: "ov200", name: "200-day average"},
+    {key: "vwap90", cls: "ovvw", name: "90-day average traded price"}
+  ];
   function drawPrice(){
     const box = $("bnChart");
-    const now = PRICE_PTS.length ? PRICE_PTS[PRICE_PTS.length - 1].t : Date.now();
+    const src = HIST && (+RANGE > 92 || PRICE_SRC !== "coingecko") ? longPts() : PRICE_PTS;
+    const now = src.length ? src[src.length - 1].t : Date.now();
     const from = now - (+RANGE) * 864e5;
-    const pts = PRICE_PTS.filter(p => p.t >= from);
+    const pts = src.filter(p => p.t >= from);
     const badge = $("bnRangeChg");
     if(pts.length < 2){ box.innerHTML = ""; badge.textContent = ""; return; }
+    const t0 = pts[0].t, t1 = pts[pts.length - 1].t;
+    // the averages, clipped to the visible window
+    const ovs = [];
+    if(OV_ON && HIST){
+      const S = IND.series(HIST, livePt());
+      OVERLAYS.forEach(o => {
+        const p = [];
+        S.t.forEach((t, i) => { const v = S[o.key][i]; if(v != null && t >= t0 - 864e5 && t <= t1 + 36e5) p.push({t: Math.max(t0, Math.min(t1, t)), v}); });
+        if(p.length > 1) ovs.push(Object.assign({pts: p, last: p[p.length - 1].v}, o));
+      });
+    }
     // Drawn at the box's real pixel size: the card stretches to the height of the
     // column beside it and the chart takes up whatever is left, without
     // distorting text or dots.
     const W = Math.max(280, Math.round(box.clientWidth || 800));
     const H = Math.max(200, Math.round(box.clientHeight || 236));
     const top = 14, bot = H - 6;
-    const lo0 = Math.min(...pts.map(p => p.v)), hi0 = Math.max(...pts.map(p => p.v));
+    // the scale includes the averages, so a line far above the price stays on the chart
+    const all = pts.map(p => p.v).concat(...ovs.map(o => o.pts.map(p => p.v)));
+    const lo0 = Math.min(...all), hi0 = Math.max(...all);
     const pad = (hi0 - lo0) * 0.08 || hi0 * 0.05;
     const lo = lo0 - pad, hi = hi0 + pad;
-    const t0 = pts[0].t, t1 = pts[pts.length - 1].t;
     const X = t => (t - t0) / ((t1 - t0) || 1) * W;
     const Y = v => bot - (v - lo) / ((hi - lo) || 1) * (bot - top);
-    const line = pts.map((p, i) => (i ? "L" : "M") + X(p.t).toFixed(1) + "," + Y(p.v).toFixed(1)).join(" ");
+    const path = a => a.map((p, i) => (i ? "L" : "M") + X(p.t).toFixed(1) + "," + Y(p.v).toFixed(1)).join(" ");
+    const line = path(pts);
     // Days with no snapshot are not invented: the solid line breaks over any gap
     // longer than GAP_DAYS and a faint dashed segment bridges it.
     const GAP = 3 * 864e5;
@@ -101,28 +143,36 @@
         solid += " M" + xy;
       } else solid += (i ? " L" : "M") + xy;
     });
+    const dec = hi < 0.1 ? 3 : 2;
     const grid = [0.25, 0.5, 0.75].map(f => {
       const y = top + (bot - top) * f, v = hi - (hi - lo) * f;
       return `<line class="grid" x1="0" y1="${y.toFixed(1)}" x2="${W}" y2="${y.toFixed(1)}"/>`
-        + (f !== 0.5 ? `<text class="axis" x="${W}" y="${(y - 5).toFixed(1)}" text-anchor="end">$${v.toFixed(3)}</text>` : "");
+        + (f !== 0.5 ? `<text class="axis" x="${W}" y="${(y - 5).toFixed(1)}" text-anchor="end">$${v.toFixed(dec)}</text>` : "");
     }).join("");
     const last = pts[pts.length - 1];
     const first = pts[0];
     const ch = (last.v / first.v - 1) * 100;
     // name the real span: if the data does not reach back to the range start
     // (snapshot fallback), say "since <date>" rather than claim the full range
-    const span = first.t - from > 3 * 864e5 ? "since " + first.d : "in " + RANGE + " days";
-    box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="RIO price ${esc(span)}, from $${first.v.toFixed(4)} to $${last.v.toFixed(4)}">`
+    const span = first.t - from > 3 * 864e5 ? "since " + first.d : RANGE === "365" ? "in a year" : "in " + RANGE + " days";
+    box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="RIO price ${esc(span)}, from $${first.v.toFixed(4)} to $${last.v.toFixed(4)}${ovs.length ? ", with " + ovs.map(o => o.name).join(", ") : ""}">`
       // area under the line: green fading to nothing at the bottom (stop colours
       // come from CSS so the gradient follows the light and dark themes)
       + `<defs><linearGradient id="bnPriceFill" x1="0" y1="0" x2="0" y2="1"><stop class="g0" offset="0"/><stop class="g1" offset="1"/></linearGradient></defs>`
       + grid
       + `<path class="area" d="${line} L${X(t1).toFixed(1)},${bot} L0,${bot} Z" fill="url(#bnPriceFill)"/>`
+      + ovs.map(o => `<path class="ov ${o.cls}" d="${path(o.pts)}"><title>${esc(o.name)}</title></path>`).join("")
       + `<path class="line" d="${solid}"/>`
       + (dashed ? `<path class="gap" d="${dashed}"><title>No daily snapshot for these days</title></path>` : "")
       + `<circle class="last" cx="${X(last.t).toFixed(1)}" cy="${Y(last.v).toFixed(1)}" r="4.5"/></svg>`;
     badge.textContent = (ch >= 0 ? "▲ " : "▼ ") + pct1(ch).replace(/\.0%$/, "%") + " " + span;
     badge.className = "bn-badge" + (ch < 0 ? " is-down" : "");
+    const leg = $("bnOvLeg");
+    // say where the line switches source when KuCoin closes are part of it
+    const joined = src !== PRICE_PTS && PRICE_SRC === "coingecko" && PRICE_PTS.length && PRICE_PTS[0].t > t0 + 864e5;
+    leg.innerHTML = ovs.map(o => `<span><i class="${o.cls}"></i>${esc(o.name)} <b>$${o.last.toFixed(4)}</b></span>`).join("")
+      + (joined ? `<span>KuCoin daily closes before ${esc(PRICE_PTS[0].d)}</span>` : "");
+    leg.hidden = !ovs.length && !joined;
   }
   // Redraw when the chart box changes size (window resize, the mood card or the
   // news loading and changing the row height). Only on a real size change.
@@ -132,7 +182,7 @@
       const w = Math.round(e.contentRect.width), h = Math.round(e.contentRect.height);
       if(Math.abs(w - lastW) < 2 && Math.abs(h - lastH) < 2) return;
       lastW = w; lastH = h;
-      if(!queued){ queued = true; setTimeout(() => { queued = false; if(PRICE_PTS.length) drawPrice(); }, 60); }
+      if(!queued){ queued = true; setTimeout(() => { queued = false; if(PRICE_PTS.length || HIST) drawPrice(); }, 60); }
     }).observe($("bnChart"));
   }
   document.querySelectorAll(".bn-tabs button").forEach(b => b.addEventListener("click", () => {
@@ -140,8 +190,98 @@
     document.querySelectorAll(".bn-tabs button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
     drawPrice();
   }));
+  $("bnIndBtn").setAttribute("aria-pressed", String(OV_ON));
+  $("bnIndBtn").addEventListener("click", () => {
+    OV_ON = !OV_ON;
+    $("bnIndBtn").setAttribute("aria-pressed", String(OV_ON));
+    try { localStorage.setItem("rs-ind-ov", OV_ON ? "1" : "0"); } catch(e){}
+    drawPrice();
+  });
 
   loadPriceHistory();
+
+  /* ---------- where the price sits ----------
+     Descriptive readings from indicators.js. Labels say where the price is,
+     never "buy" or "sell": on RIO's own history the classic oversold signals
+     were followed by further falls more often than rises (the methodology
+     page re-runs that backtest daily). The on-chain tiles are filled from the
+     network and large-transfer data further down this file (CTX). */
+  const CTX = {};
+  let VOL = null, BT_NOTE = null;
+  getJ("./volume-history.json").then(v => { VOL = v; renderIndicators(); });
+  const usd4 = v => "$" + v.toFixed(4);
+  const sgnPct = x => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(100 * x).toFixed(0) + "%";
+  const fmtD = d => { const x = new Date(d + "T00:00:00Z"); return x.getUTCDate() + " " + MON[x.getUTCMonth()] + (x.getUTCFullYear() !== new Date().getUTCFullYear() ? " " + x.getUTCFullYear() : ""); };
+  const itile = (label, value, tag, tagCls, sub) =>
+    `<div class="bn-tile"><div class="bn-ind-l">${label}</div><div class="v">${value}</div>`
+    + (tag ? `<div class="bn-ind-tag${tagCls ? " " + tagCls : ""}">${tag}</div>` : "")
+    + `<div class="bn-sub">${sub}</div></div>`;
+  function renderIndicators(){
+    if(!HIST) return;
+    const r = IND.readings(HIST, livePt());
+    const ext = t => /Oversold|Overbought|Below|Above/.test(t) ? "is-stretch" : "";
+    // volume: all exchanges (CoinGecko, volume-history.json), latest 24h against the 30-day median
+    let volTile = "";
+    if(VOL && Array.isArray(VOL.daily) && VOL.latest_usd){
+      const med = IND.median(VOL.daily.map(d => d.volume_usd).filter(x => x > 0));
+      if(med){
+        const x = VOL.latest_usd / med;
+        volTile = itile("Volume vs its 30-day median", x.toFixed(1) + "x",
+          x > 1.5 ? "Busier than usual" : x < 0.67 ? "Quieter than usual" : "About normal", "",
+          "$" + Math.round(VOL.latest_usd / 1000) + "K traded in 24h, all exchanges");
+      }
+    }
+    $("bnIndShort").innerHTML =
+        itile("RSI, 14 days", r.rsi.toFixed(1), r.rsiTag, ext(r.rsiTag), "Under 30 is oversold, over 70 overbought")
+      + itile("Lower Bollinger band", usd4(r.bbLo), r.bbTag, ext(r.bbTag), "Upper band " + usd4(r.bbHi) + ", 20 days, 2 deviations")
+      + itile("vs the 20-day average", sgnPct(r.vs20), "", "", "Average " + usd4(r.sma20))
+      + itile("Typical daily swing", "±" + (100 * r.atr).toFixed(0) + "%", "", "", "About " + usd4(r.atr * r.price) + " a day, 14-day average range")
+      + volTile;
+    $("bnIndLong").innerHTML =
+        itile("vs the 50-day average", sgnPct(r.vs50), r.sma50Rising ? "Average rising" : "Average falling", r.sma50Rising ? "is-up" : "is-down", "Average " + usd4(r.sma50))
+      + itile("vs the 200-day average", sgnPct(r.vs200), r.sma200Rising ? "Average rising" : "Average falling", r.sma200Rising ? "is-up" : "is-down", "Average " + usd4(r.sma200))
+      + itile("vs the 90-day traded price", sgnPct(r.vsVwap90), "", "", "Traders paid " + usd4(r.vwap90) + " on average (KuCoin VWAP)")
+      + itile("Above the 1-year low", sgnPct(r.vsYrLo), Math.round(100 * r.yrPos) + "% of the way up the range", "",
+          "Low " + usd4(r.yrLo) + " on " + fmtD(r.yrLoDate) + ", high " + usd4(r.yrHi) + " on " + fmtD(r.yrHiDate))
+      + itile("Trend", r.trend === "up" ? "Uptrend" : r.trend === "down" ? "Downtrend" : "Sideways", "", "",
+          "Price against its 30-day average, and that average against a week ago");
+    // on-chain context
+    const chain = [];
+    if(CTX.flow){
+      const n = CTX.flow.net;
+      chain.push(itile("Net exchange flow, 30 days", fmtM(M(Math.abs(n))) + (n >= 0 ? " out" : " in"),
+        n >= 0 ? "More withdrawn than deposited" : "More deposited than withdrawn", "",
+        "Transfers of 100k+ RIO: " + fmtM(M(CTX.flow.wd)) + " withdrawn, " + fmtM(M(CTX.flow.dep)) + " deposited"));
+    }
+    if(CTX.unb != null){
+      const med = VOL && Array.isArray(VOL.daily) ? IND.median(VOL.daily.map(d => d.volume_usd).filter(x => x > 0)) : null;
+      const days = med ? CTX.unb * r.price / med : null;
+      const share = days == null ? "" : days >= 1 ? ", about " + days.toFixed(1) + " days of global trading volume"
+        : ", " + (days < 0.01 ? "under 1%" : "about " + Math.round(100 * days) + "%") + " of one day's global trading volume";
+      chain.push(itile("RIO unbonding now", CTX.unb >= 1e5 ? fmtM(M(CTX.unb)) : fmtInt(CTX.unb),
+        "", "", (CTX.unb >= 1e5 ? "" : "RIO, ") + "released within 7 days" + share));
+    }
+    $("bnIndChain").innerHTML = chain.join("");
+    $("bnIndChainG").hidden = !chain.length;
+    $("bnIndAsOf").textContent = "Daily closes from KuCoin RIO-USDT to " + fmtD(r.asOf) + (r.provisional ? ", plus today's live price as a provisional close." : ".");
+    // the honest caveat, computed from the same backtest the methodology page shows
+    if(BT_NOTE == null){
+      const bt = IND.backtest(HIST), base = bt[0], os = bt.find(x => x.key === "rsi30");
+      BT_NOTE = os && os.med30 != null && base.med30 != null
+        ? "In RIO's daily history since " + fmtD(IND.BT_FROM(HIST)) + ", an RSI under 30 was followed by a median " + sgnPct(os.med30)
+          + " over the next 30 days, against " + sgnPct(base.med30) + " on an average day, so oversold has not reliably meant a bounce."
+        : "";
+    }
+    $("bnIndNote").textContent = BT_NOTE;
+    $("bnIndicators").hidden = false;
+  }
+  IND.load().then(H => {
+    if(!H) return;
+    HIST = H;
+    document.querySelector('.bn-tabs button[data-r="365"]').hidden = false;
+    drawPrice();
+    renderIndicators();
+  });
 
   /* ---------- bars ---------- */
   function bar(el, legendEl, parts, labelMin){
@@ -163,6 +303,7 @@
     if(PRICE_SRC === "snapshots"){
       PRICE_PTS = snaps.map(r => toPt(Date.parse(r.ts), r.price_usd));
       drawPrice();
+      renderIndicators();
     } else rebuildPrices();   // CoinGecko arrived first: apply the cross-check now
 
     $("bnCircTitle").textContent = fmtM(M(latest.tradable_total));
@@ -221,7 +362,7 @@
       const el = $("bnNet30"); el.textContent = signM(net); el.className = "v " + (net > 0 ? "bn-up" : net < 0 ? "bn-down" : "");
     }
     const unb = st.unbonding != null ? st.unbonding : st.not_bonded;
-    if(unb != null) $("bnUnbond").textContent = fmtInt(unb) + " RIO unbonding";
+    if(unb != null){ $("bnUnbond").textContent = fmtInt(unb) + " RIO unbonding"; CTX.unb = unb; renderIndicators(); }
 
     // staking pool by asset
     const COL = {RIO: ["#34d399", "#04130d"], DSTRX: ["#f472b6", "#1f0614"], RST: ["#8b9cf7", "#0b1015"]};
@@ -350,6 +491,7 @@
     const sum = a => a.reduce((s, t) => s + t.amount, 0);
     const dep = sum(T.filter(t => t.kind === "deposit")), wd = sum(T.filter(t => t.kind === "withdrawal"));
     const net = wd - dep;
+    CTX.flow = {net, wd, dep}; renderIndicators();
     const big = T.filter(t => !["exchange", "deposit", "withdrawal"].includes(t.kind)).sort((a, b) => b.amount - a.amount)[0];
     const tile = (v, s, hi) => `<div class="bn-tile"${hi ? ' style="background:var(--mint-soft);border-color:rgba(52,211,153,.4)"' : ""}><div class="v${hi ? " bn-up" : ""}">${v}</div><div class="bn-sub">${s}</div></div>`;
     $("bnLtTiles").innerHTML =
