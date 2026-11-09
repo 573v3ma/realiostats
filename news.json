@@ -1,6 +1,43 @@
 {
- "updated": "2026-11-08T15:52:42Z",
+ "updated": "2026-11-09T05:29:22Z",
  "days": [
+  {
+   "date": "2026-11-09",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Derek says any asset can be tokenized on Freehold, watches included",
+     "text": "Asked whether only some asset types qualify, Derek said everything can be tokenized. On X he told watch collectors they can also tokenize their watches on Freehold.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "ts": "2026-11-08T16:30:00Z"
+      },
+      {
+       "kind": "x",
+       "handle": "derekboirun",
+       "id": "2119546610204262441",
+       "ts": "2026-11-08T21:44:25Z"
+      }
+     ]
+    },
+    {
+     "project": "Realio",
+     "title": "Algorand and Stellar holders will be handled after the v1 app wallets",
+     "text": "Derek says the team will first resolve wallets from the v1 app and then turn to RIO held on Algorand and Stellar. No timeline was given.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "ts": "2026-11-08T22:03:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "algorand-stellar-holders"
+    }
+   ]
+  },
   {
    "date": "2026-11-08",
    "items": [
@@ -562,26 +599,6 @@
   {
    "date": "2026-10-11",
    "items": []
-  },
-  {
-   "date": "2026-10-10",
-   "items": [
-    {
-     "project": "Freehold",
-     "title": "Freehold explains how the Freehold Collection works and opens early access requests",
-     "text": "Freehold outlined the Freehold Collection model: the team sources each car, every vehicle is structured as its own fractionalized ownership opportunity, and holders own a share accessible through Freehold. Early access can be requested.",
-     "sources": [
-      {
-       "kind": "x",
-       "handle": "freehold_wallet",
-       "id": "2108568432924889529",
-       "ts": "2026-10-09T14:41:04Z"
-      }
-     ],
-     "key": true,
-     "topic": "freehold-collection"
-    }
-   ]
   }
  ]
 }
