@@ -149,6 +149,27 @@ function computeFloat(latest, h){
   if(moved[id]) location.replace(moved[id] + "#" + id);
 })();
 
+/* Deep links into a section (holders.html#transfers) land early: the browser
+   jumps before the tables and charts above the target have loaded, and as they
+   fill in the target drifts out of view. Re-align with the target each time the
+   page changes height, for the first few seconds, and stop as soon as the
+   visitor scrolls, clicks or types. */
+(function(){
+  var id = location.hash.slice(1);
+  try{ id = decodeURIComponent(id); }catch(e){}
+  if(!id || !window.ResizeObserver || !document.getElementById(id)) return;
+  var evs = ["wheel","touchstart","keydown","mousedown"], until = Date.now() + 8000, ro;
+  function align(){ var el = document.getElementById(id); if(el) el.scrollIntoView({block:"start"}); }
+  function quit(){
+    if(ro) ro.disconnect();
+    evs.forEach(function(e){ removeEventListener(e, quit, true); });
+  }
+  evs.forEach(function(e){ addEventListener(e, quit, {capture:true, passive:true}); });
+  ro = new ResizeObserver(function(){ if(Date.now() > until) quit(); else align(); });
+  ro.observe(document.body);
+  setTimeout(quit, 8000);
+})();
+
 /* Theme. Dark is the default; the nav button switches to light and the choice
    is remembered per browser. The attribute itself is set by a one-line script
    in each page's <head>, before first paint, so there is no flash.
