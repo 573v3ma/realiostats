@@ -1,5 +1,5 @@
 /* realiostats price indicators (Nov 2026). Shared by the home page (chart
-   overlays and the "Where the price sits" card) and the methodology page (the
+   overlays and the "Trading indicators" card) and the methodology page (the
    backtest table), so both always use the same maths on the same data.
 
    Data: price-history.json, every closed daily KuCoin RIO-USDT candle since

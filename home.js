@@ -200,7 +200,7 @@
 
   loadPriceHistory();
 
-  /* ---------- where the price sits ----------
+  /* ---------- trading indicators card ----------
      Descriptive readings from indicators.js. Labels say where the price is,
      never "buy" or "sell": on RIO's own history the classic oversold signals
      were followed by further falls more often than rises (the methodology

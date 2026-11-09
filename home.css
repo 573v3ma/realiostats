@@ -84,7 +84,7 @@
 .bn-ovleg i{display:inline-block;width:14px;height:0;border-top:2px solid currentColor;vertical-align:middle;margin-right:6px}
 .bn-ovleg .ovvw i{border-top-style:dashed}
 
-/* where the price sits */
+/* trading indicators card */
 .bn-ind-g{margin-top:18px}
 .bn-ind-h{text-transform:none;letter-spacing:0;font-weight:500;color:var(--faint);margin-left:6px}
 .bn-ind-tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:8px}
