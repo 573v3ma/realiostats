@@ -1,6 +1,23 @@
 {
- "updated": "2026-11-08T16:27:12Z",
+ "updated": "2026-11-09T05:29:38Z",
  "days": [
+  {
+   "date": "2026-11-09",
+   "items": [
+    {
+     "tag": "MARKET",
+     "title": "ARK files for a tokenized market infrastructure ETF",
+     "why": "ARK's proposed fund would back listed tokenization platforms, the category Freehold competes in, but it would not hold network tokens like RIO directly.",
+     "source": {
+      "outlet": "TokenPost",
+      "url": "https://www.tokenpost.com/news/investing/51945",
+      "published": "2026-11-09T00:32:55Z"
+     },
+     "score": 2,
+     "topic": "ark-tokenization-etf"
+    }
+   ]
+  },
   {
    "date": "2026-11-08",
    "items": [
