@@ -155,6 +155,12 @@
           .map(t => Object.assign({}, t, {live: true}));
         d.transfers = d.transfers.concat(fresh).sort((a, b) => b.ts - a.ts);
         LIVE = {fresh: fresh.length, at: new Date(chk).toISOString().slice(11, 16)};
+        const badge = document.getElementById("ltLive");
+        if(badge){
+          document.getElementById("ltLiveTxt").textContent = `Live · checked ${LIVE.at} UTC`;
+          badge.title = "Checked every minute on all seven chains. Bridge legs are paired in the daily update.";
+          badge.hidden = false;
+        }
       }
       DATA = d; render(); renderNotes();
     }).catch(() => {

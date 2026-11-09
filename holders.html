@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="site.css?v=35">
+<link rel="stylesheet" href="site.css?v=36">
 </head>
 <body>
 <header><div class="wrap nav">
@@ -65,7 +65,7 @@
 </div></section>
 
 <section id="transfers"><div class="wrap">
-  <h2>Large transfers</h2>
+  <div class="lt-head"><h2>Large transfers</h2><span class="lt-live" id="ltLive" hidden><span class="lt-dot"></span><span id="ltLiveTxt">Live</span></span></div>
   <p class="sec-lede">Every transfer of 100,000 RIO or more in the last 30 days, on all seven chains. Exchange wallets, bridges and Realio module accounts are named where we know the address; anything else is shown as an address you can open in the explorer. A bridge move shows up twice, once as it leaves one chain and once as it arrives on the other, and the two legs are paired where the amounts and times match.</p>
   <div class="hb-metricrow" id="ltChainRow"></div>
   <div class="hb-metricrow" id="ltTypeRow"></div>
@@ -99,6 +99,6 @@
 
 <script src="core.js?v=26"></script>
 <script src="holders.js?v=26"></script>
-<script src="transfers.js?v=2"></script>
+<script src="transfers.js?v=3"></script>
 </body>
 </html>
