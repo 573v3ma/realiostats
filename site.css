@@ -3,15 +3,15 @@
      Chart colours read the --chart-* tokens at draw time (see core.js). */
   :root{
     color-scheme:dark;
-    --bg:#0b1015; --alt:#10171e; --ink:#e8eef2; --body:#bac6cf; --muted:#8d9aa6;
-    --faint:#697682; --line:#1d2730; --line-strong:#2c3844;
+    --bg:#0b1015; --alt:#17212b; --ink:#e8eef2; --body:#bac6cf; --muted:#8d9aa6;
+    --faint:#697682; --line:#28343f; --line-strong:#384653;
     --green:#10b981; --green-ink:#34d399; --mint:#34d399; --mint-soft:rgba(16,185,129,.13); --slate:#94a3b8;
     --card:#0a0f14; --card-ink:#f0f4f7; --card-muted:#9daebc;
     --hero-grad:linear-gradient(155deg,#131d26 0%,#0e161d 52%,#111b24 100%);
     --header-bg:rgba(11,16,21,.84); --assume-end:#0d141a;
     --danger-bg:rgba(220,38,38,.10); --danger-line:rgba(248,113,113,.45); --danger-ink:#fca5a5; --danger-q:rgba(0,0,0,.28); --danger-qink:#fecaca;
     --burn:#f59e0b;
-    --chart-ink:#e8eef2; --chart-grid:#1c252e; --chart-tick:#8a97a3; --chart-guide:rgba(232,238,242,.28); --chart-wm:rgba(232,238,242,.09);
+    --chart-ink:#e8eef2; --chart-grid:#26313c; --chart-tick:#8a97a3; --chart-guide:rgba(232,238,242,.28); --chart-wm:rgba(232,238,242,.09);
     --radius:22px; --radius-sm:16px;
     --shadow-sm:0 1px 2px rgba(0,0,0,.35),0 4px 14px -6px rgba(0,0,0,.45);
     --shadow-md:0 2px 6px rgba(0,0,0,.35),0 16px 36px -16px rgba(0,0,0,.6);
