@@ -210,3 +210,16 @@
 @media (prefers-reduced-motion:reduce){
   .bn-dot,.bn-bar span,.bn-progress span{animation:none}
 }
+/* textbook Buy / Sell / Neutral reading per tile, and the tally per group */
+.bn-ind .bn-ind-l{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.bn-sig{flex:none;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:1px 8px;line-height:1.6;background:var(--line);color:var(--body)}
+.bn-sig.is-buy{background:var(--mint-soft);color:var(--green-ink)}
+.bn-sig.is-sell{background:rgba(251,113,133,.15);color:#fb7185}
+:root[data-theme="light"] .bn-sig.is-sell{background:#ffe4e6;color:#be123c}
+.bn-ind-sum{float:right;text-transform:none;letter-spacing:0;font-weight:500;color:var(--faint)}
+.bn-ind-sum b{font-weight:600}
+.bn-ind-sum .is-buy{color:var(--green-ink)}
+.bn-ind-sum .is-sell{color:#fb7185}
+.bn-ind-sum .is-neutral{color:var(--muted)}
+:root[data-theme="light"] .bn-ind-sum .is-sell{color:#be123c}
+@media(max-width:640px){.bn-ind-sum{float:none;display:block;margin-top:2px}}

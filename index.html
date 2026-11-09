@@ -16,7 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="site.css?v=38">
-<link rel="stylesheet" href="home.css?v=8">
+<link rel="stylesheet" href="home.css?v=9">
 </head>
 <body data-summary>
 <header><div class="wrap bn-wide nav">
@@ -143,18 +143,18 @@
       <a href="methodology.html#indicators">How to read these &rarr;</a>
     </div>
     <div class="bn-ind-g">
-      <div class="bn-k">Short swing <span class="bn-ind-h">days to two weeks</span></div>
+      <div class="bn-k bn-ind-k">Short swing <span class="bn-ind-h">days to two weeks</span><span class="bn-ind-sum" id="bnIndShortSum"></span></div>
       <div class="bn-ind-tiles" id="bnIndShort"></div>
     </div>
     <div class="bn-ind-g">
-      <div class="bn-k">Long swing <span class="bn-ind-h">weeks to months</span></div>
+      <div class="bn-k bn-ind-k">Long swing <span class="bn-ind-h">weeks to months</span><span class="bn-ind-sum" id="bnIndLongSum"></span></div>
       <div class="bn-ind-tiles" id="bnIndLong"></div>
     </div>
     <div class="bn-ind-g" id="bnIndChainG" hidden>
-      <div class="bn-k">On-chain context <span class="bn-ind-h">what the chains show</span></div>
+      <div class="bn-k bn-ind-k">On-chain context <span class="bn-ind-h">what the chains show</span><span class="bn-ind-sum" id="bnIndChainSum"></span></div>
       <div class="bn-ind-tiles" id="bnIndChain"></div>
     </div>
-    <p class="bn-ind-note"><b>Readings, not buy or sell signals.</b> <span id="bnIndNote"></span> <a href="methodology.html#indicators">See the full backtest</a>. Not financial advice.</p>
+    <p class="bn-ind-note"><b>Buy and Sell show the general textbook reading of each level, the same rules any charting tool uses. They are not tuned to RIO and are not advice.</b> <span id="bnIndNote"></span> <a href="methodology.html#indicators">See the full backtest</a>. Not financial advice.</p>
   </section>
 
   <!-- news, right under the main blocks -->
@@ -279,6 +279,6 @@
 <script src="rwa.js?v=6"></script>
 <script src="sentiment.js?v=1"></script>
 <script src="indicators.js?v=1"></script>
-<script src="home.js?v=10"></script>
+<script src="home.js?v=11"></script>
 </body>
 </html>

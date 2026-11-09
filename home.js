@@ -201,25 +201,43 @@
   loadPriceHistory();
 
   /* ---------- trading indicators card ----------
-     Descriptive readings from indicators.js. Labels say where the price is,
-     never "buy" or "sell": on RIO's own history the classic oversold signals
-     were followed by further falls more often than rises (the methodology
-     page re-runs that backtest daily). The on-chain tiles are filled from the
-     network and large-transfer data further down this file (CTX). */
+     Readings from indicators.js. Each directional tile carries the general
+     textbook reading of its level (Buy, Sell or Neutral, e.g. RSI under 30 =
+     Buy); volatility and volume tiles carry none. The rules are textbook, not
+     tuned to RIO, and the note under the card says what followed on RIO's own
+     history (computed from the methodology page's backtest). The on-chain
+     tiles are filled from the network and large-transfer data further down
+     this file (CTX). */
   const CTX = {};
   let VOL = null, BT_NOTE = null;
   getJ("./volume-history.json").then(v => { VOL = v; renderIndicators(); });
   const usd4 = v => "$" + v.toFixed(4);
   const sgnPct = x => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(100 * x).toFixed(0) + "%";
   const fmtD = d => { const x = new Date(d + "T00:00:00Z"); return x.getUTCDate() + " " + MON[x.getUTCMonth()] + (x.getUTCFullYear() !== new Date().getUTCFullYear() ? " " + x.getUTCFullYear() : ""); };
-  const itile = (label, value, tag, tagCls, sub) =>
-    `<div class="bn-tile"><div class="bn-ind-l">${label}</div><div class="v">${value}</div>`
+  // sig: "buy" | "sell" | "neutral" | "" (no directional reading)
+  const SIG = {buy: "Buy", sell: "Sell", neutral: "Neutral"};
+  const itile = (label, value, tag, tagCls, sub, sig) =>
+    `<div class="bn-tile"${sig ? ` data-sig="${sig}"` : ""}><div class="bn-ind-l"><span>${label}</span>`
+    + (sig ? `<span class="bn-sig is-${sig}" title="General textbook reading of this level, not advice">${SIG[sig]}</span>` : "")
+    + `</div><div class="v">${value}</div>`
     + (tag ? `<div class="bn-ind-tag${tagCls ? " " + tagCls : ""}">${tag}</div>` : "")
     + `<div class="bn-sub">${sub}</div></div>`;
+  // textbook rules: above / below a level, and an average agreeing with its slope
+  const side = (x, band) => x == null ? "" : x > (band || 0) ? "buy" : x < -(band || 0) ? "sell" : "neutral";
+  const withSlope = (vs, rising) => vs == null ? "" : vs > 0 && rising ? "buy" : vs < 0 && !rising ? "sell" : "neutral";
+  // "2 buy · 1 sell · 1 neutral" for a group heading
+  const tally = id => {
+    const n = {buy: 0, sell: 0, neutral: 0};
+    $(id).querySelectorAll("[data-sig]").forEach(t => n[t.dataset.sig]++);
+    return Object.keys(n).filter(k => n[k]).map(k => `<b class="is-${k}">${n[k]} ${k}</b>`).join(" · ");
+  };
   function renderIndicators(){
     if(!HIST) return;
     const r = IND.readings(HIST, livePt());
     const ext = t => /Oversold|Overbought|Below|Above/.test(t) ? "is-stretch" : "";
+    const rsiSig = r.rsi == null ? "" : r.rsi < 30 ? "buy" : r.rsi > 70 ? "sell" : "neutral";
+    const bbSig = r.bbPb == null ? "" : r.bbPb < 0 ? "buy" : r.bbPb > 1 ? "sell" : "neutral";
+    const yrSig = r.yrPos == null ? "" : r.yrPos < 0.2 ? "buy" : r.yrPos > 0.8 ? "sell" : "neutral";
     // volume: all exchanges (CoinGecko, volume-history.json), latest 24h against the 30-day median
     let volTile = "";
     if(VOL && Array.isArray(VOL.daily) && VOL.latest_usd){
@@ -232,26 +250,30 @@
       }
     }
     $("bnIndShort").innerHTML =
-        itile("RSI, 14 days", r.rsi.toFixed(1), r.rsiTag, ext(r.rsiTag), "Under 30 is oversold, over 70 overbought")
-      + itile("Lower Bollinger band", usd4(r.bbLo), r.bbTag, ext(r.bbTag), "Upper band " + usd4(r.bbHi) + ", 20 days, 2 deviations")
-      + itile("vs the 20-day average", sgnPct(r.vs20), "", "", "Average " + usd4(r.sma20))
-      + itile("Typical daily swing", "±" + (100 * r.atr).toFixed(0) + "%", "", "", "About " + usd4(r.atr * r.price) + " a day, 14-day average range")
+        itile("RSI, 14 days", r.rsi.toFixed(1), r.rsiTag, ext(r.rsiTag), "Under 30 is oversold (Buy), over 70 overbought (Sell)", rsiSig)
+      + itile("Lower Bollinger band", usd4(r.bbLo), r.bbTag, ext(r.bbTag), "Upper band " + usd4(r.bbHi) + ". Below the lower band reads Buy, above the upper Sell", bbSig)
+      + itile("vs the 20-day average", sgnPct(r.vs20), "", "", "Average " + usd4(r.sma20) + ". Above it reads Buy, below it Sell", side(r.vs20))
+      + itile("Typical daily swing", "±" + (100 * r.atr).toFixed(0) + "%", "", "", "About " + usd4(r.atr * r.price) + " a day, 14-day average range. Size of moves, no direction")
       + volTile;
     $("bnIndLong").innerHTML =
-        itile("vs the 50-day average", sgnPct(r.vs50), r.sma50Rising ? "Average rising" : "Average falling", r.sma50Rising ? "is-up" : "is-down", "Average " + usd4(r.sma50))
-      + itile("vs the 200-day average", sgnPct(r.vs200), r.sma200Rising ? "Average rising" : "Average falling", r.sma200Rising ? "is-up" : "is-down", "Average " + usd4(r.sma200))
-      + itile("vs the 90-day traded price", sgnPct(r.vsVwap90), "", "", "Traders paid " + usd4(r.vwap90) + " on average (KuCoin VWAP)")
+        itile("vs the 50-day average", sgnPct(r.vs50), r.sma50Rising ? "Average rising" : "Average falling", r.sma50Rising ? "is-up" : "is-down",
+          "Average " + usd4(r.sma50) + ". Above a rising average reads Buy, below a falling one Sell", withSlope(r.vs50, r.sma50Rising))
+      + itile("vs the 200-day average", sgnPct(r.vs200), r.sma200Rising ? "Average rising" : "Average falling", r.sma200Rising ? "is-up" : "is-down",
+          "Average " + usd4(r.sma200) + ". Above a rising average reads Buy, below a falling one Sell", withSlope(r.vs200, r.sma200Rising))
+      + itile("vs the 90-day traded price", sgnPct(r.vsVwap90), "", "", "Traders paid " + usd4(r.vwap90) + " on average (KuCoin VWAP). Above it reads Buy, below it Sell", side(r.vsVwap90))
       + itile("Above the 1-year low", sgnPct(r.vsYrLo), Math.round(100 * r.yrPos) + "% of the way up the range", "",
-          "Low " + usd4(r.yrLo) + " on " + fmtD(r.yrLoDate) + ", high " + usd4(r.yrHi) + " on " + fmtD(r.yrHiDate))
+          "Low " + usd4(r.yrLo) + " on " + fmtD(r.yrLoDate) + ", high " + usd4(r.yrHi) + " on " + fmtD(r.yrHiDate) + ". Bottom fifth reads Buy, top fifth Sell", yrSig)
       + itile("Trend", r.trend === "up" ? "Uptrend" : r.trend === "down" ? "Downtrend" : "Sideways", "", "",
-          "Price against its 30-day average, and that average against a week ago");
+          "Price against its 30-day average, and that average against a week ago. Uptrend reads Buy, downtrend Sell",
+          r.trend === "up" ? "buy" : r.trend === "down" ? "sell" : "neutral");
     // on-chain context
     const chain = [];
     if(CTX.flow){
       const n = CTX.flow.net;
       chain.push(itile("Net exchange flow, 30 days", fmtM(M(Math.abs(n))) + (n >= 0 ? " out" : " in"),
         n >= 0 ? "More withdrawn than deposited" : "More deposited than withdrawn", "",
-        "Transfers of 100k+ RIO: " + fmtM(M(CTX.flow.wd)) + " withdrawn, " + fmtM(M(CTX.flow.dep)) + " deposited"));
+        "Transfers of 100k+ RIO: " + fmtM(M(CTX.flow.wd)) + " withdrawn, " + fmtM(M(CTX.flow.dep)) + " deposited. Net outflow reads Buy, inflow Sell",
+        n > 0 ? "buy" : n < 0 ? "sell" : "neutral"));
     }
     if(CTX.unb != null){
       const med = VOL && Array.isArray(VOL.daily) ? IND.median(VOL.daily.map(d => d.volume_usd).filter(x => x > 0)) : null;
@@ -263,6 +285,9 @@
     }
     $("bnIndChain").innerHTML = chain.join("");
     $("bnIndChainG").hidden = !chain.length;
+    $("bnIndShortSum").innerHTML = tally("bnIndShort");
+    $("bnIndLongSum").innerHTML = tally("bnIndLong");
+    $("bnIndChainSum").innerHTML = tally("bnIndChain");
     $("bnIndAsOf").textContent = "Daily closes from KuCoin RIO-USDT to " + fmtD(r.asOf) + (r.provisional ? ", plus today's live price as a provisional close." : ".");
     // the honest caveat, computed from the same backtest the methodology page shows
     if(BT_NOTE == null){
