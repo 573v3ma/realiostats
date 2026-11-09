@@ -35,6 +35,13 @@ jobs:
         continue-on-error: true
         run: python fetch_volume.py
 
+      # Daily KuCoin candles since Apr 2024 for the 1Y chart and the price
+      # indicators. Exchange data, informational only, so a failure must not
+      # block the supply snapshot.
+      - name: Refresh daily price history
+        continue-on-error: true
+        run: python fetch_price_history.py
+
       # Staking yield ladder + validator health. Independent of the supply
       # count: it reads the same native LCD but nothing it produces feeds the
       # integrity checks, so a failure must not block the supply snapshot.
@@ -60,7 +67,7 @@ jobs:
         run: |
           git config user.name  "realiostats-bot"
           git config user.email "actions@users.noreply.github.com"
-          FILES="supply-history.json volume-history.json network-history.json network-validators.json large-transfers.json"
+          FILES="supply-history.json volume-history.json price-history.json network-history.json network-validators.json large-transfers.json"
           if [ -n "$(git status --porcelain -- $FILES)" ]; then
             git add $FILES
             git commit -m "supply snapshot $(date -u +%Y-%m-%d)"
