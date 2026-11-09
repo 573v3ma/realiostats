@@ -204,12 +204,11 @@
      Readings from indicators.js. Each directional tile carries the general
      textbook reading of its level (Buy, Sell or Neutral, e.g. RSI under 30 =
      Buy); volatility and volume tiles carry none. The rules are textbook, not
-     tuned to RIO, and the note under the card says what followed on RIO's own
-     history (computed from the methodology page's backtest). The on-chain
-     tiles are filled from the network and large-transfer data further down
-     this file (CTX). */
+     tuned to RIO; what followed on RIO's own history is on the methodology
+     page (backtest). The on-chain tiles are filled from the network and
+     large-transfer data further down this file (CTX). */
   const CTX = {};
-  let VOL = null, BT_NOTE = null;
+  let VOL = null;
   getJ("./volume-history.json").then(v => { VOL = v; renderIndicators(); });
   const usd4 = v => "$" + v.toFixed(4);
   const sgnPct = x => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(100 * x).toFixed(0) + "%";
@@ -289,15 +288,6 @@
     $("bnIndLongSum").innerHTML = tally("bnIndLong");
     $("bnIndChainSum").innerHTML = tally("bnIndChain");
     $("bnIndAsOf").textContent = "Daily closes from KuCoin RIO-USDT to " + fmtD(r.asOf) + (r.provisional ? ", plus today's live price as a provisional close." : ".");
-    // the honest caveat, computed from the same backtest the methodology page shows
-    if(BT_NOTE == null){
-      const bt = IND.backtest(HIST), base = bt[0], os = bt.find(x => x.key === "rsi30");
-      BT_NOTE = os && os.med30 != null && base.med30 != null
-        ? "In RIO's daily history since " + fmtD(IND.BT_FROM(HIST)) + ", an RSI under 30 was followed by a median " + sgnPct(os.med30)
-          + " over the next 30 days, against " + sgnPct(base.med30) + " on an average day, so oversold has not reliably meant a bounce."
-        : "";
-    }
-    $("bnIndNote").textContent = BT_NOTE;
     $("bnIndicators").hidden = false;
   }
   IND.load().then(H => {
