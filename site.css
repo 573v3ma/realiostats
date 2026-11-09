@@ -579,3 +579,4 @@
   .home-stat .hm .hmv{flex-direction:row;align-items:baseline;gap:0}
   .home-stat .hm .chg{margin-left:12px}
 }
+.lt-new{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green-ink);margin-left:6px}

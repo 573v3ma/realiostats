@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="site.css?v=34">
+<link rel="stylesheet" href="site.css?v=35">
 </head>
 <body>
 <header><div class="wrap nav">
@@ -76,7 +76,7 @@
   </table></div>
   <div style="margin-top:12px"><button type="button" class="hb-mbtn" id="ltMore" hidden>Show all</button></div>
   <p class="lq-sub" id="ltNote"></p>
-  <p class="cap">Read daily from public chain data (<a href="https://github.com/573v3ma/realiostats/blob/main/fetch_large_transfers.py" target="_blank" rel="noopener">fetch_large_transfers.py</a>). BNB Chain, Ethereum and Base are read through the same Alchemy access as the holder counts, because free public nodes keep only part of the history; the script falls back to keyless public nodes without it. The other four chains need no key. Labels are a floor: an unnamed address can still be an exchange we have not identified. Staking, unstaking and reward claims on the native chain are not transfers and are left out. A swap routed through several contracts can show as more than one row in the same transaction. RIO on Algorand and Stellar no longer trades on a live market after the 25 August theft (<a href="incident.html">incident report</a>), so moves there are listed for completeness.</p>
+  <p class="cap">Read daily from public chain data (<a href="https://github.com/573v3ma/realiostats/blob/main/fetch_large_transfers.py" target="_blank" rel="noopener">fetch_large_transfers.py</a>), then topped up every minute by a live check (<a href="https://github.com/573v3ma/realiostats/blob/main/worker/live-transfers.js" target="_blank" rel="noopener">live-transfers.js</a>) that marks anything newer as <b>new</b> until the next daily run takes it in. BNB Chain, Ethereum and Base are read through the same Alchemy access as the holder counts, because free public nodes keep only part of the history; the script falls back to keyless public nodes without it. The other four chains need no key. Labels are a floor: an unnamed address can still be an exchange we have not identified. Staking, unstaking and reward claims on the native chain are not transfers and are left out. A swap routed through several contracts can show as more than one row in the same transaction. RIO on Algorand and Stellar no longer trades on a live market after the 25 August theft (<a href="incident.html">incident report</a>), so moves there are listed for completeness.</p>
 </div></section>
 
 <footer><div class="wrap">
@@ -99,6 +99,6 @@
 
 <script src="core.js?v=26"></script>
 <script src="holders.js?v=26"></script>
-<script src="transfers.js?v=1"></script>
+<script src="transfers.js?v=2"></script>
 </body>
 </html>

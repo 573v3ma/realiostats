@@ -1,6 +1,8 @@
 /* realiostats — large transfers (holders page). Every RIO transfer of
    100,000+ RIO in the last 30 days, all seven chains, from
-   large-transfers.json (written daily by fetch_large_transfers.py).
+   large-transfers.json (written daily by fetch_large_transfers.py), topped up
+   with /api/live-transfers (the realiostats-live Worker, checked every minute)
+   for anything that moved since the daily run.
    Self-contained: needs only the page markup, not core.js internals. */
 (function(){
   const CHAINS = {
@@ -20,7 +22,7 @@
     wallet:   {name:"Wallets and DEX", kinds:["wallet","dex"]}
   };
   const PAGE = 40;
-  let DATA = null, fChain = "all", fType = "all", showAll = false;
+  let DATA = null, LIVE = null, fChain = "all", fType = "all", showAll = false;
 
   const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const num = n => Math.round(n).toLocaleString("en-US");
@@ -98,7 +100,7 @@
     body.innerHTML = shown.length ? shown.map(r => {
       const same = prevTx === r.chain + r.tx; prevTx = r.chain + r.tx;
       const t = same ? `<span style="color:var(--faint);font-weight:400">same tx</span>`
-                     : `${r.time_est ? "≈ " : ""}${when(r.ts)}`;
+                     : `${r.time_est ? "≈ " : ""}${when(r.ts)}${r.live ? ` <span class="lt-new" title="Found by the live check, added to the full list at the next daily update">new</span>` : ""}`;
       const txUrl = CHAINS[r.chain].tx + r.tx;
       return `<tr><td>${t}</td><td style="text-align:left">${CHAINS[r.chain].name}</td>`
         + `<td>${num(r.amount)}</td><td style="text-align:left">${party(r,"from")}</td>`
@@ -123,6 +125,9 @@
     if(late.length) bits.push(`Coverage starts later on ${late.join(", ")}: the free public endpoints keep only part of the history, so the 30-day window fills forward day by day.`);
     if(partial.length) bits.push(`Still catching up on ${partial.join(", ")}: its most recent days are added over the next daily runs.`);
     if(stale.length) bits.push(`Not refreshed on the latest run: ${stale.join(", ")}. Rows shown for it are from the last good run.`);
+    if(LIVE) bits.push(LIVE.fresh
+      ? `Live check: ${LIVE.fresh} newer transfer${LIVE.fresh === 1 ? "" : "s"} marked new, last checked ${LIVE.at} UTC.`
+      : `Live check: nothing new since the daily update, last checked ${LIVE.at} UTC.`);
     if(DATA.transfers.some(r => r.time_est)) bits.push(`≈ marks a native-chain time estimated from the block rate.`);
     document.getElementById("ltNote").textContent = bits.join(" ");
   }
@@ -137,8 +142,20 @@
     document.getElementById("ltTypeRow").addEventListener("click", e => {
       const b = e.target.closest("[data-t]"); if(!b) return; fType = b.dataset.t; showAll = false; render(); });
     document.getElementById("ltMore").addEventListener("click", () => { showAll = !showAll; renderTable(); });
-    fetch("./large-transfers.json", {cache:"no-store"}).then(r => r.ok ? r.json() : null).then(d => {
+    const getJ = u => fetch(u, {cache:"no-store"}).then(r => r.ok ? r.json() : null).catch(() => null);
+    Promise.all([getJ("./large-transfers.json"), getJ("/api/live-transfers")]).then(([d, live]) => {
       if(!d || !Array.isArray(d.transfers)) throw new Error("no data");
+      // Same merge as the homepage card: drop live rows the daily file already has.
+      const key = t => t.chain + "|" + String(t.tx).toLowerCase() + "|" + Math.round(t.amount);
+      const seen = new Set(d.transfers.map(t => t.id));
+      d.transfers.forEach(t => seen.add(key(t)));
+      const chk = live && Date.parse(live.checked);
+      if(chk && Date.now() - chk < 10 * 6e4 && Array.isArray(live.transfers)){
+        const fresh = live.transfers.filter(t => t && t.ts && CHAINS[t.chain] && !seen.has(t.id) && !seen.has(key(t)))
+          .map(t => Object.assign({}, t, {live: true}));
+        d.transfers = d.transfers.concat(fresh).sort((a, b) => b.ts - a.ts);
+        LIVE = {fresh: fresh.length, at: new Date(chk).toISOString().slice(11, 16)};
+      }
       DATA = d; render(); renderNotes();
     }).catch(() => {
       document.getElementById("ltBody").innerHTML = `<tr><td colspan="7" class="hb-pending">Transfer data could not be loaded.</td></tr>`;
