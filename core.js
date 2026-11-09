@@ -162,9 +162,11 @@ function computeFloat(latest, h){
   function align(){ var el = document.getElementById(id); if(el) el.scrollIntoView({block:"start"}); }
   function quit(){
     if(ro) ro.disconnect();
+    removeEventListener("load", align);
     evs.forEach(function(e){ removeEventListener(e, quit, true); });
   }
   evs.forEach(function(e){ addEventListener(e, quit, {capture:true, passive:true}); });
+  addEventListener("load", align);
   ro = new ResizeObserver(function(){ if(Date.now() > until) quit(); else align(); });
   ro.observe(document.body);
   setTimeout(quit, 8000);
