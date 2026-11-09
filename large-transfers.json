@@ -1,70 +1,213 @@
 {
- "as_of": "2026-11-08T15:50:15Z",
+ "as_of": "2026-11-09T13:03:08Z",
  "threshold_rio": 100000,
  "window_days": 30,
- "window_start": "2026-10-09T15:50:15Z",
+ "window_start": "2026-10-10T13:03:08Z",
  "source": "Public keyless endpoints, see fetch_large_transfers.py. Labels from holders.json and known bridge, module and treasury addresses.",
  "chains": {
   "bnb": {
-   "cursor": 132419504,
+   "cursor": 132589173,
    "source": "alchemy",
    "status": "ok",
-   "coverage_from": 1791561015,
-   "updated": "2026-11-08T15:50:15Z",
-   "seconds": 8.5
+   "coverage_from": 1791637388,
+   "updated": "2026-11-09T13:03:08Z",
+   "seconds": 3.4
   },
   "eth": {
-   "cursor": 26371160,
+   "cursor": 26377505,
    "source": "alchemy",
    "status": "ok",
-   "coverage_from": 1791561015,
-   "updated": "2026-11-08T15:50:15Z",
-   "seconds": 4.7
+   "coverage_from": 1791637388,
+   "updated": "2026-11-09T13:03:08Z",
+   "seconds": 1.4
   },
   "base": {
-   "cursor": 54813262,
+   "cursor": 55195085,
    "source": "alchemy",
    "status": "ok",
-   "coverage_from": 1791561015,
-   "updated": "2026-11-08T15:50:15Z",
-   "seconds": 3.6
+   "coverage_from": 1791637388,
+   "updated": "2026-11-09T13:03:08Z",
+   "seconds": 0.7
   },
   "solana": {
    "cursor": "2fBwydC94dciDEHPCEJeppMLzPzBsrf1vL38iZNBCUUPg3JKzq6t1RBKv71A8XeyTiBSUdm7kQTUogrVyUvVUynT",
    "source": "https://api.mainnet-beta.solana.com",
    "status": "ok",
-   "coverage_from": 1791561015,
-   "updated": "2026-11-08T15:50:15Z",
-   "seconds": 2.2
+   "coverage_from": 1791637388,
+   "updated": "2026-11-09T13:03:08Z",
+   "seconds": 1.2
   },
   "algorand": {
-   "cursor": 66763246,
+   "cursor": 66790957,
    "source": "https://mainnet-idx.algonode.cloud",
    "status": "ok",
-   "coverage_from": 1791561015,
-   "updated": "2026-11-08T15:50:15Z",
-   "seconds": 0.2
+   "coverage_from": 1791637388,
+   "updated": "2026-11-09T13:03:08Z",
+   "seconds": 0.3
   },
   "stellar": {
-   "cursor": 65373398,
+   "cursor": 65388670,
    "source": "https://rpc.lightsail.network",
    "status": "ok",
    "coverage_from": 1793450304,
-   "updated": "2026-11-08T15:50:15Z",
-   "seconds": 1.3
+   "updated": "2026-11-09T13:03:08Z",
+   "seconds": 0.9
   },
   "native": {
-   "cursor": 20474323,
+   "cursor": 20487856,
    "source": "https://rpc.realio.network",
-   "block_time_s": 5.639,
-   "exact_time_from_height": 20374323,
+   "block_time_s": 5.64,
+   "exact_time_from_height": 20387856,
    "status": "ok",
-   "coverage_from": 1791561015,
-   "updated": "2026-11-08T15:50:15Z",
-   "seconds": 0.9
+   "coverage_from": 1791637388,
+   "updated": "2026-11-09T13:03:08Z",
+   "seconds": 0.6
   }
  },
  "transfers": [
+  {
+   "id": "bnb:0x468b044a845e57acb21b107992613fedf5b6085aa6c4c5dbed4ac3898495f3cf:242",
+   "chain": "bnb",
+   "ts": 1794224231,
+   "amount": 173197.0,
+   "from": "0x4982085c9e2f89f2ecb8131eca71afad896e89cb",
+   "to": "0x8fdc9bb3e8b0a10fca0261f7059ad6583a2b641f",
+   "tx": "0x468b044a845e57acb21b107992613fedf5b6085aa6c4c5dbed4ac3898495f3cf",
+   "block": 132577726,
+   "kind": "withdrawal",
+   "from_label": "MEXC",
+   "to_label": null
+  },
+  {
+   "id": "bnb:0xaba2b70398396cedffa273ef3f6314baa948641e14355444953032a427d0b266:270",
+   "chain": "bnb",
+   "ts": 1794223500,
+   "amount": 173099.0,
+   "from": "0x548a751430c15c17a8c1478cdcd07ed25ccf5c35",
+   "to": "0x4982085c9e2f89f2ecb8131eca71afad896e89cb",
+   "tx": "0xaba2b70398396cedffa273ef3f6314baa948641e14355444953032a427d0b266",
+   "block": 132576104,
+   "kind": "deposit",
+   "from_label": null,
+   "to_label": "MEXC"
+  },
+  {
+   "id": "bnb:0xc4f59780fb58fe878294155cc54e607a594549c7305b1c498f10ec2a1f74107c:141",
+   "chain": "bnb",
+   "ts": 1794223161,
+   "amount": 173099.0,
+   "from": "0x8fdc9bb3e8b0a10fca0261f7059ad6583a2b641f",
+   "to": "0x548a751430c15c17a8c1478cdcd07ed25ccf5c35",
+   "tx": "0xc4f59780fb58fe878294155cc54e607a594549c7305b1c498f10ec2a1f74107c",
+   "block": 132575351,
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
+  {
+   "id": "bnb:0x314436c889516014476384f506552883283dcb28b2db49013d21110916cabd44:28",
+   "chain": "bnb",
+   "ts": 1794194826,
+   "amount": 100014.31,
+   "from": "0x676fa447ae6bd63cbc00260403326cfae59c2cf2",
+   "to": "0xc75d2ce9d0a2c67b606a7b325c16e8a1b7c15a4a",
+   "tx": "0x314436c889516014476384f506552883283dcb28b2db49013d21110916cabd44",
+   "block": 132512409,
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
+  {
+   "id": "bnb:0x314436c889516014476384f506552883283dcb28b2db49013d21110916cabd44:29",
+   "chain": "bnb",
+   "ts": 1794194826,
+   "amount": 100014.31,
+   "from": "0xc75d2ce9d0a2c67b606a7b325c16e8a1b7c15a4a",
+   "to": "0x5b1d38f51c8841c7f4f19d768a01e819fe41b8d7",
+   "tx": "0x314436c889516014476384f506552883283dcb28b2db49013d21110916cabd44",
+   "block": 132512409,
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
+  {
+   "id": "bnb:0xa499b28c54094f7b9911c7b6bfc7379cc1efddc15c554d048306283f103263e2:1",
+   "chain": "bnb",
+   "ts": 1794194707,
+   "amount": 100000.0,
+   "from": "0x676fa447ae6bd63cbc00260403326cfae59c2cf2",
+   "to": "0xc75d2ce9d0a2c67b606a7b325c16e8a1b7c15a4a",
+   "tx": "0xa499b28c54094f7b9911c7b6bfc7379cc1efddc15c554d048306283f103263e2",
+   "block": 132512143,
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
+  {
+   "id": "bnb:0xa499b28c54094f7b9911c7b6bfc7379cc1efddc15c554d048306283f103263e2:2",
+   "chain": "bnb",
+   "ts": 1794194707,
+   "amount": 100000.0,
+   "from": "0xc75d2ce9d0a2c67b606a7b325c16e8a1b7c15a4a",
+   "to": "0x5b1d38f51c8841c7f4f19d768a01e819fe41b8d7",
+   "tx": "0xa499b28c54094f7b9911c7b6bfc7379cc1efddc15c554d048306283f103263e2",
+   "block": 132512143,
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
+  {
+   "id": "bnb:0xd7ffae8a5b34439eb871dce9191a8be6f942d5b6c903d9d3cc5c5ac66ff74005:1",
+   "chain": "bnb",
+   "ts": 1794194314,
+   "amount": 176016.39,
+   "from": "0x676fa447ae6bd63cbc00260403326cfae59c2cf2",
+   "to": "0xc75d2ce9d0a2c67b606a7b325c16e8a1b7c15a4a",
+   "tx": "0xd7ffae8a5b34439eb871dce9191a8be6f942d5b6c903d9d3cc5c5ac66ff74005",
+   "block": 132511271,
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
+  {
+   "id": "bnb:0xd7ffae8a5b34439eb871dce9191a8be6f942d5b6c903d9d3cc5c5ac66ff74005:17",
+   "chain": "bnb",
+   "ts": 1794194314,
+   "amount": 145653.56,
+   "from": "0x5b1d38f51c8841c7f4f19d768a01e819fe41b8d7",
+   "to": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
+   "tx": "0xd7ffae8a5b34439eb871dce9191a8be6f942d5b6c903d9d3cc5c5ac66ff74005",
+   "block": 132511271,
+   "kind": "dex",
+   "from_label": null,
+   "to_label": "DEX pool"
+  },
+  {
+   "id": "bnb:0xd7ffae8a5b34439eb871dce9191a8be6f942d5b6c903d9d3cc5c5ac66ff74005:2",
+   "chain": "bnb",
+   "ts": 1794194314,
+   "amount": 176016.39,
+   "from": "0xc75d2ce9d0a2c67b606a7b325c16e8a1b7c15a4a",
+   "to": "0x5b1d38f51c8841c7f4f19d768a01e819fe41b8d7",
+   "tx": "0xd7ffae8a5b34439eb871dce9191a8be6f942d5b6c903d9d3cc5c5ac66ff74005",
+   "block": 132511271,
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
+  {
+   "id": "bnb:0x131fd5aa8a110a665ee31057e18b4c1c77d99dd3c1cb63de9cce8a42d512a3e7:184",
+   "chain": "bnb",
+   "ts": 1794190989,
+   "amount": 476016.39,
+   "from": "0xb81be888587704aa77c581e01299abe3667a7897",
+   "to": "0x676fa447ae6bd63cbc00260403326cfae59c2cf2",
+   "tx": "0x131fd5aa8a110a665ee31057e18b4c1c77d99dd3c1cb63de9cce8a42d512a3e7",
+   "block": 132503882,
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
   {
    "id": "bnb:0xa3bed5880ca725788fbd68bf5c767d9227c07f23863f9a1a746432b8acd6ff84:108",
    "chain": "bnb",
@@ -1079,32 +1222,6 @@
    "to": "0xcded3bb9d2dc98f6e4e772095b48051acfb84df9",
    "tx": "0xa6dd9162d747db7522c6da10208eb98136847a6d9c7bffcc8bdaacf549a5af2b",
    "block": 127252161,
-   "kind": "withdrawal",
-   "from_label": "KuCoin",
-   "to_label": null
-  },
-  {
-   "id": "bnb:0xb581d93f63e5f32f69ea1360e1aea433dd6b5c2052cb7fa6c4b771eba46b4e0b:34",
-   "chain": "bnb",
-   "ts": 1791588611,
-   "amount": 120352.9,
-   "from": "0x5a73bdfcf10d6209db03d8eceabab233015fefd1",
-   "to": "0xb8c14eaa4e98932c12d4701974ad8d5ae98cbad8",
-   "tx": "0xb581d93f63e5f32f69ea1360e1aea433dd6b5c2052cb7fa6c4b771eba46b4e0b",
-   "block": 126724056,
-   "kind": "wallet",
-   "from_label": null,
-   "to_label": null
-  },
-  {
-   "id": "bnb:0x2063e1bf209d38fc1e047583ad0f1b099b818427b3c3e60c1a4a397a56a5464a:5",
-   "chain": "bnb",
-   "ts": 1791588449,
-   "amount": 120440.9,
-   "from": "0x53f78a071d04224b8e254e243fffc6d9f2f3fa23",
-   "to": "0x5a73bdfcf10d6209db03d8eceabab233015fefd1",
-   "tx": "0x2063e1bf209d38fc1e047583ad0f1b099b818427b3c3e60c1a4a397a56a5464a",
-   "block": 126723696,
    "kind": "withdrawal",
    "from_label": "KuCoin",
    "to_label": null
