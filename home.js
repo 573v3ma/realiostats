@@ -170,7 +170,7 @@
     const leg = $("bnOvLeg");
     // say where the line switches source when KuCoin closes are part of it
     const joined = src !== PRICE_PTS && PRICE_SRC === "coingecko" && PRICE_PTS.length && PRICE_PTS[0].t > t0 + 864e5;
-    leg.innerHTML = ovs.map(o => `<span><i class="${o.cls}"></i>${esc(o.name)} <b>$${o.last.toFixed(4)}</b></span>`).join("")
+    leg.innerHTML = ovs.map(o => `<span class="${o.cls}"><i></i>${esc(o.name)} <b>$${o.last.toFixed(4)}</b></span>`).join("")
       + (joined ? `<span>KuCoin daily closes before ${esc(PRICE_PTS[0].d)}</span>` : "");
     leg.hidden = !ovs.length && !joined;
   }

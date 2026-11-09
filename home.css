@@ -72,17 +72,17 @@
 .bn-ind-btn[aria-pressed="true"]{color:var(--ink);border-color:var(--line-strong);background:var(--line)}
 .bn-chart .ov{fill:none;stroke-width:1.5;stroke-linejoin:round;vector-effect:non-scaling-stroke;opacity:.9}
 .bn-chart .ov.ovvw{stroke-dasharray:5 4}
-.ov50{stroke:#f59e0b;border-color:#f59e0b}
-.ov200{stroke:#8b9cf7;border-color:#8b9cf7}
-.ovvw{stroke:#f472b6;border-color:#f472b6}
-:root[data-theme="light"] .ov50{stroke:#d97706;border-color:#d97706}
-:root[data-theme="light"] .ov200{stroke:#4f46e5;border-color:#4f46e5}
-:root[data-theme="light"] .ovvw{stroke:#db2777;border-color:#db2777}
+.ov50{stroke:#f59e0b;color:#f59e0b}
+.ov200{stroke:#8b9cf7;color:#8b9cf7}
+.ovvw{stroke:#f472b6;color:#f472b6}
+:root[data-theme="light"] .ov50{stroke:#d97706;color:#d97706}
+:root[data-theme="light"] .ov200{stroke:#4f46e5;color:#4f46e5}
+:root[data-theme="light"] .ovvw{stroke:#db2777;color:#db2777}
 .bn-ovleg{display:flex;gap:4px 16px;flex-wrap:wrap}
 .bn-ovleg span{white-space:nowrap}
-.bn-ovleg b{color:var(--ink);font-weight:600}
-.bn-ovleg i{display:inline-block;width:14px;height:0;border-top:2px solid;vertical-align:middle;margin-right:6px}
-.bn-ovleg i.ovvw{border-top-style:dashed}
+.bn-ovleg b{color:inherit;font-weight:600}
+.bn-ovleg i{display:inline-block;width:14px;height:0;border-top:2px solid currentColor;vertical-align:middle;margin-right:6px}
+.bn-ovleg .ovvw i{border-top-style:dashed}
 
 /* where the price sits */
 .bn-ind-g{margin-top:18px}
