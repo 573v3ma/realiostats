@@ -9739,10 +9739,10 @@
     ]
   },
   {
-    "ts": "2026-11-09T13:02:13Z",
+    "ts": "2026-11-09T14:49:42Z",
     "chains": {
       "realio_native": {
-        "total": 90940715.5476,
+        "total": 90941933.3724,
         "bridge_escrow": 0.0,
         "compromised": 5732040.9057,
         "compromised_detail": {
@@ -9750,11 +9750,11 @@
         },
         "compromised_excluded": 0.0,
         "compromised_in_float": 5732040.9057,
-        "circulating": 90940715.5476,
-        "staked": 70655738.284,
-        "height": 20487844,
-        "block_time_utc": "2026-11-09T13:02:03.024321863Z",
-        "block_age_s": 8.2,
+        "circulating": 90941933.3724,
+        "staked": 70655861.4951,
+        "height": 20488987,
+        "block_time_utc": "2026-11-09T14:49:30.570699225Z",
+        "block_age_s": 9.0,
         "chain_live": true,
         "_source": "https://realio-api.noders.services"
       },
@@ -9811,25 +9811,25 @@
         "circulating": 0
       }
     },
-    "tradable_total": 376765037.48,
+    "tradable_total": 376766255.3,
     "native_cap": 175000000,
     "compromised_total": 46081865.31,
     "compromised_in_float": 7854850.65,
     "compromised_excluded": 113720212.0,
-    "price_usd": 0.03556827,
+    "price_usd": 0.03563069,
     "price_source": "coingecko",
-    "market_cap_usd": 13400880.58,
-    "volume_24h_usd": 238389.94,
+    "market_cap_usd": 13424441.65,
+    "volume_24h_usd": 241511.63,
     "volume_source": "coingecko",
     "mint": {
       "inflation_rate": 0.08,
       "blocks_per_year": 6311520
     },
-    "global_total_rio": 490579488.99,
-    "expected_annual_emission_rio": 5953347.1,
-    "expected_daily_emission_rio": 16310.54,
-    "expected_daily_emission_nominal_rio": 18423.95,
-    "block_time_s": 5.644,
+    "global_total_rio": 490580706.81,
+    "expected_annual_emission_rio": 5954212.15,
+    "expected_daily_emission_rio": 16312.91,
+    "expected_daily_emission_nominal_rio": 18423.69,
+    "block_time_s": 5.6431,
     "emission_block_adjusted": true,
     "bridge_caps": {
       "evm_daily_mint_cap_bnb": 1000000.0,

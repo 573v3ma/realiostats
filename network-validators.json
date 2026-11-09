@@ -1,12 +1,12 @@
 {
- "as_of": "2026-11-09T13:03:08Z",
- "height": 20487854,
+ "as_of": "2026-11-09T14:50:53Z",
+ "height": 20489000,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 134827038.76,
+ "bonded_weight": 134827161.97,
  "validators": [
   {
    "moniker": "Teshy RIO",
-   "weight": 7819555.93,
+   "weight": 7819679.14,
    "commission": 0.05,
    "jailed": false
   },
