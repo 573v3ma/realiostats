@@ -1,11 +1,17 @@
-/* realiostats official-updates card.
+/* realiostats Official Realio updates card.
    news.json is written once a day by publish_news.py, which has already
    validated every item (official accounts only, no links in text, every
-   number traceable to its source post). This file still treats it as
-   untrusted: text goes in via textContent only, and the only links built
-   are x.com status URLs from an allowlisted handle plus a numeric id. */
+   number traceable to its source post, every source carrying a link id).
+   This file still treats it as untrusted: text goes in via textContent only,
+   and the only links built are x.com status URLs from an allowlisted handle
+   plus a numeric id, and t.me/c message URLs from an allowlisted group plus
+   a numeric message id. Every item links to its source: each source in the
+   row below it, and the headline to the first one. */
 (function(){
   const X_OK = ["realio_network","derekboirun","freehold_wallet","districts_xyz"];
+  // official groups are private (no @username), so links use t.me/c/<id>/<msg>;
+  // they open in Telegram for anyone who has joined the group
+  const TG_OK = {"Realio Network Official":"2432247183","Freehold Official":"2397575725","Realio Network Validators":"3469704422","Districts Official":"2289133801"};
   const PROJECTS = ["Realio","Freehold","Districts"];
   const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   const DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
@@ -17,25 +23,42 @@
   const KEY_DAYS = 21, KEY_MAX = 7, FH_MAX = 4;
   const hhmm = ts => { const d = new Date(ts); return isNaN(d) ? "" : d.toISOString().slice(11,16) + " UTC"; };
 
+  const link = (href, text) => { const a = el("a", null, text); a.href = href; a.target = "_blank"; a.rel = "noopener nofollow"; return a; };
+
+  // URL of the original post, or null if the source is not one we can link safely
+  function sourceUrl(s){
+    if(s && s.kind === "x" && X_OK.includes(String(s.handle).toLowerCase()) && /^\d{5,25}$/.test(String(s.id)))
+      return `https://x.com/${encodeURIComponent(s.handle)}/status/${s.id}`;
+    if(s && s.kind === "tg" && Object.prototype.hasOwnProperty.call(TG_OK, s.chat) && /^\d{1,12}$/.test(String(s.msg)))
+      return `https://t.me/c/${TG_OK[s.chat]}/${s.msg}`;
+    return null;
+  }
+
   function sourceNode(s){
     const wrap = el("span", "nw-src");
-    if(s && s.kind === "x" && X_OK.includes(String(s.handle).toLowerCase()) && /^\d{5,25}$/.test(String(s.id))){
-      const a = el("a", null, "@" + s.handle);
-      a.href = `https://x.com/${encodeURIComponent(s.handle)}/status/${s.id}`;
-      a.target = "_blank"; a.rel = "noopener nofollow";
-      wrap.append("X · ", a);
+    const href = sourceUrl(s);
+    if(s && s.kind === "x" && href){
+      wrap.append("X · ", link(href, "@" + s.handle));
     } else if(s && s.kind === "tg" && typeof s.chat === "string"){
-      wrap.textContent = "Telegram · " + s.chat;
+      wrap.append("Telegram · ", href ? link(href, s.chat) : s.chat);
     } else return null;
     if(s.ts) wrap.append(" · " + hhmm(s.ts));
     return wrap;
+  }
+
+  // headline, linked to the item's first linkable source
+  function titleNode(it){
+    const srcs = Array.isArray(it.sources) ? it.sources : [];
+    const href = srcs.map(sourceUrl).find(Boolean);
+    return href ? link(href, it.title || "") : document.createTextNode(it.title || "");
   }
 
   function itemNode(it){
     const li = el("li", "nw-item");
     const p = PROJECTS.includes(it.project) ? it.project : "Realio";
     const head = el("div", "nw-head");
-    head.append(el("span", "nw-pill nw-" + p.toLowerCase(), p), el("span", "nw-title", it.title || ""));
+    const t = el("span", "nw-title"); t.append(titleNode(it));
+    head.append(el("span", "nw-pill nw-" + p.toLowerCase(), p), t);
     li.append(head);
     if(it.text) li.append(el("p", "nw-text", it.text));
     const srcs = (Array.isArray(it.sources) ? it.sources : []).map(sourceNode).filter(Boolean);
@@ -67,7 +90,8 @@
     const li = el("li", "nw-item nw-key");
     const head = el("div", "nw-head");
     const p = PROJECTS.includes(k.it.project) ? k.it.project : "Realio";
-    head.append(el("span", "nw-pill nw-" + p.toLowerCase(), p), el("span", "nw-title", k.it.title || ""));
+    const t = el("span", "nw-title"); t.append(titleNode(k.it));
+    head.append(el("span", "nw-pill nw-" + p.toLowerCase(), p), t);
     li.append(head);
     const row = el("div", "nw-srcs");
     row.append(el("span", "nw-kdate", dayLabel(k.date)));

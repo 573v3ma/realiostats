@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate a daily official-updates draft and publish it to news.json.
+"""Validate a daily Official Realio updates draft and publish it to news.json.
 
 Run by the Realio daily brief on Steve's PC, never by GitHub Actions.
 
@@ -12,7 +12,7 @@ DRAFT.json (private, never committed):
   "date": "2026-09-29",
   "sources": [
     {"key":"x1","kind":"x","handle":"realio_network","id":"1840...","ts":"...Z","text":"full post text"},
-    {"key":"t1","kind":"tg","chat_id":-1002432247183,"sender":"Derek Boirun","admin":true,"ts":"...Z","text":"full message"}
+    {"key":"t1","kind":"tg","chat_id":-1002432247183,"msg_id":63652,"sender":"Derek Boirun","admin":true,"ts":"...Z","text":"full message"}
   ],
   "items": [
     {"project":"Realio","title":"...","text":"...","sources":["x1","t1"],
@@ -21,14 +21,18 @@ DRAFT.json (private, never committed):
 }
 
 Guarantees on what reaches the public file:
-  * sources are official X accounts or team/admin messages in the three
+  * sources are official X accounts or team/admin messages in the four
     official Telegram groups; nothing else is accepted
   * titles and text carry no links, no HTML and no @handles other than the
     official accounts; em dashes are rewritten (house style)
   * every number in an item appears in one of its own source posts or in
     the source date, so nothing numeric can be invented
+  * every source links back to the original post: X sources by status id,
+    Telegram sources by message id ("msg_id", the #number the reader shows;
+    the site builds t.me/c/<group>/<msg_id>). A Telegram source without a
+    msg_id is rejected, so an item can never go out unlinked
   * Telegram message text and sender names are never published, only the
-    group name and time
+    group name, message id and time
   * optional "key" (bool) marks news that matters beyond the day; the site
     shows key items from the last 21 days, newest per "topic" (lowercase
     slug), so a newer item on the same topic replaces or retires an older one
@@ -43,6 +47,7 @@ TG_OK = {
     -1002432247183: "Realio Network Official",
     -1002397575725: "Freehold Official",
     -1003469704422: "Realio Network Validators",
+    -1002289133801: "Districts Official",
 }
 PROJECTS = {"Realio", "Freehold", "Districts"}
 MAX_ITEMS, MAX_TITLE, MAX_TEXT, KEEP_DAYS = 6, 90, 320, 30
@@ -122,8 +127,10 @@ def check_item(it, srcmap, date):
                 errs.append(f"{k}: Telegram chat {cid} not official")
             elif s.get("admin") is not True:
                 errs.append(f"{k}: sender is not a team member/admin")
+            elif not (isinstance(s.get("msg_id"), int) and not isinstance(s.get("msg_id"), bool) and s["msg_id"] > 0):
+                errs.append(f"{k}: Telegram msg_id missing or not a positive integer (needed for the source link)")
             else:
-                pub.append({"kind": "tg", "chat": TG_OK[cid], "ts": ts})
+                pub.append({"kind": "tg", "chat": TG_OK[cid], "msg": s["msg_id"], "ts": ts})
         else:
             errs.append(f"{k}: unknown kind")
     key, topic = it.get("key", False), it.get("topic")

@@ -68,14 +68,17 @@
     const li = el("li", "nw-item rw-item" + (opts && opts.key ? " nw-key" : ""));
     const head = el("div", "nw-head");
     const tag = TAGS[it.tag] ? it.tag : "MARKET";
-    head.append(el("span", "nw-pill rw-" + TAGS[tag], tag), el("span", "nw-title", it.title || ""));
+    const s = it.source || {};
+    const href = safeUrl(s.url);
+    const t = el("span", "nw-title");
+    if(href){ const a = el("a", null, it.title || ""); a.href = href; a.target = "_blank"; a.rel = "noopener nofollow"; t.append(a); }
+    else t.textContent = it.title || "";
+    head.append(el("span", "nw-pill rw-" + TAGS[tag], tag), t);
     li.append(head);
     if(it.why && !(opts && opts.key)){
       const w = el("p", "rw-why"); w.append(el("b", null, "Why it matters: "), it.why); li.append(w);
     }
-    const s = it.source || {};
     const row = el("div", "nw-srcs");
-    const href = safeUrl(s.url);
     if(href){ const a = el("a", null, s.outlet || "Source"); a.href = href; a.target = "_blank"; a.rel = "noopener nofollow"; row.append(a); }
     else if(s.outlet) row.append(el("span", null, s.outlet));
     if(s.published) row.append(el("span", null, shortDate(s.published)));
@@ -98,7 +101,9 @@
     return out.slice(0, KEY_MAX);
   }
 
-  function list(items, opts){ const ul = el("ul", "nw-list"); items.forEach(it => ul.append(storyNode(it, opts))); return ul; }
+  // every story links to its article; one without a valid link is not shown
+  const linked = it => !!safeUrl(it && it.source && it.source.url);
+  function list(items, opts){ const ul = el("ul", "nw-list"); items.filter(linked).forEach(it => ul.append(storyNode(it, opts))); return ul; }
 
   function storiesHome(days){
     const box = el("div", "nw-card");
