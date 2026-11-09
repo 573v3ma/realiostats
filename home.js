@@ -321,7 +321,6 @@
       renderIndicators();
     } else rebuildPrices();   // CoinGecko arrived first: apply the cross-check now
 
-    $("bnCircTitle").textContent = fmtM(M(latest.tradable_total));
     const ch = latest.chains || {};
     const main = CHAINS.filter(c => ["bnb", "ethereum", "realio_native"].includes(c.key));
     const parts = main.map(c => ({name: c.name, short: c.key === "realio_native" ? "Native" : c.key === "bnb" ? "BNB" : "ETH",
