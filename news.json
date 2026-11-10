@@ -1,6 +1,52 @@
 {
- "updated": "2026-11-09T05:29:22Z",
+ "updated": "2026-11-10T05:32:39Z",
  "days": [
+  {
+   "date": "2026-11-10",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Derek says outside owners want to list supercars on Freehold, under strict standards",
+     "text": "Asked whether outside owners have approached Freehold to tokenize their supercars, Derek said yes, but that only the rarest and highest quality cars will be accepted.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "msg": 7086,
+       "ts": "2026-11-09T16:34:00Z"
+      }
+     ],
+     "topic": "freehold-collection-outside-owners"
+    },
+    {
+     "project": "Realio",
+     "title": "Derek explains what happened to the stolen RIO",
+     "text": "Derek believes the hacker moved the stolen BSC and ETH RIO to one wallet and sold what it could on a DEX, as there was no liquidity on Algorand or Stellar. Hit exchange deposit addresses were frozen, and stablecoins received were reported to Circle and Tether.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 65750,
+       "ts": "2026-11-09T19:42:00Z"
+      }
+     ],
+     "topic": "incident-recovery-stolen-rio"
+    },
+    {
+     "project": "Realio",
+     "title": "Derek recommends DEXs for buying RIO amid exchange access worries",
+     "text": "Asked where holders in Europe can buy RIO as some centralized exchanges restrict access, Derek said decentralized exchanges are always the best option, even when a coin is listed on centralized exchanges.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 65774,
+       "ts": "2026-11-09T21:18:00Z"
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-11-09",
    "items": [
@@ -629,10 +675,6 @@
      "topic": "incident-recovery"
     }
    ]
-  },
-  {
-   "date": "2026-10-11",
-   "items": []
   }
  ]
 }
