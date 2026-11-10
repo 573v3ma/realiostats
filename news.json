@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-10T17:29:41Z",
+ "updated": "2026-11-10T23:29:02Z",
  "days": [
   {
    "date": "2026-11-10",
@@ -35,7 +35,7 @@
     {
      "project": "Realio",
      "title": "Derek points holders to DEXs, KuCoin and self custody as exchange worries grow",
-     "text": "Asked about access if a centralized exchange closes, Derek said DEXs are always the best option and that Uniswap and KuCoin have adequate liquidity for typical traders, with more listings likely to follow Freehold adoption. He also advised never moving RIO directly between exchanges, only via self custody.",
+     "text": "Derek said DEXs are always the best option, Uniswap and KuCoin have adequate liquidity for typical traders, and more listings should follow Freehold adoption. He advised moving RIO between exchanges only via self custody, and said thin order books reflect a lack of buyers, not a reason to mint new coins.",
      "sources": [
       {
        "kind": "tg",
@@ -54,6 +54,12 @@
        "chat": "Realio Network Official",
        "msg": 65869,
        "ts": "2026-11-10T15:29:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 65924,
+       "ts": "2026-11-10T22:52:00Z"
       }
      ]
     }
