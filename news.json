@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-10T11:28:21Z",
+ "updated": "2026-11-10T17:29:41Z",
  "days": [
   {
    "date": "2026-11-10",
@@ -34,14 +34,26 @@
     },
     {
      "project": "Realio",
-     "title": "Derek recommends DEXs for buying RIO amid exchange access worries",
-     "text": "Asked where holders in Europe can buy RIO as some centralized exchanges restrict access, Derek said decentralized exchanges are always the best option, even when a coin is listed on centralized exchanges.",
+     "title": "Derek points holders to DEXs, KuCoin and self custody as exchange worries grow",
+     "text": "Asked about access if a centralized exchange closes, Derek said DEXs are always the best option and that Uniswap and KuCoin have adequate liquidity for typical traders, with more listings likely to follow Freehold adoption. He also advised never moving RIO directly between exchanges, only via self custody.",
      "sources": [
       {
        "kind": "tg",
        "chat": "Realio Network Official",
        "msg": 65774,
        "ts": "2026-11-09T21:18:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 65853,
+       "ts": "2026-11-10T14:25:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 65869,
+       "ts": "2026-11-10T15:29:00Z"
       }
      ]
     }
