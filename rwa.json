@@ -1,6 +1,23 @@
 {
- "updated": "2026-11-09T05:29:38Z",
+ "updated": "2026-11-10T05:33:01Z",
  "days": [
+  {
+   "date": "2026-11-10",
+   "items": [
+    {
+     "tag": "MARKET",
+     "title": "Morgan Stanley buys digital transfer agent Vinyl Equity as a tokenization building block",
+     "why": "Big banks are buying the shareholder registry layer to capture issuers at listing, the same issuer onboarding position Freehold's Tokenization Studio is trying to win.",
+     "source": {
+      "outlet": "Ledger Insights",
+      "url": "https://www.ledgerinsights.com/morgan-stanley-buys-transfer-agent-vinyl-equity-as-a-tokenization-building-block/",
+      "published": "2026-11-09T17:14:52Z"
+     },
+     "score": 1,
+     "topic": "morgan-stanley-vinyl"
+    }
+   ]
+  },
   {
    "date": "2026-11-09",
    "items": [
