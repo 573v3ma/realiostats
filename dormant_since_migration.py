@@ -22,7 +22,7 @@ Alchemy is one.
 Env vars, same as the weekly job (never printed):
   ALCHEMY_BNB_URL, ALCHEMY_ETH_URL
 
-Usage:
+Usage (migration days = days with 100+ zero-address mints up to --cutoff):
   python dormant_since_migration.py                 # both chains, RIO-only test
   python dormant_since_migration.py --nonce         # plus any-transaction test
   python dormant_since_migration.py --cutoff 2024-11-10
@@ -58,10 +58,11 @@ def rpc(url, method, params):
 
 
 def rpc_batch(url, calls):
-    """calls: list of (method, params). Returns results in order."""
+    """calls: list of (method, params). Returns results in order. Backs off on
+    Alchemy's compute-units-per-second 429s instead of failing."""
     body = json.dumps([{"jsonrpc": "2.0", "id": i, "method": m, "params": p}
                        for i, (m, p) in enumerate(calls)]).encode()
-    for a in range(6):
+    for a in range(40):
         try:
             req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"})
             d = json.load(urllib.request.urlopen(req, timeout=120))
@@ -72,9 +73,9 @@ def rpc_batch(url, calls):
                 raise RuntimeError(str([x["error"] for x in d if "error" in x][:1])[:200])
             return [x["result"] for x in d]
         except Exception:
-            if a == 5:
+            if a == 39:
                 raise
-            time.sleep(3)
+            time.sleep(min(10, 1.5 + a))
 
 
 def fetch_transfers(url, chain):
@@ -110,18 +111,25 @@ def fetch_transfers(url, chain):
             return rows
 
 
+MASS_MINT_MIN = 100   # a day with this many zero-address mints is an airdrop day
+
+
 def analyse(rows, cutoff):
-    # Migration mints: from zero, dated on/before the cutoff.
+    # Migration mints: from zero, on a mass-mint day on/before the cutoff.
+    # Odd single mints in the same window are bridge mints (burn-and-mint),
+    # e.g. one 10M mint on 5 Nov 2024 on BNB, and are NOT migration.
     first_day = rows[0][4]
     mint_days = defaultdict(lambda: [0, 0])
+    for f, to, v, blk, day in rows:
+        if f == ZERO and day <= max(cutoff, first_day):
+            mint_days[day][0] += 1; mint_days[day][1] += v
+    mig_days = {d for d, (n, _) in mint_days.items() if n >= MASS_MINT_MIN}
     migrated = defaultdict(int)       # address -> migrated amount (wei)
     mig_block = 0
     touched_after = set()             # address had any non-migration transfer
     bal = defaultdict(int)
     for f, to, v, blk, day in rows:
-        is_mig = (f == ZERO and day <= cutoff)
-        if f == ZERO and day <= max(cutoff, first_day):
-            mint_days[day][0] += 1; mint_days[day][1] += v
+        is_mig = (f == ZERO and day in mig_days)
         if is_mig:
             migrated[to] += v
             mig_block = max(mig_block, blk)
@@ -140,21 +148,25 @@ def analyse(rows, cutoff):
 
 
 def nonce_check(url, addrs, mig_block):
-    """Return {addr: (nonce_at_migration, nonce_now, is_contract)}."""
-    out, addrs = {}, list(addrs)
-    for i in range(0, len(addrs), 100):
-        chunk = addrs[i:i + 100]
-        calls = []
-        for a in chunk:
-            calls += [("eth_getTransactionCount", [a, hex(mig_block)]),
-                      ("eth_getTransactionCount", [a, "latest"]),
-                      ("eth_getCode", [a, "latest"])]
-        res = rpc_batch(url, calls)
-        for j, a in enumerate(chunk):
-            n0, n1, code = res[3 * j: 3 * j + 3]
-            out[a] = (int(n0, 16), int(n1, 16), code not in ("0x", "0x0", None))
-        if (i // 100) % 20 == 0:
-            print(f"    nonce {i + len(chunk):,}/{len(addrs):,}", file=sys.stderr)
+    """Return {addr: (nonce_at_migration, nonce_now)}. Small throttled batches:
+    the free Alchemy tier caps compute units per second. On a hard failure,
+    returns what it has so far rather than losing the RIO-only results."""
+    out, addrs, step = {}, list(addrs), 10
+    try:
+        for i in range(0, len(addrs), step):
+            chunk = addrs[i:i + step]
+            calls = []
+            for a in chunk:
+                calls += [("eth_getTransactionCount", [a, hex(mig_block)]),
+                          ("eth_getTransactionCount", [a, "latest"])]
+            res = rpc_batch(url, calls)
+            for j, a in enumerate(chunk):
+                out[a] = (int(res[2 * j], 16), int(res[2 * j + 1], 16))
+            if (i // step) % 50 == 0:
+                print(f"    nonce {i + len(chunk):,}/{len(addrs):,}", file=sys.stderr)
+            time.sleep(0.25)
+    except Exception as e:
+        print(f"    nonce check stopped early at {len(out):,}/{len(addrs):,}: {str(e)[:150]}", file=sys.stderr)
     return out
 
 
@@ -215,16 +227,17 @@ def main():
               "rio_untouched": t, "mismatch": r["mismatch"][:50]}
         rows_out = {addr: {"rio": v / DEC, "label": labels.get(addr)} for addr, v in dor.items()}
         if a.nonce:
-            print(f"  checking nonces at block {r['mig_block']:,} vs latest for {len(dor):,} wallets...", file=sys.stderr)
-            nc = nonce_check(url, dor.keys(), r["mig_block"])
-            silent = [x for x, (n0, n1, c) in nc.items() if n0 == n1]
-            eoa_silent = [x for x in silent if not nc[x][2]]
+            big = [x for x, v in dor.items() if v >= 100 * DEC]
+            print(f"  checking nonces at block {r['mig_block']:,} vs latest for {len(big):,} untouched wallets with 100+ RIO...", file=sys.stderr)
+            nc = nonce_check(url, big, r["mig_block"])
+            silent = [x for x, (n0, n1) in nc.items() if n0 == n1]
             ts = tiers(dor[x] for x in silent)
-            print(f"  ...and NO outgoing tx of any kind since: {ts['wallets']:,} wallets, {ts['rio']:,.0f} RIO "
-                  f"({len(eoa_silent):,} plain wallets, {len(silent) - len(eoa_silent):,} contracts)")
-            ch["fully_silent"] = ts
-            for x, (n0, n1, c) in nc.items():
-                rows_out[x].update({"nonce_at_migration": n0, "nonce_now": n1, "contract": c})
+            print(f"  of the {len(big):,} untouched 100+ RIO wallets ({len(nc):,} checked), "
+                  f"NO outgoing tx of any kind since: {ts['wallets']:,} wallets, {ts['rio']:,.0f} RIO")
+            print("   by size: " + ", ".join(f">={k:,}: {ts[f'gte_{k:,}']:,} wallets / {ts[f'rio_gte_{k:,}']:,.0f} RIO" for k in TIERS))
+            ch["fully_silent_100plus"] = {"checked": len(nc), "of": len(big), **ts}
+            for x, (n0, n1) in nc.items():
+                rows_out[x].update({"nonce_at_migration": n0, "nonce_now": n1})
         ch["wallets"] = dict(sorted(rows_out.items(), key=lambda kv: -kv[1]["rio"]))
         report["chains"][chain] = ch
     out = os.path.join(HERE, "dormant-since-migration.json")
