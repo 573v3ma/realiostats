@@ -1,6 +1,31 @@
 {
- "updated": "2026-11-10T23:29:02Z",
+ "updated": "2026-11-11T05:29:04Z",
  "days": [
+  {
+   "date": "2026-11-11",
+   "items": [
+    {
+     "project": "Realio",
+     "title": "Derek says the website shows the native supply cap set in the network code",
+     "text": "Asked about differing RIO supply figures, Derek says the website shows the native cap written into the open source code, and that the team does not publish supply metrics because it does not market RIO. He adds that validators run the network, token holders vote, and Realio funds its developers.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 65935,
+       "ts": "2026-11-11T00:04:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 65969,
+       "ts": "2026-11-11T01:45:00Z"
+      }
+     ],
+     "topic": "rio-supply"
+    }
+   ]
+  },
   {
    "date": "2026-11-10",
    "items": [
@@ -623,74 +648,6 @@
        "ts": "2026-10-12T16:34:00Z"
       }
      ]
-    }
-   ]
-  },
-  {
-   "date": "2026-10-12",
-   "items": [
-    {
-     "project": "Freehold",
-     "title": "Freehold car tokens: primary purchases in USDC, BTC or ETH, RIO pairs for secondary",
-     "text": "Derek says primary purchases of the team-sponsored car tokens will be made in USDC, BTC or ETH, with RIO trading pairs for secondary trading. Primary pools on the native DEX will pair with RIO. Bridging ETH and BTC is only needed for the DEX, not for token purchases.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "msg": 6775,
-       "ts": "2026-10-11T16:53:00Z"
-      },
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "msg": 6776,
-       "ts": "2026-10-11T16:54:00Z"
-      },
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "msg": 6779,
-       "ts": "2026-10-11T16:56:00Z"
-      }
-     ],
-     "key": true,
-     "topic": "freehold-collection-payments"
-    },
-    {
-     "project": "Realio",
-     "title": "Derek: a validator shutting down does not slash or lose delegators' staked coins",
-     "text": "Asked about a validator that has announced it will shut down, Derek said delegators are not slashed and staked coins are not lost after a shutdown. He confirmed staked coins will be retrievable and said updates will come when available.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "msg": 64848,
-       "ts": "2026-10-11T16:07:00Z"
-      }
-     ],
-     "key": true,
-     "topic": "staked-rio-frozen"
-    },
-    {
-     "project": "Realio",
-     "title": "Derek: claims are the current priority; Algorand and Stellar holders need take no action",
-     "text": "Asked whether the Freehold app or the claims process comes first, Derek said claims are the current priority. Asked whether Algorand and Stellar holders should move tokens into the Freehold wallet, he said no action is necessary.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Freehold Official",
-       "msg": 6774,
-       "ts": "2026-10-11T16:50:00Z"
-      },
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "msg": 64855,
-       "ts": "2026-10-11T16:14:00Z"
-      }
-     ],
-     "key": true,
-     "topic": "incident-recovery"
     }
    ]
   }
