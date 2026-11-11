@@ -1,12 +1,12 @@
 {
- "as_of": "2026-11-10T14:02:51Z",
- "height": 20503803,
+ "as_of": "2026-11-11T13:19:30Z",
+ "height": 20518642,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 134804160.48,
+ "bonded_weight": 134794366.65,
  "validators": [
   {
    "moniker": "Teshy RIO",
-   "weight": 7820190.41,
+   "weight": 7820313.51,
    "commission": 0.05,
    "jailed": false
   },
@@ -18,7 +18,7 @@
   },
   {
    "moniker": "Rose Validators | $DSTRX",
-   "weight": 7362379.5,
+   "weight": 7351599.55,
    "commission": 0.05,
    "jailed": false
   },
@@ -30,7 +30,7 @@
   },
   {
    "moniker": "Realio Italy \ud83c\uddee\ud83c\uddf9 \ud83c\udf0f",
-   "weight": 7275824.89,
+   "weight": 7279210.31,
    "commission": 0.05,
    "jailed": false
   },
@@ -96,7 +96,7 @@
   },
   {
    "moniker": "Indonode | DSTRX | Low Fees",
-   "weight": 3579459.7,
+   "weight": 3579409.74,
    "commission": 0.05,
    "jailed": false
   },
@@ -144,7 +144,7 @@
   },
   {
    "moniker": "Vinjan.Inc | DSTRX",
-   "weight": 2780663.53,
+   "weight": 2780391.09,
    "commission": 0.05,
    "jailed": false
   },
@@ -210,7 +210,7 @@
   },
   {
    "moniker": "\ud83d\udd25 BIERFORGE \u2692 \ud83d\udd25 REStake",
-   "weight": 578613.6,
+   "weight": 576413.6,
    "commission": 0.05,
    "jailed": false
   },
