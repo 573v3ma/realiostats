@@ -1,0 +1,37 @@
+name: One-off - wallets untouched since migration
+
+# Manual only. Prints the summary to the run log and keeps the address list as
+# a short-lived artifact. Commits nothing.
+on:
+  workflow_dispatch:
+    inputs:
+      cutoff:
+        description: "Last UTC day a zero-address mint counts as migration"
+        default: "2024-11-06"
+      nonce:
+        description: "Also check for no outgoing tx of any kind"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  dormant:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Count untouched wallets
+        env:
+          ALCHEMY_BNB_URL: ${{ secrets.ALCHEMY_BNB_URL }}
+          ALCHEMY_ETH_URL: ${{ secrets.ALCHEMY_ETH_URL }}
+        run: python dormant_since_migration.py --cutoff "${{ inputs.cutoff }}" ${{ inputs.nonce && '--nonce' || '' }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dormant-since-migration
+          path: dormant-since-migration.json
+          retention-days: 3
