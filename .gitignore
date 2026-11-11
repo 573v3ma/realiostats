@@ -4,3 +4,6 @@ __pycache__/
 CLAUDE.md
 *.bak
 *.bak2
+
+# one-off analysis output (address list), never committed
+dormant-since-migration.json
