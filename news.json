@@ -1,9 +1,50 @@
 {
- "updated": "2026-11-11T11:28:32Z",
+ "updated": "2026-11-11T17:28:38Z",
  "days": [
   {
    "date": "2026-11-11",
    "items": [
+    {
+     "project": "Freehold",
+     "title": "Derek says Freehold should enable RST whitelisting again soon",
+     "text": "Derek told the official group that Freehold should enable whitelisting for RST again soon. He gave no date or further detail.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 66001,
+       "ts": "2026-11-11T14:13:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-rst-support"
+    },
+    {
+     "project": "Freehold",
+     "title": "Freehold Collection to appear in Hagerty magazine this week",
+     "text": "Freehold says the Freehold Collection appears this week in Hagerty magazine, which it describes as a place collectors actually read.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2120551705553023448",
+       "ts": "2026-11-11T16:18:19Z"
+      }
+     ]
+    },
+    {
+     "project": "Realio",
+     "title": "Derek declines to say what drives demand for RIO, calls it a plain proof of stake token",
+     "text": "Asked how the business connects to demand for RIO, Derek says holders must determine that for themselves and the team makes no speculative assertions about RIO. He describes it as the native token of a proof of stake network with no additional mechanisms coded in, and says the team keeps building on the network.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 66003,
+       "ts": "2026-11-11T14:27:00Z"
+      }
+     ]
+    },
     {
      "project": "Realio",
      "title": "Derek says the website shows the native supply cap set in the network code",
