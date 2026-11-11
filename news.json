@@ -1,9 +1,51 @@
 {
- "updated": "2026-11-11T17:28:38Z",
+ "updated": "2026-11-11T23:29:37Z",
  "days": [
   {
    "date": "2026-11-11",
    "items": [
+    {
+     "project": "Freehold",
+     "title": "Derek sets out how tokenized collector car ownership will work on Freehold",
+     "text": "Derek says each car is bought outright by the sponsor, then sold as fractional tokens starting at the car's value, with unsold tokens kept by the sponsor. Title sits in a Montana trust, a third party stores the car, and token holders vote on any sale and receive all proceeds. The first car is the Ferrari Pista.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "derekboirun",
+       "id": "2120593547908858174",
+       "ts": "2026-11-11T19:04:35Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "msg": 7112,
+       "ts": "2026-11-11T19:27:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "msg": 7119,
+       "ts": "2026-11-11T21:42:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-car-token-structure"
+    },
+    {
+     "project": "Freehold",
+     "title": "Derek says stocks are coming to Freehold too",
+     "text": "Right after his collector car explainer, Derek told the Freehold group that stocks are coming to Freehold as well. He gave no date or further detail.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "msg": 7114,
+       "ts": "2026-11-11T19:57:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-stocks"
+    },
     {
      "project": "Freehold",
      "title": "Derek says Freehold should enable RST whitelisting again soon",
