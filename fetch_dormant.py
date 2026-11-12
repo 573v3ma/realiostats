@@ -12,9 +12,10 @@ Two measures per chain:
   * never_moved: from the contract's full transfer history (same Alchemy walk
     as fetch_evm_holders.py). Exact, and reconstructable month by month, so
     it ships with a monthly history back to the migration.
-  * silent: of the never-moved wallets holding 100+ RIO, those that have sent
-    no transaction of any kind on that chain since (outgoing nonce at the
-    migration block equals today's). Needs an archive read per wallet, so it is
+  * silent ("Dead Wallets" on the site): of the never-moved wallets holding
+    100+ RIO, those that have sent no transaction of any kind since the
+    migration on BOTH BNB Chain and Ethereum (outgoing nonce at each chain's
+    migration block equals today's; same address on both chains). Needs an archive read per wallet, so it is
     counted forward only, one point per run.
 
 A nonce only ever goes up, so a wallet that has sent once is never silent
@@ -137,10 +138,15 @@ def main():
     except Exception:
         cache = {}
     chains = prev.get("chains") or {}
-    for chain, env in (("bnb", "ALCHEMY_BNB_URL"), ("ethereum", "ALCHEMY_ETH_URL")):
-        url = os.environ.get(env, "").strip()
+    urls = {"bnb": os.environ.get("ALCHEMY_BNB_URL", "").strip(),
+            "ethereum": os.environ.get("ALCHEMY_ETH_URL", "").strip()}
+    work = {}   # chain -> (ch, dor, own-chain silent list or None)
+
+    # Phase 1, per chain: never-moved totals and history, then the wallet's own
+    # chain nonce check for never-moved wallets holding 100+ RIO.
+    for chain, url in urls.items():
         if not url:
-            print(f"{chain}: {env} unset, keeping previous value", file=sys.stderr)
+            print(f"{chain}: URL unset, keeping previous value", file=sys.stderr)
             continue
         try:
             rows = fetch_transfers(url, chain)
@@ -149,7 +155,6 @@ def main():
             migrated = {a: v for a, v in r["migrated"].items() if v > 0}
             dor = r["dormant"]
             ft = first_touch(rows, migrated, mig_days)
-            old = chains.get(chain) or {}
             ch = {"migration_days": sorted(mig_days), "migration_block": r["mig_block"],
                   "recipients": len(migrated), "migrated_rio": round(sum(migrated.values()) / DEC),
                   "never_moved": summary(dor.values()), "history": history(migrated, ft)}
@@ -162,31 +167,53 @@ def main():
                       "differs from the migrated amount", file=sys.stderr)
             cands = {a: v for a, v in dor.items() if v >= SILENT_MIN}
             silent, complete = silent_check(url, chain, cands, r["mig_block"], cache)
-            sh = [p for p in (old.get("silent_history") or []) if p.get("date") != today]
-            if complete:
-                s = summary(dor[a] for a in silent)
-                ch["silent"] = {"as_of": today, "candidates": len(cands),
-                                "wallets": s["wallets"], "rio": s["rio"], "gte_10k": s["gte_10k"]}
-                sh.append({"date": today, "wallets": s["wallets"], "rio": s["rio"]})
-            else:
-                ch["silent"] = old.get("silent")   # keep the last complete reading
-                print(f"::warning::{chain}: nonce check incomplete, kept the previous silent figure",
-                      file=sys.stderr)
-            ch["silent_history"] = sh
-            chains[chain] = ch
-            nm = ch["never_moved"]
-            print(f"{chain}: {ch['recipients']:,} migrated wallets, never moved {nm['wallets']:,} "
-                  f"/ {nm['rio']:,} RIO; silent 100+: "
-                  + (f"{ch['silent']['wallets']:,} / {ch['silent']['rio']:,} RIO" if ch.get("silent") else "n/a"))
+            work[chain] = (ch, dor, silent if complete else None)
         except Exception as e:
             print(f"::error::{chain}: FAILED ({type(e).__name__}: {str(e)[:200]}), keeping previous value",
                   file=sys.stderr)
+
+    # Phase 2: a dead wallet must also be silent on the OTHER chain. The same
+    # address exists on BNB and Ethereum, so a wallet whose RIO sits on BNB is
+    # only dead if it has sent nothing on Ethereum since that chain's migration
+    # block either. Needs both chains from this run; otherwise the last
+    # complete reading is kept.
+    for chain, (ch, dor, silent) in work.items():
+        other = "ethereum" if chain == "bnb" else "bnb"
+        old = chains.get(chain) or {}
+        dead, complete = None, False
+        if silent is not None and other in work:
+            oblk = work[other][0]["migration_block"]
+            osil, ocomplete = silent_check(urls[other], other, {a: dor[a] for a in silent}, oblk, cache)
+            if ocomplete:
+                dead, complete = osil, True
+        # History is only kept while the definition is the same (both chains).
+        sh = [p for p in (old.get("silent_history") or [])
+              if p.get("date") != today and p.get("scope") == "bnb+ethereum"]
+        if complete:
+            s = summary(dor[a] for a in dead)
+            ch["silent"] = {"as_of": today, "scope": "bnb+ethereum", "candidates": len(silent),
+                            "wallets": s["wallets"], "rio": s["rio"], "gte_10k": s["gte_10k"]}
+            sh.append({"date": today, "scope": "bnb+ethereum", "wallets": s["wallets"], "rio": s["rio"]})
+        else:
+            o = old.get("silent")
+            ch["silent"] = o if (o and o.get("scope") == "bnb+ethereum") else None
+            print(f"::warning::{chain}: dead-wallet check incomplete, kept the previous reading",
+                  file=sys.stderr)
+        ch["silent_history"] = sh
+        chains[chain] = ch
+        nm = ch["never_moved"]
+        print(f"{chain}: {ch['recipients']:,} migrated wallets, never moved {nm['wallets']:,} "
+              f"/ {nm['rio']:,} RIO; silent on own chain: "
+              + (f"{len(silent):,}" if silent is not None else "n/a") + "; dead on both chains: "
+              + (f"{ch['silent']['wallets']:,} / {ch['silent']['rio']:,} RIO" if ch.get("silent") else "n/a"))
+
     os.makedirs(os.path.dirname(CACHE), exist_ok=True)
     json.dump(cache, open(CACHE, "w"))
     out = {"as_of": today,
            "source": "Full ERC-20 transfer history of 0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0 via "
                      "Alchemy getAssetTransfers; migration mints are the mass zero-address mints of "
-                     "30-31 Oct 2024; silent = outgoing nonce unchanged since the migration block.",
+                     "30-31 Oct 2024; dead (silent) = outgoing nonce unchanged since the migration block "
+                     "on both BNB Chain and Ethereum.",
            "chains": chains}
     json.dump(out, open(OUT, "w"), indent=1)
     print("wrote", OUT)
