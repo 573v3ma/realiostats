@@ -1,9 +1,49 @@
 {
- "updated": "2026-11-12T17:29:48Z",
+ "updated": "2026-11-12T23:30:12Z",
  "days": [
   {
    "date": "2026-11-12",
-   "items": []
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold Collection to open with a Ferrari 488 Pista as its first tokenized car",
+     "text": "Freehold says each collector car will be its own fractional offering, not a pooled fund, with its own offering materials. Freehold sources the car and arranges custody, tokens show up in Freehold Wallet, and early access requests are open.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2120963644888592510",
+       "ts": "2026-11-12T19:35:13Z"
+      },
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2120963654623564231",
+       "ts": "2026-11-12T19:35:15Z"
+      },
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2120963661250417079",
+       "ts": "2026-11-12T19:35:17Z"
+      },
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2120963668808478857",
+       "ts": "2026-11-12T19:35:18Z"
+      },
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2120963681777270920",
+       "ts": "2026-11-12T19:35:21Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-collection"
+    }
+   ]
   },
   {
    "date": "2026-11-11",
