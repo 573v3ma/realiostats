@@ -1,6 +1,23 @@
 {
- "updated": "2026-11-11T05:29:19Z",
+ "updated": "2026-11-12T06:00:23Z",
  "days": [
+  {
+   "date": "2026-11-12",
+   "items": [
+    {
+     "tag": "REGULATION",
+     "title": "OKX and ICE set a November 23 launch for their tokenized stock venue under the SEC exemption",
+     "why": "Derek says stocks are coming to Freehold, and this venue shows both the SEC route for tokenized shares and how many issuers refuse to have their stock tokenized.",
+     "source": {
+      "outlet": "Ledger Insights",
+      "url": "https://www.ledgerinsights.com/okxice-tokenized-securities-venue-launches-november-23-direxion-etfs-fill-the-roster/",
+      "published": "2026-11-11T14:54:07Z"
+     },
+     "score": 2,
+     "topic": "okxice-launch"
+    }
+   ]
+  },
   {
    "date": "2026-11-11",
    "items": [
