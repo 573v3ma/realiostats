@@ -64,6 +64,20 @@
   </div>
 </div></section>
 
+<section id="dormant" hidden><div class="wrap">
+  <h2>Never moved since the migration</h2>
+  <p class="sec-lede">RIO on BNB Chain and Ethereum that has not moved since the 30 October 2024 migration, when every holder's balance was re-issued on the new contract. A wallet counts if it received its migrated RIO and has had no RIO transfer in or out since, so it still holds exactly what it was given. Updated weekly.</p>
+  <div class="chains" id="dmGrid"></div>
+  <div class="chartcard" id="dmCard" hidden>
+    <div class="hb-metricrow" id="dmMetricRow">
+      <button type="button" class="hb-mbtn is-on" data-m="rio">RIO never moved</button>
+      <button type="button" class="hb-mbtn" data-m="wallets">Wallets</button>
+    </div>
+    <div class="chartwrap"><canvas id="dmCanvas"></canvas></div>
+    <p class="cap" id="dmCap"></p>
+  </div>
+</div></section>
+
 <section id="transfers"><div class="wrap">
   <div class="lt-head"><h2>Whale watchers</h2><span class="lt-live" id="ltLive" hidden><span class="lt-dot"></span><span id="ltLiveTxt">Live</span></span></div>
   <p class="sec-lede">Every transfer of 100,000 RIO or more in the last 30 days, on all seven chains. Exchange wallets, bridges and Realio module accounts are named where we know the address; anything else is shown as an address you can open in the explorer. A bridge move shows up twice, once as it leaves one chain and once as it arrives on the other, and the two legs are paired where the amounts and times match.</p>
@@ -98,7 +112,7 @@
 </div></footer>
 
 <script src="core.js?v=26"></script>
-<script src="holders.js?v=26"></script>
+<script src="holders.js?v=27"></script>
 <script src="transfers.js?v=3"></script>
 </body>
 </html>

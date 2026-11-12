@@ -195,6 +195,89 @@ function renderHolderBase(arr){
   renderNativeChart();
 }
 
+// Never moved since the migration (dormant-supply.json, weekly). Migration
+// wallets on BNB and Ethereum whose RIO has not moved since 30 Oct 2024: four
+// tiles plus a month-end chart reconstructed from transfer history. The
+// "no transaction at all" tile is counted forward only (one archive read per
+// wallet), so it has no history line.
+let DM = null, DM_CHART = null, DM_METRIC = "rio", DM_WIRED = false;
+function renderDormant(){
+  const sec = document.getElementById("dormant");
+  const cx = (DM && DM.chains) || {};
+  const have = [["BNB Chain","#fbbf24",cx.bnb], ["Ethereum","#818cf8",cx.ethereum]].filter(x => x[2] && x[2].never_moved);
+  if(!sec || !have.length) return;
+  sec.hidden = false;
+  const pct = (a,b) => b ? (100*a/b).toFixed(1) + "%" : "n/a";
+  const rio = n => fmtM(M(n)) + " RIO";
+  const chip = (name, dot, v, x) => `<div class="chip"><div class="cn">${dot ? `<span class="cdot" style="background:${dot}"></span>` : ""}${name}</div><div class="cv">${v}</div><div class="cx">${x}</div></div>`;
+  let tiles = have.map(([name,color,c]) => chip(name, color, rio(c.never_moved.rio),
+    `${fmtInt(c.never_moved.wallets)} of ${fmtInt(c.recipients)} migrated wallets, ${pct(c.never_moved.rio, c.migrated_rio)} of the RIO they were given`));
+  const sum = f => have.reduce((t,[, ,c]) => t + (f(c)||0), 0);
+  if(have.length > 1) tiles.push(chip("Both chains", "", rio(sum(c => c.never_moved.rio)),
+    `${fmtInt(sum(c => c.never_moved.wallets))} wallets, ${pct(sum(c => c.never_moved.rio), sum(c => c.migrated_rio))} of all migrated RIO`));
+  const sil = have.filter(([, ,c]) => c.silent);
+  if(sil.length) tiles.push(chip("No transaction at all", "", rio(sil.reduce((t,[, ,c]) => t + c.silent.rio, 0)),
+    `${fmtInt(sil.reduce((t,[, ,c]) => t + c.silent.wallets, 0))} of these wallets with 100+ RIO have sent nothing on ${sil.length > 1 ? "either chain" : sil[0][0]} since`));
+  document.getElementById("dmGrid").innerHTML = tiles.join("");
+
+  const card = document.getElementById("dmCard");
+  const hist = have.filter(([, ,c]) => c.history && c.history.length);
+  if(!hist.length){ card.hidden = true; return; }
+  card.hidden = false;
+  if(!DM_WIRED){
+    document.querySelectorAll("#dmMetricRow .hb-mbtn").forEach(b => b.addEventListener("click", () => {
+      DM_METRIC = b.dataset.m;
+      document.querySelectorAll("#dmMetricRow .hb-mbtn").forEach(x => x.classList.toggle("is-on", x === b));
+      renderDormant();
+    }));
+    DM_WIRED = true;
+  }
+  const set = new Set(); hist.forEach(([, ,c]) => c.history.forEach(p => set.add(p.month)));
+  const months = [...set].sort();
+  const labels = months.map(m => { const [y,mo] = m.split("-");
+    return new Date(y, mo-1, 1).toLocaleDateString("en-GB",{month:"short",year:"2-digit"}); });
+  const val = v => DM_METRIC === "rio" ? v / 1e6 : v;
+  const datasets = hist.map(([name,color,c], i) => {
+    const bym = {}; c.history.forEach(p => bym[p.month] = p[DM_METRIC]);
+    return {label:name, data:months.map(m => bym[m] == null ? null : val(bym[m])), borderColor:color, legendColor:color,
+      backgroundColor:fadeFill(color,.38,.12), ...LINE_STYLE, pointBackgroundColor:color, pointBorderColor:T().bg,
+      fill: i === 0 ? "origin" : "-1", stack:"s"};
+  });
+  const show = v => DM_METRIC === "rio" ? fmtM(v) + " RIO" : fmtInt(v) + " wallets";
+  if(DM_CHART) DM_CHART.destroy();
+  DM_CHART = new Chart(document.getElementById("dmCanvas"),{
+    type:"line", plugins:[watermarkPlugin], data:{labels, datasets},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
+      scales:{
+        y:{stacked:true,beginAtZero:true,grid:{color:T().grid},
+           ticks:{color:T().tick,font:{family:"Inter"},callback:v => DM_METRIC === "rio" ? v + "M" : fmtInt(v)}},
+        x:{grid:{display:false},ticks:{color:T().tick,font:{family:"Inter",size:11},maxRotation:0,autoSkipPadding:14}}
+      },
+      plugins:{
+        legend:chartLegend(),
+        tooltip:chartTooltip({title:i => i[0].label + " · month end",
+          label:c => ` ${c.dataset.label}: ${show(c.parsed.y)}`,
+          footer:items => "Both chains: " + show(items.reduce((t,i) => t + (+i.parsed.y || 0), 0))})
+      }
+    }
+  });
+  const since = sil.map(([, ,c]) => (c.silent_history && c.silent_history[0] && c.silent_history[0].date) || c.silent.as_of).sort()[0];
+  const fmtD = d => d ? new Date(d + "T00:00:00Z").toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}) : "";
+  document.getElementById("dmCap").innerHTML =
+    "Month-end, reconstructed from each chain's full transfer history, so the line runs back to the migration. "
+    + "A wallet drops out the first time it moves any RIO and never comes back, so the line can only fall. "
+    + "<b>No transaction at all</b> is the stricter test: of the never-moved wallets holding 100+ RIO, those whose outgoing transaction count on that chain is unchanged since the migration block, so they have sent nothing, not just no RIO. "
+    + "That needs one archive read per wallet, so it is counted forward only"
+    + (since ? " from " + fmtD(since) : "") + " and has no line here. "
+    + "Some of these wallets may be lost keys, cold storage or contracts; the chain data cannot tell which. "
+    + "Later mints from the bridge (for example 10M RIO on BNB Chain on 5 November 2024) are not migration and are left out. "
+    + "Counts are addresses per chain"
+    + (DM.as_of ? ", as of " + fmtD(DM.as_of) : "")
+    + ". Script: <a href=\"https://github.com/573v3ma/realiostats/blob/main/fetch_dormant.py\" target=\"_blank\" rel=\"noopener\">fetch_dormant.py</a>.";
+}
+fetch("./dormant-supply.json",{cache:"no-store"}).then(r=>r.ok?r.json():null)
+  .then(d=>{ DM = d; renderDormant(); }).catch(()=>{});
+
 loadSupply().then(({arr})=>{
   // Native holder counts and the native evolution chart come from the same
   // daily snapshot series the supply page uses.

@@ -7,3 +7,5 @@ CLAUDE.md
 
 # one-off analysis output (address list), never committed
 dormant-since-migration.json
+# fetch_dormant.py nonce cache (address list), kept in the Actions cache only
+.cache/
