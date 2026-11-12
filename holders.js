@@ -217,7 +217,7 @@ function renderDormant(){
     `in ${fmtInt(sum(c => c.never_moved.wallets))} wallets, ${pct(sum(c => c.never_moved.rio), sum(c => c.migrated_rio))} of all migrated RIO. Some of these wallets are still active with other tokens`));
   const sil = have.filter(([, ,c]) => c.silent);
   if(sil.length) tiles.push(chip("Dead Wallets", "", rio(sil.reduce((t,[, ,c]) => t + c.silent.rio, 0)),
-    `in ${fmtInt(sil.reduce((t,[, ,c]) => t + c.silent.wallets, 0))} wallets with 100+ RIO that have sent no transaction of any kind since, and had no activity with any other token on that chain`));
+    `in ${fmtInt(sil.reduce((t,[, ,c]) => t + c.silent.wallets, 0))} wallets with 100+ RIO that have sent no transaction of any kind since, and had no activity with any other token on those chains`));
   document.getElementById("dmGrid").innerHTML = tiles.join("");
 
   const card = document.getElementById("dmCard");
@@ -266,7 +266,7 @@ function renderDormant(){
   document.getElementById("dmCap").innerHTML =
     "Month-end, reconstructed from each chain's full transfer history, so the line runs back to the migration. "
     + "A wallet drops out the first time it moves any RIO and never comes back, so the line can only fall. "
-    + "<b>Dead Wallets</b> is read from each wallet's outgoing transaction count on that chain: unchanged since the migration block means it has sent nothing at all. "
+    + "<b>Dead Wallets</b> is read from each wallet's outgoing transaction count on both BNB Chain and Ethereum, since the same address exists on both: unchanged on both since the migration means it has sent nothing on either. Other chains are not checked. "
     + "That needs one archive read per wallet, so it is counted forward only"
     + (since ? " from " + fmtD(since) : "") + " and has no line here. "
     + "Some of these wallets may be lost keys, cold storage or contracts; the chain data cannot tell which. "
