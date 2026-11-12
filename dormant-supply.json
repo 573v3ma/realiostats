@@ -1,0 +1,345 @@
+{
+ "as_of": "2026-11-12",
+ "source": "Full ERC-20 transfer history of 0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0 via Alchemy getAssetTransfers; migration mints are the mass zero-address mints of 30-31 Oct 2024; silent = outgoing nonce unchanged since the migration block.",
+ "chains": {
+  "bnb": {
+   "migration_days": [
+    "2024-10-31"
+   ],
+   "migration_block": 43611908,
+   "recipients": 18573,
+   "migrated_rio": 75672254,
+   "never_moved": {
+    "wallets": 9511,
+    "rio": 8155495,
+    "gte_100": {
+     "wallets": 2943,
+     "rio": 8074281
+    },
+    "gte_10k": {
+     "wallets": 148,
+     "rio": 4697937
+    }
+   },
+   "history": [
+    {
+     "month": "2024-10",
+     "wallets": 18564,
+     "rio": 74630281
+    },
+    {
+     "month": "2024-11",
+     "wallets": 16191,
+     "rio": 38467226
+    },
+    {
+     "month": "2024-12",
+     "wallets": 14855,
+     "rio": 32026309
+    },
+    {
+     "month": "2025-01",
+     "wallets": 14114,
+     "rio": 28498107
+    },
+    {
+     "month": "2025-02",
+     "wallets": 13400,
+     "rio": 26011040
+    },
+    {
+     "month": "2025-03",
+     "wallets": 13108,
+     "rio": 24908149
+    },
+    {
+     "month": "2025-04",
+     "wallets": 12884,
+     "rio": 22223363
+    },
+    {
+     "month": "2025-05",
+     "wallets": 12608,
+     "rio": 21523343
+    },
+    {
+     "month": "2025-06",
+     "wallets": 12432,
+     "rio": 20919044
+    },
+    {
+     "month": "2025-07",
+     "wallets": 12168,
+     "rio": 19269571
+    },
+    {
+     "month": "2025-08",
+     "wallets": 11987,
+     "rio": 18776545
+    },
+    {
+     "month": "2025-09",
+     "wallets": 11810,
+     "rio": 17813816
+    },
+    {
+     "month": "2025-10",
+     "wallets": 11619,
+     "rio": 17195892
+    },
+    {
+     "month": "2025-11",
+     "wallets": 11456,
+     "rio": 16070398
+    },
+    {
+     "month": "2025-12",
+     "wallets": 11351,
+     "rio": 15717553
+    },
+    {
+     "month": "2026-01",
+     "wallets": 11248,
+     "rio": 13864886
+    },
+    {
+     "month": "2026-02",
+     "wallets": 11169,
+     "rio": 13622804
+    },
+    {
+     "month": "2026-03",
+     "wallets": 11106,
+     "rio": 13234807
+    },
+    {
+     "month": "2026-04",
+     "wallets": 11068,
+     "rio": 13111786
+    },
+    {
+     "month": "2026-05",
+     "wallets": 10999,
+     "rio": 12661726
+    },
+    {
+     "month": "2026-06",
+     "wallets": 10935,
+     "rio": 12386339
+    },
+    {
+     "month": "2026-07",
+     "wallets": 10901,
+     "rio": 12262002
+    },
+    {
+     "month": "2026-08",
+     "wallets": 9614,
+     "rio": 9993042
+    },
+    {
+     "month": "2026-09",
+     "wallets": 9570,
+     "rio": 9897897
+    },
+    {
+     "month": "2026-10",
+     "wallets": 9527,
+     "rio": 8222110
+    },
+    {
+     "month": "2026-11",
+     "wallets": 9511,
+     "rio": 8155495
+    }
+   ],
+   "silent": {
+    "as_of": "2026-11-12",
+    "candidates": 2943,
+    "wallets": 1586,
+    "rio": 4350630,
+    "gte_10k": {
+     "wallets": 82,
+     "rio": 2505572
+    }
+   },
+   "silent_history": [
+    {
+     "date": "2026-11-12",
+     "wallets": 1586,
+     "rio": 4350630
+    }
+   ]
+  },
+  "ethereum": {
+   "migration_days": [
+    "2024-10-30",
+    "2024-10-31"
+   ],
+   "migration_block": 21088771,
+   "recipients": 32302,
+   "migrated_rio": 60565100,
+   "never_moved": {
+    "wallets": 17551,
+    "rio": 18235392,
+    "gte_100": {
+     "wallets": 10190,
+     "rio": 18050978
+    },
+    "gte_10k": {
+     "wallets": 341,
+     "rio": 7442727
+    }
+   },
+   "history": [
+    {
+     "month": "2024-10",
+     "wallets": 32163,
+     "rio": 57255084
+    },
+    {
+     "month": "2024-11",
+     "wallets": 28730,
+     "rio": 42033925
+    },
+    {
+     "month": "2024-12",
+     "wallets": 26699,
+     "rio": 37140513
+    },
+    {
+     "month": "2025-01",
+     "wallets": 25293,
+     "rio": 33057927
+    },
+    {
+     "month": "2025-02",
+     "wallets": 24385,
+     "rio": 30755441
+    },
+    {
+     "month": "2025-03",
+     "wallets": 23866,
+     "rio": 28944247
+    },
+    {
+     "month": "2025-04",
+     "wallets": 23492,
+     "rio": 28220175
+    },
+    {
+     "month": "2025-05",
+     "wallets": 23038,
+     "rio": 27546547
+    },
+    {
+     "month": "2025-06",
+     "wallets": 22701,
+     "rio": 26854114
+    },
+    {
+     "month": "2025-07",
+     "wallets": 22171,
+     "rio": 26112501
+    },
+    {
+     "month": "2025-08",
+     "wallets": 21737,
+     "rio": 25383091
+    },
+    {
+     "month": "2025-09",
+     "wallets": 21362,
+     "rio": 24504497
+    },
+    {
+     "month": "2025-10",
+     "wallets": 20968,
+     "rio": 23864841
+    },
+    {
+     "month": "2025-11",
+     "wallets": 20613,
+     "rio": 22665102
+    },
+    {
+     "month": "2025-12",
+     "wallets": 20349,
+     "rio": 22061440
+    },
+    {
+     "month": "2026-01",
+     "wallets": 20150,
+     "rio": 21599681
+    },
+    {
+     "month": "2026-02",
+     "wallets": 19951,
+     "rio": 20919742
+    },
+    {
+     "month": "2026-03",
+     "wallets": 19827,
+     "rio": 20490237
+    },
+    {
+     "month": "2026-04",
+     "wallets": 19751,
+     "rio": 20220602
+    },
+    {
+     "month": "2026-05",
+     "wallets": 19623,
+     "rio": 19861793
+    },
+    {
+     "month": "2026-06",
+     "wallets": 19506,
+     "rio": 19557983
+    },
+    {
+     "month": "2026-07",
+     "wallets": 19454,
+     "rio": 19460553
+    },
+    {
+     "month": "2026-08",
+     "wallets": 17851,
+     "rio": 18837266
+    },
+    {
+     "month": "2026-09",
+     "wallets": 17701,
+     "rio": 18538902
+    },
+    {
+     "month": "2026-10",
+     "wallets": 17595,
+     "rio": 18308345
+    },
+    {
+     "month": "2026-11",
+     "wallets": 17551,
+     "rio": 18235392
+    }
+   ],
+   "silent": {
+    "as_of": "2026-11-12",
+    "candidates": 10190,
+    "wallets": 4111,
+    "rio": 6323287,
+    "gte_10k": {
+     "wallets": 102,
+     "rio": 2321419
+    }
+   },
+   "silent_history": [
+    {
+     "date": "2026-11-12",
+     "wallets": 4111,
+     "rio": 6323287
+    }
+   ]
+  }
+ }
+}
