@@ -1,12 +1,12 @@
 {
- "as_of": "2026-11-11T13:19:30Z",
- "height": 20518642,
+ "as_of": "2026-11-12T14:24:35Z",
+ "height": 20534641,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 134794366.65,
+ "bonded_weight": 134854515.86,
  "validators": [
   {
    "moniker": "Teshy RIO",
-   "weight": 7820313.51,
+   "weight": 7820435.65,
    "commission": 0.05,
    "jailed": false
   },
@@ -18,7 +18,7 @@
   },
   {
    "moniker": "Rose Validators | $DSTRX",
-   "weight": 7351599.55,
+   "weight": 7351655.24,
    "commission": 0.05,
    "jailed": false
   },
@@ -30,7 +30,7 @@
   },
   {
    "moniker": "Realio Italy \ud83c\uddee\ud83c\uddf9 \ud83c\udf0f",
-   "weight": 7279210.31,
+   "weight": 7281043.69,
    "commission": 0.05,
    "jailed": false
   },
@@ -48,7 +48,7 @@
   },
   {
    "moniker": "Marx-Realio",
-   "weight": 6734750.4,
+   "weight": 6778550.4,
    "commission": 0.05,
    "jailed": false
   },
@@ -60,13 +60,13 @@
   },
   {
    "moniker": "min fee\ud83c\udf84 \ud835\udc25\ud835\udc1e\ud835\udc2c\ud835\udc27\ud835\udc22\ud835\udc24 | \ud835\udc14\ud835\udc13\ud835\udc12\ud835\udc00",
-   "weight": 5278286.23,
+   "weight": 5290616.23,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Teshy - DSTRX",
-   "weight": 4994158.23,
+   "weight": 4994203.23,
    "commission": 0.05,
    "jailed": false
   },
@@ -168,7 +168,7 @@
   },
   {
    "moniker": "hubprovider",
-   "weight": 882381.26,
+   "weight": 884344.26,
    "commission": 0.05,
    "jailed": false
   },
