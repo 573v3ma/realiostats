@@ -879,6 +879,41 @@ function renderFloatLadder(latest, h){
   renderFloatRead();
 }
 
+// Month-over-month column. holders-evm.json "venues_history" holds one point
+// per weekly run ({as_of, bsc_exchanges:{name:rio}, eth_holders:{name:rio}}).
+// Baseline = the point nearest four weeks before the current reading, at least
+// three weeks old. Returns null (column shows a dash) until such a point exists.
+function venueBaseline(h, key){
+  const hist = Array.isArray(h.venues_history) ? h.venues_history : [];
+  if(!h.as_of || !hist.length) return null;
+  const DAY = 864e5, now = Date.parse(h.as_of);
+  let best = null;
+  for(const p of hist){
+    if(!p[key]) continue;
+    const age = (now - Date.parse(p.as_of))/DAY;
+    if(age < 21) continue;
+    if(!best || Math.abs(age-28) < Math.abs(best.age-28)) best = {age, as_of:p.as_of, vals:p[key]};
+  }
+  return best;
+}
+function chgCell(now, was){
+  if(was == null) return `<td class="lq-chg flat">new</td>`;
+  const d = now - was, a = Math.abs(d)/1e6;
+  if(Math.abs(d) < 1e4) return `<td class="lq-chg flat">0.00M</td>`;
+  const sign = d > 0 ? "+" : "\u2212";
+  const pcN = was > 0 ? 100*Math.abs(d)/was : null;
+  const pc = (pcN == null || pcN < 0.05) ? "" : ` <span class="lq-pc">${sign}${pcN < 10 ? pcN.toFixed(1) : pcN.toFixed(0)}%</span>`;
+  return `<td class="lq-chg ${d>0?"up":"down"}">${sign}${a.toFixed(a<10?2:1)}M${pc}</td>`;
+}
+const venueDate = s => new Date(s+"T00:00:00Z").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"UTC"});
+function chgHead(id, base){
+  const th = document.getElementById(id);
+  if(!th) return;
+  if(!base){ th.textContent = "vs 4 wks"; th.removeAttribute("title"); return; }
+  th.textContent = "vs " + Math.round(base.age/7) + " wks";
+  th.title = "Change since the reading of " + venueDate(base.as_of);
+}
+
 function renderHolders(latest, h){
   if(!h || !latest) return;
   renderFloatLadder(latest, h);
@@ -887,39 +922,51 @@ function renderHolders(latest, h){
   const circ = latest.tradable_total || 0;
   const body = document.getElementById("bscHoldersBody");
   if(body && Array.isArray(h.bsc_exchanges)){
-    let tot = 0, wtot = 0;
+    let tot = 0, wtot = 0, btot = 0, bnow = 0;
+    const base = venueBaseline(h, "bsc_exchanges");
+    chgHead("bscChgHead", base);
     const rows = h.bsc_exchanges.slice().sort((a,b)=>b.rio-a.rio).map(x=>{
       tot += x.rio; wtot += x.wallets;
+      const was = base ? base.vals[x.entity] : undefined;
+      if(was != null){ btot += was; bnow += x.rio; }
+      const cc = base ? chgCell(x.rio, was) : `<td class="lq-chg flat">\u2014</td>`;
       const pB = bnb ? (100*x.rio/bnb).toFixed(1)+"%" : "—";
       const pC = circ ? (100*x.rio/circ).toFixed(1)+"%" : "—";
       const tag = x.note ? ` <span class="lq-tag">${x.note}</span>` : "";
-      return `<tr><td>${x.entity}${tag}</td><td>${x.wallets}</td><td>${fmtM(M(x.rio))}</td><td>${pB}</td><td>${pC}</td></tr>`;
+      return `<tr><td>${x.entity}${tag}</td><td>${x.wallets}</td><td>${fmtM(M(x.rio))}</td>${cc}<td>${pB}</td><td>${pC}</td></tr>`;
     }).join("");
     const tB = bnb ? (100*tot/bnb).toFixed(0)+"%" : "—";
     const tC = circ ? (100*tot/circ).toFixed(1)+"%" : "—";
     body.innerHTML = rows +
-      `<tr class="lq-total"><td>Identified exchanges & DEX pools</td><td>${wtot}</td><td>${fmtM(M(tot))}</td><td>${tB}</td><td>${tC}</td></tr>`;
+      `<tr class="lq-total"><td>Identified exchanges & DEX pools</td><td>${wtot}</td><td>${fmtM(M(tot))}</td>${base ? chgCell(bnow, btot) : `<td class="lq-chg flat">\u2014</td>`}<td>${tB}</td><td>${tC}</td></tr>`;
     document.getElementById("bscHoldersSub").innerHTML =
-      `Held in exchange wallets, which custody user funds. Not exhaustive: smaller labelled wallets sit below the top holders, so the real exchange-held total is a little higher.`;
+      `Held in exchange wallets, which custody user funds. Not exhaustive: smaller labelled wallets sit below the top holders, so the real exchange-held total is a little higher.`
+      + (base ? ` The change column compares the same wallets with their reading of ${venueDate(base.as_of)}. An exchange moving funds to a new, unlabelled wallet shows as an outflow.` : "");
   }
   const eth = (latest.chains && latest.chains.ethereum &&
     (latest.chains.ethereum.circulating ?? latest.chains.ethereum.total_supply)) || 0;
   const ebody = document.getElementById("ethHoldersBody");
   if(ebody && Array.isArray(h.eth_holders)){
-    let etot = 0;
+    let etot = 0, btot = 0, bnow = 0;
+    const base = venueBaseline(h, "eth_holders");
+    chgHead("ethChgHead", base);
     const rows = h.eth_holders.slice().sort((a,b)=>b.rio-a.rio).map(x=>{
       etot += x.rio;
+      const was = base ? base.vals[x.holder] : undefined;
+      if(was != null){ btot += was; bnow += x.rio; }
+      const cc = base ? chgCell(x.rio, was) : `<td class="lq-chg flat">\u2014</td>`;
       const pE = eth ? (100*x.rio/eth).toFixed(1)+"%" : "—";
       const pC = circ ? (100*x.rio/circ).toFixed(1)+"%" : "—";
       // Same "no active market" tag the BNB table shows, so the two are consistent.
       const tag = x.note ? ` <span class="lq-tag">${x.note}</span>` : "";
-      return `<tr><td>${x.holder}${tag}</td><td>${x.type}</td><td>${fmtM(M(x.rio))}</td><td>${pE}</td><td>${pC}</td></tr>`;
+      return `<tr><td>${x.holder}${tag}</td><td>${x.type}</td><td>${fmtM(M(x.rio))}</td>${cc}<td>${pE}</td><td>${pC}</td></tr>`;
     }).join("");
     const tE = eth ? (100*etot/eth).toFixed(1)+"%" : "—";
     const tC = circ ? (100*etot/circ).toFixed(1)+"%" : "—";
     ebody.innerHTML = rows +
-      `<tr class="lq-total"><td>Identified</td><td></td><td>${fmtM(M(etot))}</td><td>${tE}</td><td>${tC}</td></tr>`;
-    document.getElementById("ethHoldersSub").textContent = h.eth_dispersed_note || "";
+      `<tr class="lq-total"><td>Identified</td><td></td><td>${fmtM(M(etot))}</td>${base ? chgCell(bnow, btot) : `<td class="lq-chg flat">\u2014</td>`}<td>${tE}</td><td>${tC}</td></tr>`;
+    document.getElementById("ethHoldersSub").textContent = (h.eth_dispersed_note || "")
+      + (base ? (h.eth_dispersed_note ? " " : "") + `Change: against the reading of ${venueDate(base.as_of)}.` : "");
   }
   // Bridge throttles, read live from the snapshot. Two directions, stated
   // neutrally: the EVM mint cap is the gate for off-venue RIO reaching a
@@ -970,6 +1017,7 @@ loadSupply().then(({arr, latest})=>{
       h = Object.assign({}, h, {as_of: v.as_of});
       if(Array.isArray(v.bsc_exchanges)) h.bsc_exchanges = v.bsc_exchanges;
       if(Array.isArray(v.eth_holders)) h.eth_holders = v.eth_holders;
+      if(Array.isArray(evm.venues_history)) h.venues_history = evm.venues_history;
     }
     renderHolders(latest, h);
   }).catch(()=>{});

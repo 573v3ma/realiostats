@@ -151,9 +151,10 @@ def _finalize(bal, history, curmonth):
 
 def main():
     try:
-        chains = (json.load(open(OUT)).get("chains") or {})
+        prev_out = json.load(open(OUT))
     except Exception:
-        chains = {"bnb": None, "ethereum": None}
+        prev_out = {}
+    chains = prev_out.get("chains") or {"bnb": None, "ethereum": None}
     for key, env in (("bnb", "ALCHEMY_BNB_URL"), ("ethereum", "ALCHEMY_ETH_URL")):
         url = os.environ.get(env, "").strip()
         if not url:
@@ -172,6 +173,12 @@ def main():
         "history_starts": "2024-10 (30 Oct 2024 migration; the current contracts carry no earlier history)",
         "chains": chains,
     }
+    # Carry the venue balances and their weekly history over: fetch_venues
+    # (below) reads its previous block from this file, and the history is only
+    # ever appended to, so rewriting the file without them would wipe it.
+    for k in ("venues", "venues_history"):
+        if k in prev_out:
+            out[k] = prev_out[k]
     json.dump(out, open(OUT, "w"), indent=2)
     print("wrote", OUT)
     # Base lives in holders-chains.json but needs the same Alchemy key: every

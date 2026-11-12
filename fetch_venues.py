@@ -17,6 +17,11 @@ RPC: the Alchemy URLs when set, otherwise public keyless endpoints. A chain
 whose reads fail keeps its previous venues block, so a flaky node never blanks
 the figure.
 
+Each run also appends a point to "venues_history" in the same file (kept
+forever, about 2 KB a year), which drives the "vs 4 weeks" column on the
+supply page. Seeded on 12 Nov 2026 from the weekly commits back to 1 Oct 2026,
+when live balances started.
+
 Adding a venue: add its addresses to holders.json. Exchange wallets rotate, so
 re-check the explorer top-holder lists every month or two for new labelled
 wallets (and for venues that gained or lost a live market).
@@ -63,6 +68,24 @@ def balance(urls, addr):
     raise RuntimeError(f"all RPCs failed for {addr}: {last}")
 
 
+def add_history(hist, venues):
+    """One point per weekly run, {as_of, bsc_exchanges:{entity: rio},
+    eth_holders:{holder: rio}}, oldest first. The site compares the latest
+    point with the one about four weeks earlier ("vs 4 weeks" column). A chain
+    that failed this run (kept stale) is left out of the point rather than
+    repeated, so it can never show as a fake "no change". A rerun on the same
+    day replaces that day's point."""
+    pt = {"as_of": venues["as_of"]}
+    stale = set(venues.get("stale", []))
+    for key, name in (("bsc_exchanges", "entity"), ("eth_holders", "holder")):
+        if key in venues and key not in stale:
+            pt[key] = {r[name]: r["rio"] for r in venues[key]}
+    if len(pt) == 1:
+        return hist
+    hist = [h for h in hist if h.get("as_of") != pt["as_of"]] + [pt]
+    return sorted(hist, key=lambda h: h["as_of"])
+
+
 def refresh_venues():
     reg = json.load(open(REGISTRY))
     try:
@@ -98,6 +121,7 @@ def refresh_venues():
     if not ok_any and prev:
         return
     out["venues"] = venues
+    out["venues_history"] = add_history(out.get("venues_history") or [], venues)
     json.dump(out, open(OUT, "w"), indent=2)
     print("wrote venues to", OUT)
 

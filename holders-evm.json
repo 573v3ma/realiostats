@@ -493,5 +493,119 @@
         "rio": 2136238.54
       }
     ]
-  }
+  },
+  "venues_history": [
+    {
+      "as_of": "2026-10-01",
+      "bsc_exchanges": {
+        "KuCoin": 33883982.38,
+        "MEXC": 8122691.7,
+        "DEX pools (PancakeSwap, Uniswap)": 1258011.92,
+        "OKX": 7610523.96,
+        "CoinSpot": 1931179.64,
+        "Bitrue": 244567.5
+      },
+      "eth_holders": {
+        "MEXC": 49318933.46,
+        "Uniswap (V2, V3 + V4 pools)": 1974260.9,
+        "Base bridge": 2127280.64
+      }
+    },
+    {
+      "as_of": "2026-10-05",
+      "bsc_exchanges": {
+        "KuCoin": 34127242.33,
+        "MEXC": 7540507.05,
+        "DEX pools (PancakeSwap, Uniswap)": 1531734.06,
+        "OKX": 7583787.55,
+        "CoinSpot": 1931279.76,
+        "Bitrue": 227422.28
+      },
+      "eth_holders": {
+        "MEXC": 50212401.87,
+        "Uniswap (V2, V3 + V4 pools)": 2302429.42,
+        "Base bridge": 2128104.85
+      }
+    },
+    {
+      "as_of": "2026-10-12",
+      "bsc_exchanges": {
+        "KuCoin": 34006877.5,
+        "MEXC": 7212164.22,
+        "DEX pools (PancakeSwap, Uniswap)": 1598122.18,
+        "OKX": 7530473.97,
+        "CoinSpot": 1937409.21,
+        "Bitrue": 227422.28
+      },
+      "eth_holders": {
+        "MEXC": 50054760.59,
+        "Uniswap (V2, V3 + V4 pools)": 2405702.33,
+        "Base bridge": 2134463.68
+      }
+    },
+    {
+      "as_of": "2026-10-19",
+      "bsc_exchanges": {
+        "KuCoin": 34378212.95,
+        "MEXC": 7425264.05,
+        "DEX pools (PancakeSwap, Uniswap)": 1923295.61,
+        "OKX": 7472928.03,
+        "CoinSpot": 1953830.21,
+        "Bitrue": 227133.38
+      },
+      "eth_holders": {
+        "MEXC": 49825060.52,
+        "Uniswap (V2, V3 + V4 pools)": 2683507.56,
+        "Base bridge": 2134651.38
+      }
+    },
+    {
+      "as_of": "2026-10-26",
+      "bsc_exchanges": {
+        "KuCoin": 34541809.31,
+        "MEXC": 5705596.33,
+        "DEX pools (PancakeSwap, Uniswap)": 2158083.71,
+        "OKX": 7471662.57,
+        "CoinSpot": 1953830.21,
+        "Bitrue": 227133.38
+      },
+      "eth_holders": {
+        "MEXC": 49717831.28,
+        "Uniswap (V2, V3 + V4 pools)": 2749923.69,
+        "Base bridge": 2131089.79
+      }
+    },
+    {
+      "as_of": "2026-11-02",
+      "bsc_exchanges": {
+        "KuCoin": 33968476.38,
+        "MEXC": 5192770.74,
+        "DEX pools (PancakeSwap, Uniswap)": 2313642.7,
+        "OKX": 7466913.54,
+        "CoinSpot": 1953830.21,
+        "Bitrue": 227133.38
+      },
+      "eth_holders": {
+        "MEXC": 49889583.82,
+        "Uniswap (V2, V3 + V4 pools)": 2765073.41,
+        "Base bridge": 2128556.28
+      }
+    },
+    {
+      "as_of": "2026-11-09",
+      "bsc_exchanges": {
+        "KuCoin": 34527884.55,
+        "MEXC": 2667411.19,
+        "DEX pools (PancakeSwap, Uniswap)": 2882717.46,
+        "OKX": 7459313.68,
+        "CoinSpot": 1953830.21,
+        "Bitrue": 227083.3
+      },
+      "eth_holders": {
+        "MEXC": 49540899.53,
+        "Uniswap (V2, V3 + V4 pools)": 2899178.35,
+        "Base bridge": 2136238.54
+      }
+    }
+  ]
 }

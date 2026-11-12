@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="site.css?v=38">
+<link rel="stylesheet" href="site.css?v=39">
 </head>
 <body>
 <header><div class="wrap nav">
@@ -112,7 +112,7 @@
     <div class="lq-card">
       <div class="lq-h">BNB Chain, exchange wallets and DEX pools</div>
       <div class="ptbl-wrap"><table class="ptbl">
-        <thead><tr><th>Exchange</th><th>Wallets</th><th>RIO</th><th>% of BNB</th><th>% of circ.</th></tr></thead>
+        <thead><tr><th>Exchange</th><th>Wallets</th><th>RIO</th><th id="bscChgHead">vs 4 wks</th><th>% of BNB</th><th>% of circ.</th></tr></thead>
         <tbody id="bscHoldersBody"></tbody>
       </table></div>
       <p class="lq-sub" id="bscHoldersSub"></p>
@@ -120,7 +120,7 @@
     <div class="lq-card">
       <div class="lq-h">Ethereum, main identified holders</div>
       <div class="ptbl-wrap"><table class="ptbl">
-        <thead><tr><th>Holder</th><th>Type</th><th>RIO</th><th>% of ETH</th><th>% of circ.</th></tr></thead>
+        <thead><tr><th>Holder</th><th>Type</th><th>RIO</th><th id="ethChgHead">vs 4 wks</th><th>% of ETH</th><th>% of circ.</th></tr></thead>
         <tbody id="ethHoldersBody"></tbody>
       </table></div>
       <p class="lq-sub" id="ethHoldersSub"></p>
@@ -235,6 +235,6 @@
 </div></footer>
 
 <script src="core.js?v=26"></script>
-<script src="supply.js?v=28"></script>
+<script src="supply.js?v=29"></script>
 </body>
 </html>
