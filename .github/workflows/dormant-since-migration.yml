@@ -1,37 +1,52 @@
-name: One-off - wallets untouched since migration
+name: Weekly dormant supply
 
-# Manual only. Prints the summary to the run log and keeps the address list as
-# a short-lived artifact. Commits nothing.
 on:
-  workflow_dispatch:
-    inputs:
-      cutoff:
-        description: "Last UTC day a zero-address mint counts as migration"
-        default: "2024-11-06"
-      nonce:
-        description: "Also check for no outgoing tx of any kind"
-        type: boolean
-        default: true
+  schedule:
+    - cron: "30 8 * * 1"        # Mondays 08:30 UTC, after the holder counts
+  workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: dormant-supply
+  cancel-in-progress: false
 
 jobs:
   dormant:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Count untouched wallets
+
+      # Nonces already read, and wallets known to have moved. Kept in the
+      # Actions cache, never committed: it is an address list. After the first
+      # run only wallets that were still silent are re-read each week.
+      - uses: actions/cache@v4
+        with:
+          path: .cache
+          key: dormant-nonce-${{ github.run_id }}
+          restore-keys: dormant-nonce-
+
+      - name: Count RIO never moved since the migration
         env:
           ALCHEMY_BNB_URL: ${{ secrets.ALCHEMY_BNB_URL }}
           ALCHEMY_ETH_URL: ${{ secrets.ALCHEMY_ETH_URL }}
-        run: python dormant_since_migration.py --cutoff "${{ inputs.cutoff }}" ${{ inputs.nonce && '--nonce' || '' }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: dormant-since-migration
-          path: dormant-since-migration.json
-          retention-days: 3
+        run: python fetch_dormant.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "realiostats-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if [ -n "$(git status --porcelain -- dormant-supply.json)" ]; then
+            git add dormant-supply.json
+            git commit -m "dormant supply $(date -u +%Y-%m-%d)"
+            git pull --rebase
+            git push
+          else
+            echo "No change to dormant-supply.json."
+          fi
