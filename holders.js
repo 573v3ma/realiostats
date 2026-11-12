@@ -210,14 +210,14 @@ function renderDormant(){
   const pct = (a,b) => b ? (100*a/b).toFixed(1) + "%" : "n/a";
   const rio = n => fmtM(M(n)) + " RIO";
   const chip = (name, dot, v, x) => `<div class="chip"><div class="cn">${dot ? `<span class="cdot" style="background:${dot}"></span>` : ""}${name}</div><div class="cv">${v}</div><div class="cx">${x}</div></div>`;
-  let tiles = have.map(([name,color,c]) => chip(name, color, rio(c.never_moved.rio),
-    `${fmtInt(c.never_moved.wallets)} of ${fmtInt(c.recipients)} migrated wallets, ${pct(c.never_moved.rio, c.migrated_rio)} of the RIO they were given`));
+  let tiles = have.map(([name,color,c]) => chip(name + ": RIO never moved", color, rio(c.never_moved.rio),
+    `in ${fmtInt(c.never_moved.wallets)} of ${fmtInt(c.recipients)} migrated wallets, ${pct(c.never_moved.rio, c.migrated_rio)} of the RIO they were given`));
   const sum = f => have.reduce((t,[, ,c]) => t + (f(c)||0), 0);
-  if(have.length > 1) tiles.push(chip("Both chains", "", rio(sum(c => c.never_moved.rio)),
-    `${fmtInt(sum(c => c.never_moved.wallets))} wallets, ${pct(sum(c => c.never_moved.rio), sum(c => c.migrated_rio))} of all migrated RIO`));
+  if(have.length > 1) tiles.push(chip("Both chains: RIO never moved", "", rio(sum(c => c.never_moved.rio)),
+    `in ${fmtInt(sum(c => c.never_moved.wallets))} wallets, ${pct(sum(c => c.never_moved.rio), sum(c => c.migrated_rio))} of all migrated RIO. Some of these wallets are still active with other tokens`));
   const sil = have.filter(([, ,c]) => c.silent);
-  if(sil.length) tiles.push(chip("No transaction at all", "", rio(sil.reduce((t,[, ,c]) => t + c.silent.rio, 0)),
-    `${fmtInt(sil.reduce((t,[, ,c]) => t + c.silent.wallets, 0))} of these wallets with 100+ RIO have sent nothing on ${sil.length > 1 ? "either chain" : sil[0][0]} since`));
+  if(sil.length) tiles.push(chip("Fully untouched wallets", "", rio(sil.reduce((t,[, ,c]) => t + c.silent.rio, 0)),
+    `in ${fmtInt(sil.reduce((t,[, ,c]) => t + c.silent.wallets, 0))} wallets with 100+ RIO that have sent no transaction of any kind since. Part of the never-moved total, not extra`));
   document.getElementById("dmGrid").innerHTML = tiles.join("");
 
   const card = document.getElementById("dmCard");
@@ -266,7 +266,7 @@ function renderDormant(){
   document.getElementById("dmCap").innerHTML =
     "Month-end, reconstructed from each chain's full transfer history, so the line runs back to the migration. "
     + "A wallet drops out the first time it moves any RIO and never comes back, so the line can only fall. "
-    + "<b>No transaction at all</b> is the stricter test: of the never-moved wallets holding 100+ RIO, those whose outgoing transaction count on that chain is unchanged since the migration block, so they have sent nothing, not just no RIO. "
+    + "<b>Fully untouched</b> is read from each wallet's outgoing transaction count on that chain: unchanged since the migration block means it has sent nothing at all. "
     + "That needs one archive read per wallet, so it is counted forward only"
     + (since ? " from " + fmtD(since) : "") + " and has no line here. "
     + "Some of these wallets may be lost keys, cold storage or contracts; the chain data cannot tell which. "
