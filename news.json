@@ -1,19 +1,31 @@
 {
- "updated": "2026-11-13T11:28:35Z",
+ "updated": "2026-11-13T17:29:00Z",
  "days": [
   {
    "date": "2026-11-13",
    "items": [
     {
      "project": "Realio",
-     "title": "Derek says holders who staked RIO through the old Realio app should regain access soon",
-     "text": "Asked when RIO staked through the old Realio app will be accessible again, Derek said it should be soon and apologised that it is taking so long. No date was given.",
+     "title": "Derek says staked RIO access should return soon and explains why recovery takes time",
+     "text": "Derek said holders who staked through the old Realio app should regain access soon, with no date given. He explained the hacker obtained the keys of nearly all staking wallets, so restoring access needs a network upgrade plus Freehold backend and UI work designed to block theft and fraudulent claims.",
      "sources": [
       {
        "kind": "tg",
        "chat": "Realio Network Official",
        "msg": 66085,
        "ts": "2026-11-13T02:36:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 66107,
+       "ts": "2026-11-13T15:56:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 66108,
+       "ts": "2026-11-13T15:57:00Z"
       }
      ]
     }
