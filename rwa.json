@@ -1,6 +1,23 @@
 {
- "updated": "2026-11-13T05:30:09Z",
+ "updated": "2026-11-14T05:30:19Z",
  "days": [
+  {
+   "date": "2026-11-14",
+   "items": [
+    {
+     "tag": "REAL ESTATE",
+     "title": "Japan-listed ASIAN STAR plans to tokenize Japanese real estate on BNB Chain",
+     "why": "Tokenized property from a listed company is coming to BNB Chain, where RIO also trades, which raises the bar Freehold will be compared against when it opens real estate issuance.",
+     "source": {
+      "outlet": "TokenPost",
+      "url": "https://www.tokenpost.com/news/business/57105",
+      "published": "2026-11-14T00:59:03Z"
+     },
+     "score": 4,
+     "topic": "asian-star-bnb-real-estate"
+    }
+   ]
+  },
   {
    "date": "2026-11-13",
    "items": []
