@@ -1,8 +1,8 @@
 {
- "as_of": "2026-11-13T13:43:47Z",
- "height": 20549517,
+ "as_of": "2026-11-14T12:48:36Z",
+ "height": 20564243,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 134848914.21,
+ "bonded_weight": 134913055.16,
  "validators": [
   {
    "moniker": "Teshy RIO",
@@ -12,7 +12,7 @@
   },
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
-   "weight": 7725353.69,
+   "weight": 7724473.19,
    "commission": 0.05,
    "jailed": false
   },
@@ -72,7 +72,7 @@
   },
   {
    "moniker": "Realiostats.com \ud83d\uddfd REStake\u2705",
-   "weight": 4663554.83,
+   "weight": 4667554.83,
    "commission": 0.05,
    "jailed": false
   },
@@ -150,7 +150,7 @@
   },
   {
    "moniker": "Blockval",
-   "weight": 2642668.9,
+   "weight": 2642678.9,
    "commission": 0.05,
    "jailed": false
   },
@@ -162,7 +162,7 @@
   },
   {
    "moniker": "NodeStake",
-   "weight": 1265494.25,
+   "weight": 1265495.5,
    "commission": 0.1,
    "jailed": false
   },
@@ -234,7 +234,7 @@
   },
   {
    "moniker": "Moonbridge",
-   "weight": 329214.19,
+   "weight": 333214.19,
    "commission": 0.05,
    "jailed": false
   },
@@ -278,6 +278,12 @@
    "moniker": "Sr20de | RIO \ud83d\udd25 Restake enabled",
    "weight": 151478.66,
    "commission": 0.05,
+   "jailed": false
+  },
+  {
+   "moniker": "AlxVoy \u26a1 ANODE.TEAM",
+   "weight": 57010.19,
+   "commission": 0.08,
    "jailed": false
   },
   {
