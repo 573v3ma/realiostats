@@ -1,6 +1,25 @@
 {
- "updated": "2026-11-13T23:28:10Z",
+ "updated": "2026-11-14T05:30:03Z",
  "days": [
+  {
+   "date": "2026-11-14",
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold Collection advertises with Hagerty and points newcomers to its early-access list",
+     "text": "Freehold describes the Freehold Collection as fractional ownership of collector cars, each tokenized individually and held in the buyer's own wallet. It says the first car opens soon and people on the early-access list get it first.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2121318704726134795",
+       "ts": "2026-11-13T19:06:06Z"
+      }
+     ],
+     "topic": "freehold-waitlist"
+    }
+   ]
+  },
   {
    "date": "2026-11-13",
    "items": [
@@ -727,47 +746,6 @@
       }
      ],
      "topic": "incident-recovery-access"
-    }
-   ]
-  },
-  {
-   "date": "2026-10-15",
-   "items": [
-    {
-     "project": "Realio",
-     "title": "Derek: a validator shutting down could risk slashing; team asks it to stay up longer",
-     "text": "Derek Boirun says he may have misunderstood earlier and that there could be a risk of slashing. He asked a team member to request that the validator keep running a little longer, so people have time to claim their wallets and unstake.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "msg": 64980,
-       "ts": "2026-10-14T16:47:00Z"
-      },
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "msg": 64981,
-       "ts": "2026-10-14T16:48:00Z"
-      }
-     ],
-     "key": true,
-     "topic": "staked-rio-frozen"
-    },
-    {
-     "project": "Realio",
-     "title": "Derek: team building a better block explorer for locked v1 staking accounts",
-     "text": "Derek says the team is building a better block explorer so holders can see the v1 accounts that were staking and got locked. He is not sure it will be ready before the claims portal.",
-     "sources": [
-      {
-       "kind": "tg",
-       "chat": "Realio Network Official",
-       "msg": 64976,
-       "ts": "2026-10-14T14:46:00Z"
-      }
-     ],
-     "key": true,
-     "topic": "v1-account-explorer"
     }
    ]
   }
