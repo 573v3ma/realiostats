@@ -1,12 +1,12 @@
 {
  "latest": {
-  "as_of": "2026-11-15T05:31:15Z",
+  "as_of": "2026-11-16T05:30:40Z",
   "source": "RWA.xyz",
   "source_url": "https://app.rwa.xyz/",
-  "distributed_usd": 39530000000,
-  "distributed_30d_pct": -1.7,
-  "real_estate_usd": 212920000,
-  "real_estate_30d_pct": -5.35,
+  "distributed_usd": 39520000000,
+  "distributed_30d_pct": -1.69,
+  "real_estate_usd": 212890000,
+  "real_estate_30d_pct": -5.36,
   "rio_chains": {
    "base": 730900000,
    "bnb": 6200000000,
@@ -63,6 +63,12 @@
    "date": "2026-11-15",
    "distributed_usd": 39530000000,
    "real_estate_usd": 212920000,
+   "rio_chains_usd": 31830900000
+  },
+  {
+   "date": "2026-11-16",
+   "distributed_usd": 39520000000,
+   "real_estate_usd": 212890000,
    "rio_chains_usd": 31830900000
   }
  ]
