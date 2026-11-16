@@ -1,9 +1,23 @@
 {
- "updated": "2026-11-16T17:28:31Z",
+ "updated": "2026-11-16T23:29:55Z",
  "days": [
   {
    "date": "2026-11-16",
-   "items": []
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold collector car ad appears in the new Hagerty Drivers Club issue",
+     "text": "Derek shared the latest Hagerty Drivers Club issue, which carries a full-page Freehold ad for fractional ownership of collector cars, saying payment in BTC, ETH and USDC is accepted.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "derekboirun",
+       "id": "2122389236393660797",
+       "ts": "2026-11-16T18:00:00Z"
+      }
+     ]
+    }
+   ]
   },
   {
    "date": "2026-11-15",
