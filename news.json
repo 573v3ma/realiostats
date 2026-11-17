@@ -1,9 +1,24 @@
 {
- "updated": "2026-11-17T17:27:15Z",
+ "updated": "2026-11-17T23:28:43Z",
  "days": [
   {
    "date": "2026-11-17",
    "items": [
+    {
+     "project": "Freehold",
+     "title": "Tokenized cars will launch on the Realio native chain from the start, Derek says",
+     "text": "Derek says the team decided to issue tokenized assets on the Realio native chain from day one, with the Ethereum version minted through an IBC bridge rather than a separate contract. He adds that a native DEX is almost fully built.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 66206,
+       "ts": "2026-11-17T18:04:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-car-token-structure"
+    },
     {
      "project": "Freehold",
      "title": "Freehold shows the first car planned for the Freehold Collection",
@@ -22,6 +37,20 @@
        "ts": "2026-11-17T16:01:00Z"
       }
      ]
+    },
+    {
+     "project": "Freehold",
+     "title": "Realio presents the Freehold Tokenization Studio as open to any issuer",
+     "text": "Realio reminded followers that Freehold is built by the team that has tokenized real-world assets since 2018, and that the Freehold Tokenization Studio is open to any issuer and free to start.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "realio_network",
+       "id": "2122753366275362880",
+       "ts": "2026-11-17T18:06:56Z"
+      }
+     ],
+     "topic": "freehold-tokenization-studio"
     }
    ]
   },
