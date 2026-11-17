@@ -1,9 +1,29 @@
 {
- "updated": "2026-11-17T11:27:34Z",
+ "updated": "2026-11-17T17:27:15Z",
  "days": [
   {
    "date": "2026-11-17",
-   "items": []
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold shows the first car planned for the Freehold Collection",
+     "text": "Freehold posted the first car planned for the Freehold Collection: finished in Satin Bianco Italia, with fewer than 400 miles. Derek also pointed people who saw the Hagerty ad to the collector cars page on the Freehold website.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2122741530720960670",
+       "ts": "2026-11-17T17:19:54Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 66202,
+       "ts": "2026-11-17T16:01:00Z"
+      }
+     ]
+    }
+   ]
   },
   {
    "date": "2026-11-16",
