@@ -1,30 +1,30 @@
 {
- "as_of": "2026-11-17T15:17:41Z",
- "height": 20611743,
+ "as_of": "2026-11-18T14:53:29Z",
+ "height": 20626790,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 134986987.7,
+ "bonded_weight": 135158378.52,
  "validators": [
   {
    "moniker": "Teshy RIO",
-   "weight": 7821047.44,
+   "weight": 7821169.35,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
-   "weight": 7723324.03,
+   "weight": 7723324.24,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Realio Italy \ud83c\uddee\ud83c\uddf9 \ud83c\udf0f",
-   "weight": 7382511.88,
+   "weight": 7382585.54,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Rose Validators | $DSTRX",
-   "weight": 7351883.56,
+   "weight": 7352000.44,
    "commission": 0.05,
    "jailed": false
   },
@@ -42,7 +42,7 @@
   },
   {
    "moniker": "Reallionaires Club | RIO",
-   "weight": 6990711.35,
+   "weight": 6994288.71,
    "commission": 0.05,
    "jailed": false
   },
@@ -66,13 +66,13 @@
   },
   {
    "moniker": "Teshy - DSTRX",
-   "weight": 5049677.01,
+   "weight": 5049710.01,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "Realiostats.com \ud83d\uddfd REStake\u2705",
-   "weight": 4667996.99,
+   "weight": 4684710.99,
    "commission": 0.05,
    "jailed": false
   },
@@ -89,14 +89,14 @@
    "jailed": false
   },
   {
-   "moniker": "NodesHub | DSTRX ",
-   "weight": 3580157.45,
+   "moniker": "Indonode | DSTRX | Low Fees",
+   "weight": 3590059.37,
    "commission": 0.05,
    "jailed": false
   },
   {
-   "moniker": "Indonode | DSTRX | Low Fees",
-   "weight": 3579409.74,
+   "moniker": "NodesHub | DSTRX ",
+   "weight": 3580157.45,
    "commission": 0.05,
    "jailed": false
   },
@@ -108,13 +108,13 @@
   },
   {
    "moniker": "Sr20de DSTRX",
-   "weight": 3453166.8,
+   "weight": 3498650.8,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "dnsarz | DSTRX",
-   "weight": 3260827.5,
+   "weight": 3284086.16,
    "commission": 0.05,
    "jailed": false
   },
@@ -185,6 +185,12 @@
    "jailed": false
   },
   {
+   "moniker": "StingRay",
+   "weight": 675350.14,
+   "commission": 0.1,
+   "jailed": false
+  },
+  {
    "moniker": "StakeTrust",
    "weight": 652996.17,
    "commission": 0.05,
@@ -194,12 +200,6 @@
    "moniker": "breskulpeak.com",
    "weight": 617277.16,
    "commission": 0.05,
-   "jailed": false
-  },
-  {
-   "moniker": "StingRay",
-   "weight": 603988.63,
-   "commission": 0.1,
    "jailed": false
   },
   {
