@@ -1,6 +1,23 @@
 {
- "updated": "2026-11-17T05:28:52Z",
+ "updated": "2026-11-18T05:30:02Z",
  "days": [
+  {
+   "date": "2026-11-18",
+   "items": [
+    {
+     "tag": "REAL ESTATE",
+     "title": "Canadian Securities Exchange pilots tokenized private real estate with Ocree and Apex",
+     "why": "Freehold wants to be where issuers tokenize property, and here an established exchange and a large fund administrator test the same thing on rails investors already use, with secondary trading planned next.",
+     "source": {
+      "outlet": "Ledger Insights",
+      "url": "https://www.ledgerinsights.com/ocree-canadian-securities-exchange-apex-launch-tokenized-real-estate-pilot/",
+      "published": "2026-11-17T18:52:34Z"
+     },
+     "score": 3,
+     "topic": "cse-project-bedrock"
+    }
+   ]
+  },
   {
    "date": "2026-11-17",
    "items": []
