@@ -1,9 +1,24 @@
 {
- "updated": "2026-11-19T17:28:00Z",
+ "updated": "2026-11-19T23:28:16Z",
  "days": [
   {
    "date": "2026-11-19",
-   "items": []
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Freehold invites early-access requests for shares of its Ferrari 488 Pista",
+     "text": "Freehold says cars like its Satin Bianco Italia Ferrari, with fewer than 400 miles, usually trade privately between people who know each other, and that buyers will soon be able to own a share of one. It points interested buyers to its early-access list.",
+     "sources": [
+      {
+       "kind": "x",
+       "handle": "freehold_wallet",
+       "id": "2123490399662563686",
+       "ts": "2026-11-19T18:55:38Z"
+      }
+     ],
+     "topic": "freehold-collection-waitlist"
+    }
+   ]
   },
   {
    "date": "2026-11-18",
