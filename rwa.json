@@ -1,6 +1,35 @@
 {
- "updated": "2026-11-18T05:30:02Z",
+ "updated": "2026-11-19T05:28:10Z",
  "days": [
+  {
+   "date": "2026-11-19",
+   "items": [
+    {
+     "tag": "REAL ESTATE",
+     "title": "Tokenized real estate is still under 1% of tokenized assets, and RealT is in liquidation",
+     "why": "Freehold is opening with collectible cars before property, and this tally shows the ground it is entering: fractional real estate tokens remain a very small category where rivals such as RealT have already shut down.",
+     "source": {
+      "outlet": "TokenPost",
+      "url": "https://www.tokenpost.com/news/investing/60960",
+      "published": "2026-11-19T00:03:16Z"
+     },
+     "score": 4,
+     "topic": "real-estate-token-tally"
+    },
+    {
+     "tag": "CHAIN",
+     "title": "BNB Chain leads RWA holder counts while Base, Solana and Stellar grow faster",
+     "why": "RIO trades on BNB Chain, so a growing crowd of RWA holders there is a larger audience for whatever Freehold lists, although the figures count wallets and not people.",
+     "source": {
+      "outlet": "TokenPost",
+      "url": "https://www.tokenpost.com/news/investing/60116",
+      "published": "2026-11-18T04:21:57Z"
+     },
+     "score": 1,
+     "topic": "bnb-rwa-holders"
+    }
+   ]
+  },
   {
    "date": "2026-11-18",
    "items": [
