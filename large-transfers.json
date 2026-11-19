@@ -1,67 +1,67 @@
 {
- "as_of": "2026-11-18T14:53:29Z",
+ "as_of": "2026-11-19T14:59:36Z",
  "threshold_rio": 100000,
  "window_days": 30,
- "window_start": "2026-10-19T14:53:29Z",
+ "window_start": "2026-10-20T14:59:36Z",
  "source": "Public keyless endpoints, see fetch_large_transfers.py. Labels from holders.json and known bridge, module and treasury addresses.",
  "chains": {
   "bnb": {
-   "cursor": 134330764,
+   "cursor": 134523485,
    "source": "alchemy",
    "status": "ok",
-   "coverage_from": 1792421609,
-   "updated": "2026-11-18T14:53:29Z",
-   "seconds": 10.7
+   "coverage_from": 1792508376,
+   "updated": "2026-11-19T14:59:36Z",
+   "seconds": 7.1
   },
   "eth": {
-   "cursor": 26442668,
+   "cursor": 26449878,
    "source": "alchemy",
    "status": "ok",
-   "coverage_from": 1792421609,
-   "updated": "2026-11-18T14:53:29Z",
-   "seconds": 5.5
+   "coverage_from": 1792508376,
+   "updated": "2026-11-19T14:59:36Z",
+   "seconds": 3.0
   },
   "base": {
-   "cursor": 59116327,
+   "cursor": 59550131,
    "source": "alchemy",
    "status": "ok",
-   "coverage_from": 1792421609,
-   "updated": "2026-11-18T14:53:29Z",
-   "seconds": 3.9
+   "coverage_from": 1792508376,
+   "updated": "2026-11-19T14:59:36Z",
+   "seconds": 1.6
   },
   "solana": {
    "cursor": "5Y7NR6QTxhaiA3wb5dbnt3Qf6bnxw3uj9Hx2mrJ39HmBD7Zk9WoaypytZ2cNiP2UeGMPpHgTrxu4mZcQqnnnL6F3",
    "source": "https://api.mainnet-beta.solana.com",
    "status": "ok",
-   "coverage_from": 1792421609,
-   "updated": "2026-11-18T14:53:29Z",
-   "seconds": 1.2
+   "coverage_from": 1792508376,
+   "updated": "2026-11-19T14:59:36Z",
+   "seconds": 9.6
   },
   "algorand": {
-   "cursor": 67074996,
+   "cursor": 67106154,
    "source": "https://mainnet-idx.algonode.cloud",
    "status": "ok",
-   "coverage_from": 1792421609,
-   "updated": "2026-11-18T14:53:29Z",
+   "coverage_from": 1792508376,
+   "updated": "2026-11-19T14:59:36Z",
    "seconds": 0.2
   },
   "stellar": {
-   "cursor": 65545520,
+   "cursor": 65562874,
    "source": "https://rpc.lightsail.network",
    "status": "ok",
    "coverage_from": 1793450304,
-   "updated": "2026-11-18T14:53:29Z",
-   "seconds": 1.3
+   "updated": "2026-11-19T14:59:36Z",
+   "seconds": 1.7
   },
   "native": {
-   "cursor": 20626797,
+   "cursor": 20642168,
    "source": "https://rpc.realio.network",
-   "block_time_s": 5.644,
-   "exact_time_from_height": 20526797,
+   "block_time_s": 5.645,
+   "exact_time_from_height": 20542168,
    "status": "ok",
-   "coverage_from": 1792421609,
-   "updated": "2026-11-18T14:53:29Z",
-   "seconds": 1.3
+   "coverage_from": 1792508376,
+   "updated": "2026-11-19T14:59:36Z",
+   "seconds": 2.0
   }
  },
  "transfers": [
