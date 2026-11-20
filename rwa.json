@@ -1,6 +1,35 @@
 {
- "updated": "2026-11-19T05:28:10Z",
+ "updated": "2026-11-20T05:30:44Z",
  "days": [
+  {
+   "date": "2026-11-20",
+   "items": [
+    {
+     "tag": "REGULATION",
+     "title": "Democratic SEC nominee wants the tokenization exemption turned into a formal rule",
+     "why": "A full US rulemaking with public comment would set the terms, and the timing, for how Freehold can offer tokenized assets to American investors.",
+     "source": {
+      "outlet": "CoinDesk",
+      "url": "https://www.coindesk.com/policy/2026/11/19/trump-s-democratic-sec-pick-suggests-tokenization-policy-deserves-full-rule-process",
+      "published": "2026-11-19T18:15:00Z"
+     },
+     "score": 3,
+     "topic": "sec-tokenization-rule"
+    },
+    {
+     "tag": "REAL ESTATE",
+     "title": "Injective says tokenized mortgage loans on its network now exceed $1.5 billion",
+     "why": "Onchain real estate volume keeps flowing into loans rather than property shares, so Freehold's fractional ownership model still has to prove its own demand.",
+     "source": {
+      "outlet": "TokenPost",
+      "url": "https://www.tokenpost.com/news/business/61442",
+      "published": "2026-11-19T15:07:22Z"
+     },
+     "score": 3,
+     "topic": "injective-mortgage-loans"
+    }
+   ]
+  },
   {
    "date": "2026-11-19",
    "items": [
