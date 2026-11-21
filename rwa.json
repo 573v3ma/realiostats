@@ -1,6 +1,23 @@
 {
- "updated": "2026-11-20T05:30:44Z",
+ "updated": "2026-11-21T05:29:14Z",
  "days": [
+  {
+   "date": "2026-11-21",
+   "items": [
+    {
+     "tag": "REGULATION",
+     "title": "ECB's Lagarde says Europe needs common rules for tokenized securities before platforms split",
+     "why": "A single EU rulebook would set the terms Freehold has to meet to offer tokenized assets to European investors, and whether those tokens can settle across venues.",
+     "source": {
+      "outlet": "Cointelegraph",
+      "url": "https://cointelegraph.com/news/lagarde-europe-limited-window-tokenization-rules",
+      "published": "2026-11-20T13:21:39Z"
+     },
+     "score": 3,
+     "topic": "lagarde-eu-tokenization-rules"
+    }
+   ]
+  },
   {
    "date": "2026-11-20",
    "items": [
