@@ -1,9 +1,58 @@
 {
- "updated": "2026-11-22T11:33:51Z",
+ "updated": "2026-11-22T17:30:47Z",
  "days": [
   {
    "date": "2026-11-22",
-   "items": []
+   "items": [
+    {
+     "project": "Freehold",
+     "title": "Derek says claims are days away, not weeks, and outlines the claim steps",
+     "text": "Derek says the claims portal is almost ready and that, in his view, claiming is days away rather than weeks. Holders will first claim their v1 accounts, then a second process will verify and unlock staked coins. RSTs in old accounts follow the same process. Other lost crypto claims follow the FBI investigation.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "msg": 7161,
+       "ts": "2026-11-22T16:45:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "msg": 7162,
+       "ts": "2026-11-22T16:47:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "msg": 7165,
+       "ts": "2026-11-22T16:51:00Z"
+      },
+      {
+       "kind": "tg",
+       "chat": "Realio Network Official",
+       "msg": 66319,
+       "ts": "2026-11-22T13:06:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "freehold-claims-portal"
+    },
+    {
+     "project": "Realio",
+     "title": "Algorand and Stellar RIO holders will get a manual claim process to bridge out",
+     "text": "Derek says people holding RIO on Algorand or Stellar will go through a manual claim process to bridge out. It may take a little longer than the main claims, and more information will be shared once it is available.",
+     "sources": [
+      {
+       "kind": "tg",
+       "chat": "Freehold Official",
+       "msg": 7163,
+       "ts": "2026-11-22T16:48:00Z"
+      }
+     ],
+     "key": true,
+     "topic": "algorand-stellar-holders"
+    }
+   ]
   },
   {
    "date": "2026-11-21",
