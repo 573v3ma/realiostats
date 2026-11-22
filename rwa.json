@@ -1,6 +1,23 @@
 {
- "updated": "2026-11-21T05:29:14Z",
+ "updated": "2026-11-22T05:29:34Z",
  "days": [
+  {
+   "date": "2026-11-22",
+   "items": [
+    {
+     "tag": "CHAIN",
+     "title": "Tokenized equities on Solana reach $1.22 billion, nearly double the end of October",
+     "why": "Issuers kept putting assets onchain through a market selloff, which is the demand Freehold's Tokenization Studio is built to serve, and Solana is one of the chains RIO lives on.",
+     "source": {
+      "outlet": "TokenPost",
+      "url": "https://www.tokenpost.com/news/investing/62121",
+      "published": "2026-11-20T14:40:55Z"
+     },
+     "score": 1,
+     "topic": "solana-tokenized-equities"
+    }
+   ]
+  },
   {
    "date": "2026-11-21",
    "items": [
