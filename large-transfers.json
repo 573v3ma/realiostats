@@ -1,70 +1,167 @@
 {
- "as_of": "2026-11-21T13:58:25Z",
+ "as_of": "2026-11-22T13:51:34Z",
  "threshold_rio": 100000,
  "window_days": 30,
- "window_start": "2026-10-22T13:58:25Z",
+ "window_start": "2026-10-23T13:51:34Z",
  "source": "Public keyless endpoints, see fetch_large_transfers.py. Labels from holders.json and known bridge, module and treasury addresses.",
  "chains": {
   "bnb": {
-   "cursor": 134899203,
+   "cursor": 135090222,
    "source": "alchemy",
    "status": "ok",
-   "coverage_from": 1792677505,
-   "updated": "2026-11-21T13:58:25Z",
-   "seconds": 7.7
+   "coverage_from": 1792763494,
+   "updated": "2026-11-22T13:51:34Z",
+   "seconds": 7.3
   },
   "eth": {
-   "cursor": 26463925,
+   "cursor": 26471069,
    "source": "alchemy",
    "status": "ok",
-   "coverage_from": 1792677505,
-   "updated": "2026-11-21T13:58:25Z",
-   "seconds": 3.4
+   "coverage_from": 1792763494,
+   "updated": "2026-11-22T13:51:34Z",
+   "seconds": 4.5
   },
   "base": {
-   "cursor": 60395781,
+   "cursor": 60825728,
    "source": "alchemy",
    "status": "ok",
-   "coverage_from": 1792677505,
-   "updated": "2026-11-21T13:58:25Z",
-   "seconds": 1.6
+   "coverage_from": 1792763494,
+   "updated": "2026-11-22T13:51:34Z",
+   "seconds": 3.7
   },
   "solana": {
    "cursor": "2fxgJA3jxFD6tiEMrhg2Gqowfn8yo8v2juE5LLmM8KW2hSijEwhG9R6mjzk3QKdXktXoVkyjZccRrz3gzAm7HYst",
    "source": "https://api.mainnet-beta.solana.com",
    "status": "ok",
-   "coverage_from": 1792677505,
-   "updated": "2026-11-21T13:58:25Z",
-   "seconds": 3.2
+   "coverage_from": 1792763494,
+   "updated": "2026-11-22T13:51:34Z",
+   "seconds": 0.5
   },
   "algorand": {
-   "cursor": 67166557,
+   "cursor": 67197728,
    "source": "https://mainnet-idx.algonode.cloud",
    "status": "ok",
-   "coverage_from": 1792677505,
-   "updated": "2026-11-21T13:58:25Z",
+   "coverage_from": 1792763494,
+   "updated": "2026-11-22T13:51:34Z",
    "seconds": 0.2
   },
   "stellar": {
-   "cursor": 65596698,
+   "cursor": 65613895,
    "source": "https://rpc.lightsail.network",
    "status": "ok",
    "coverage_from": 1793450304,
-   "updated": "2026-11-21T13:58:25Z",
-   "seconds": 1.5
+   "updated": "2026-11-22T13:51:34Z",
+   "seconds": 1.7
   },
   "native": {
-   "cursor": 20672145,
+   "cursor": 20687394,
    "source": "https://rpc.realio.network",
    "block_time_s": 5.644,
-   "exact_time_from_height": 20572145,
+   "exact_time_from_height": 20587394,
    "status": "ok",
-   "coverage_from": 1792677505,
-   "updated": "2026-11-21T13:58:25Z",
-   "seconds": 1.5
+   "coverage_from": 1792763494,
+   "updated": "2026-11-22T13:51:34Z",
+   "seconds": 1.0
   }
  },
  "transfers": [
+  {
+   "id": "bnb:0xb462a2600f4f593e853fbbd6b46dcd28fa9d0c4d8a11083cd102b8f88ad05fb7:66",
+   "chain": "bnb",
+   "ts": 1795296280,
+   "amount": 163604.0,
+   "from": "0x53f78a071d04224b8e254e243fffc6d9f2f3fa23",
+   "to": "0x3176691ccebe8c5c8eb91967bced735316e8cde0",
+   "tx": "0xb462a2600f4f593e853fbbd6b46dcd28fa9d0c4d8a11083cd102b8f88ad05fb7",
+   "block": 134958647,
+   "kind": "withdrawal",
+   "from_label": "KuCoin",
+   "to_label": null
+  },
+  {
+   "id": "stellar:0281748767990960128-0000000001",
+   "chain": "stellar",
+   "ts": 1795284781,
+   "amount": 171775.88,
+   "from": "GC3ZHEIQM5VRPLXCRYFGJ7H5EV6D5S3PHLEKSIVT3QLUVTHMHNG3UMUG",
+   "to": "GA3XCOGZJJJKBIISMBXCL2ZGC42IQXHVHCCBUO44QVADES5YXCT76JEJ",
+   "tx": "140d0c28ebdb6b6c076756267a0152dc8ab6f25641d9a5897737a91e28bfdb4a",
+   "block": 65599747,
+   "op": "transfer",
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
+  {
+   "id": "stellar:0281748763695992832-0000000006",
+   "chain": "stellar",
+   "ts": 1795284776,
+   "amount": 100000.0,
+   "from": "GC3ZHEIQM5VRPLXCRYFGJ7H5EV6D5S3PHLEKSIVT3QLUVTHMHNG3UMUG",
+   "to": "GAGDRRDTWISZHBVW2GVP5RTPQK7KY6FKYYAMNCJF7N44PH62M4SCSQPF",
+   "tx": "0d48dcca88060f418ea3d3ab12c172e6038c9564a7835cc43c70a7e717c10f08",
+   "block": 65599746,
+   "op": "transfer",
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
+  {
+   "id": "stellar:0281748763695992832-0000000010",
+   "chain": "stellar",
+   "ts": 1795284776,
+   "amount": 234918.25,
+   "from": "GC3ZHEIQM5VRPLXCRYFGJ7H5EV6D5S3PHLEKSIVT3QLUVTHMHNG3UMUG",
+   "to": "GCAMBTBDURFK2TQ6A2N77MLWVLHCH73WDMNSGTNCXC4G4OHE3VMWJJQ2",
+   "tx": "0d48dcca88060f418ea3d3ab12c172e6038c9564a7835cc43c70a7e717c10f08",
+   "block": 65599746,
+   "op": "transfer",
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
+  {
+   "id": "stellar:0281748377149157376-0000000000",
+   "chain": "stellar",
+   "ts": 1795284326,
+   "amount": 128848.79,
+   "from": "GC3ZHEIQM5VRPLXCRYFGJ7H5EV6D5S3PHLEKSIVT3QLUVTHMHNG3UMUG",
+   "to": "GCJW7DJIDWNVXRS4WXXMBUJXLPE7HSNE3LYKQPC7ILNGPTHALZHA5JGF",
+   "tx": "ae0623a467c30e4dddbabf4b179d5c9a74900edcfe449360f7ec83d052c3d963",
+   "block": 65599656,
+   "op": "transfer",
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
+  {
+   "id": "stellar:0281748377149157376-0000000004",
+   "chain": "stellar",
+   "ts": 1795284326,
+   "amount": 100000.0,
+   "from": "GC3ZHEIQM5VRPLXCRYFGJ7H5EV6D5S3PHLEKSIVT3QLUVTHMHNG3UMUG",
+   "to": "GDVR57FFIEUYDCP3FXT2SHGFHKYBMHH3YOU7IJ2ZSBZELEXE5SJMEGZC",
+   "tx": "ae0623a467c30e4dddbabf4b179d5c9a74900edcfe449360f7ec83d052c3d963",
+   "block": 65599656,
+   "op": "transfer",
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
+  {
+   "id": "stellar:0281748377149157376-0000000006",
+   "chain": "stellar",
+   "ts": 1795284326,
+   "amount": 144525.84,
+   "from": "GC3ZHEIQM5VRPLXCRYFGJ7H5EV6D5S3PHLEKSIVT3QLUVTHMHNG3UMUG",
+   "to": "GCQADYKJ5VLEGYU4HVN2PKNULXT2ERO3TUMF5MNYSP3RR6E42EZ6CTIJ",
+   "tx": "ae0623a467c30e4dddbabf4b179d5c9a74900edcfe449360f7ec83d052c3d963",
+   "block": 65599656,
+   "op": "transfer",
+   "kind": "wallet",
+   "from_label": null,
+   "to_label": null
+  },
   {
    "id": "bnb:0xab4e54f7681e8d58f0d0a2256119fb8476e42438d6c9361d30d000bea41bf52b:112",
    "chain": "bnb",
