@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-11-16",
+  "as_of": "2026-11-23",
   "source": "Read from public keyless endpoints: Algorand indexer asset balances, Stellar Horizon accounts by asset, Solana getProgramAccounts on the Token-2022 mint aggregated by owner, and Base ERC-20 Transfer logs netted per address and reconciled against on-chain total supply.",
   "notes": {
     "counting": "total counts addresses with a balance above zero, the same definition used for every other chain.",
@@ -10,33 +10,33 @@
   },
   "chains": {
     "algorand": {
-      "total": 4325,
+      "total": 4326,
       "gte_100": 1355,
       "gte_1k": 767,
       "gte_10k": 151,
       "gte_100k": 10,
-      "opted_in": 27854
+      "opted_in": 27852
     },
     "stellar": {
-      "total": 3114,
-      "gte_100": 1056,
-      "gte_1k": 477,
-      "gte_10k": 212,
-      "gte_100k": 86,
-      "trustlines": 14940
+      "total": 3111,
+      "gte_100": 1060,
+      "gte_1k": 482,
+      "gte_10k": 215,
+      "gte_100k": 90,
+      "trustlines": 14933
     },
     "solana": {
-      "total": 982,
-      "gte_100": 394,
-      "gte_1k": 152,
+      "total": 983,
+      "gte_100": 395,
+      "gte_1k": 153,
       "gte_10k": 31,
       "gte_100k": 0,
-      "token_accounts": 2308
+      "token_accounts": 2309
     },
     "base": {
-      "total": 355,
-      "gte_100": 106,
-      "gte_1k": 56,
+      "total": 357,
+      "gte_100": 104,
+      "gte_1k": 55,
       "gte_10k": 9,
       "gte_100k": 1,
       "history": [
@@ -183,9 +183,25 @@
           "gte_1k": 56,
           "gte_10k": 9,
           "gte_100k": 1
+        },
+        {
+          "month": "2027-03",
+          "total": 353,
+          "gte_100": 103,
+          "gte_1k": 55,
+          "gte_10k": 9,
+          "gte_100k": 1
+        },
+        {
+          "month": "2027-04",
+          "total": 357,
+          "gte_100": 104,
+          "gte_1k": 55,
+          "gte_10k": 9,
+          "gte_100k": 1
         }
       ],
-      "transfers": 6667,
+      "transfers": 6700,
       "supply_delta_pct": 0.0
     }
   }

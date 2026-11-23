@@ -1,14 +1,14 @@
 {
-  "as_of": "2026-11-16",
+  "as_of": "2026-11-23",
   "source": "Reconstructed from the full ERC-20 transfer history via Alchemy getAssetTransfers, netted per address; monthly points are the holder distribution at each month-end.",
   "history_starts": "2024-10 (30 Oct 2024 migration; the current contracts carry no earlier history)",
   "chains": {
     "bnb": {
-      "total": 23210,
-      "gte_100": 11762,
-      "gte_1k": 6066,
-      "gte_10k": 1475,
-      "gte_100k": 182,
+      "total": 23222,
+      "gte_100": 11776,
+      "gte_1k": 6077,
+      "gte_10k": 1477,
+      "gte_100k": 181,
       "history": [
         {
           "month": "2024-10",
@@ -108,15 +108,15 @@
         },
         {
           "month": "2025-10",
-          "total": 23475,
+          "total": 23474,
           "gte_100": 11491,
           "gte_1k": 5972,
-          "gte_10k": 1314,
+          "gte_10k": 1315,
           "gte_100k": 126
         },
         {
           "month": "2025-11",
-          "total": 23587,
+          "total": 23586,
           "gte_100": 11518,
           "gte_1k": 5981,
           "gte_10k": 1285,
@@ -124,7 +124,7 @@
         },
         {
           "month": "2025-12",
-          "total": 23669,
+          "total": 23668,
           "gte_100": 11433,
           "gte_1k": 5896,
           "gte_10k": 1284,
@@ -132,7 +132,7 @@
         },
         {
           "month": "2026-01",
-          "total": 23608,
+          "total": 23607,
           "gte_100": 11312,
           "gte_1k": 5802,
           "gte_10k": 1274,
@@ -140,15 +140,15 @@
         },
         {
           "month": "2026-02",
-          "total": 23644,
+          "total": 23643,
           "gte_100": 11298,
-          "gte_1k": 5765,
+          "gte_1k": 5766,
           "gte_10k": 1276,
           "gte_100k": 128
         },
         {
           "month": "2026-03",
-          "total": 23858,
+          "total": 23857,
           "gte_100": 11419,
           "gte_1k": 5800,
           "gte_10k": 1296,
@@ -156,76 +156,76 @@
         },
         {
           "month": "2026-04",
-          "total": 23953,
-          "gte_100": 11440,
-          "gte_1k": 5790,
+          "total": 23951,
+          "gte_100": 11438,
+          "gte_1k": 5788,
           "gte_10k": 1307,
           "gte_100k": 140
         },
         {
           "month": "2026-05",
-          "total": 24001,
-          "gte_100": 11322,
-          "gte_1k": 5740,
+          "total": 23998,
+          "gte_100": 11320,
+          "gte_1k": 5739,
           "gte_10k": 1330,
           "gte_100k": 142
         },
         {
           "month": "2026-06",
-          "total": 24660,
-          "gte_100": 11861,
-          "gte_1k": 6099,
+          "total": 24658,
+          "gte_100": 11860,
+          "gte_1k": 6098,
           "gte_10k": 1458,
           "gte_100k": 170
         },
         {
           "month": "2026-07",
-          "total": 24827,
-          "gte_100": 11980,
-          "gte_1k": 6151,
+          "total": 24825,
+          "gte_100": 11979,
+          "gte_1k": 6150,
           "gte_10k": 1488,
           "gte_100k": 173
         },
         {
           "month": "2026-08",
-          "total": 22704,
-          "gte_100": 11439,
-          "gte_1k": 5914,
+          "total": 22701,
+          "gte_100": 11437,
+          "gte_1k": 5913,
           "gte_10k": 1434,
           "gte_100k": 177
         },
         {
           "month": "2026-09",
-          "total": 22864,
-          "gte_100": 11537,
-          "gte_1k": 5951,
+          "total": 22861,
+          "gte_100": 11535,
+          "gte_1k": 5950,
           "gte_10k": 1433,
           "gte_100k": 175
         },
         {
           "month": "2026-10",
-          "total": 23047,
-          "gte_100": 11630,
-          "gte_1k": 5990,
+          "total": 23044,
+          "gte_100": 11628,
+          "gte_1k": 5989,
           "gte_10k": 1444,
           "gte_100k": 181
         },
         {
           "month": "2026-11",
-          "total": 23210,
-          "gte_100": 11762,
-          "gte_1k": 6066,
-          "gte_10k": 1475,
-          "gte_100k": 182
+          "total": 23222,
+          "gte_100": 11776,
+          "gte_1k": 6077,
+          "gte_10k": 1477,
+          "gte_100k": 181
         }
       ]
     },
     "ethereum": {
-      "total": 26106,
-      "gte_100": 15051,
-      "gte_1k": 6063,
-      "gte_10k": 1153,
-      "gte_100k": 117,
+      "total": 26102,
+      "gte_100": 15035,
+      "gte_1k": 6061,
+      "gte_10k": 1155,
+      "gte_100k": 123,
       "history": [
         {
           "month": "2024-10",
@@ -429,45 +429,45 @@
         },
         {
           "month": "2026-11",
-          "total": 26106,
-          "gte_100": 15051,
-          "gte_1k": 6063,
-          "gte_10k": 1153,
-          "gte_100k": 117
+          "total": 26102,
+          "gte_100": 15035,
+          "gte_1k": 6061,
+          "gte_10k": 1155,
+          "gte_100k": 123
         }
       ]
     }
   },
   "venues": {
-    "as_of": "2026-11-16",
+    "as_of": "2026-11-23",
     "source": "Live balanceOf of the labelled exchange and DEX wallets listed in holders.json.",
     "bsc_exchanges": [
       {
         "entity": "KuCoin",
         "wallets": 5,
-        "rio": 34957663.77
+        "rio": 34969915.46
       },
       {
         "entity": "MEXC",
         "wallets": 2,
-        "rio": 973076.73
+        "rio": 919762.85
       },
       {
         "entity": "DEX pools (PancakeSwap, Uniswap)",
         "wallets": 6,
-        "rio": 2888589.33
+        "rio": 2838230.31
       },
       {
         "entity": "OKX",
         "note": "no active market",
         "wallets": 1,
-        "rio": 7458591.54
+        "rio": 7457250.99
       },
       {
         "entity": "CoinSpot",
         "note": "no active market",
         "wallets": 1,
-        "rio": 1954057.43
+        "rio": 1954549.56
       },
       {
         "entity": "Bitrue",
@@ -480,17 +480,17 @@
       {
         "holder": "MEXC",
         "type": "Exchange",
-        "rio": 48418605.27
+        "rio": 48135197.56
       },
       {
         "holder": "Uniswap (V2, V3 + V4 pools)",
         "type": "DEX liquidity",
-        "rio": 2906978.03
+        "rio": 2824484.52
       },
       {
         "holder": "Base bridge",
         "type": "Bridge, backs Base",
-        "rio": 2133816.47
+        "rio": 2133228.31
       }
     ]
   },
@@ -621,6 +621,22 @@
         "MEXC": 48418605.27,
         "Uniswap (V2, V3 + V4 pools)": 2906978.03,
         "Base bridge": 2133816.47
+      }
+    },
+    {
+      "as_of": "2026-11-23",
+      "bsc_exchanges": {
+        "KuCoin": 34969915.46,
+        "MEXC": 919762.85,
+        "DEX pools (PancakeSwap, Uniswap)": 2838230.31,
+        "OKX": 7457250.99,
+        "CoinSpot": 1954549.56,
+        "Bitrue": 233313.42
+      },
+      "eth_holders": {
+        "MEXC": 48135197.56,
+        "Uniswap (V2, V3 + V4 pools)": 2824484.52,
+        "Base bridge": 2133228.31
       }
     }
   ]
