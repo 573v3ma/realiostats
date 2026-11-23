@@ -1,5 +1,5 @@
 {
- "as_of": "2026-11-16",
+ "as_of": "2026-11-23",
  "source": "Full ERC-20 transfer history of 0x94a8b4ee5cd64c79d0ee816f467ea73009f51aa0 via Alchemy getAssetTransfers; migration mints are the mass zero-address mints of 30-31 Oct 2024; dead (silent) = outgoing nonce unchanged since the migration block on both BNB Chain and Ethereum.",
  "chains": {
   "bnb": {
@@ -10,11 +10,11 @@
    "recipients": 18573,
    "migrated_rio": 75672254,
    "never_moved": {
-    "wallets": 9506,
-    "rio": 8151792,
+    "wallets": 9496,
+    "rio": 8142336,
     "gte_100": {
-     "wallets": 2938,
-     "rio": 8070578
+     "wallets": 2933,
+     "rio": 8061237
     },
     "gte_10k": {
      "wallets": 148,
@@ -149,16 +149,16 @@
     },
     {
      "month": "2026-11",
-     "wallets": 9506,
-     "rio": 8151792
+     "wallets": 9496,
+     "rio": 8142336
     }
    ],
    "silent": {
-    "as_of": "2026-11-16",
+    "as_of": "2026-11-23",
     "scope": "bnb+ethereum",
-    "candidates": 1584,
-    "wallets": 991,
-    "rio": 2688207,
+    "candidates": 1579,
+    "wallets": 986,
+    "rio": 2675621,
     "gte_10k": {
      "wallets": 53,
      "rio": 1623864
@@ -176,6 +176,12 @@
      "scope": "bnb+ethereum",
      "wallets": 991,
      "rio": 2688207
+    },
+    {
+     "date": "2026-11-23",
+     "scope": "bnb+ethereum",
+     "wallets": 986,
+     "rio": 2675621
     }
    ]
   },
@@ -188,15 +194,15 @@
    "recipients": 32302,
    "migrated_rio": 60565100,
    "never_moved": {
-    "wallets": 17537,
-    "rio": 18220778,
+    "wallets": 17517,
+    "rio": 18184039,
     "gte_100": {
-     "wallets": 10177,
-     "rio": 18036453
+     "wallets": 10160,
+     "rio": 17999896
     },
     "gte_10k": {
-     "wallets": 341,
-     "rio": 7442727
+     "wallets": 340,
+     "rio": 7422725
     }
    },
    "history": [
@@ -327,16 +333,16 @@
     },
     {
      "month": "2026-11",
-     "wallets": 17537,
-     "rio": 18220778
+     "wallets": 17517,
+     "rio": 18184039
     }
    ],
    "silent": {
-    "as_of": "2026-11-16",
+    "as_of": "2026-11-23",
     "scope": "bnb+ethereum",
-    "candidates": 4102,
-    "wallets": 3803,
-    "rio": 5944795,
+    "candidates": 4089,
+    "wallets": 3792,
+    "rio": 5932547,
     "gte_10k": {
      "wallets": 96,
      "rio": 2230036
@@ -354,6 +360,12 @@
      "scope": "bnb+ethereum",
      "wallets": 3803,
      "rio": 5944795
+    },
+    {
+     "date": "2026-11-23",
+     "scope": "bnb+ethereum",
+     "wallets": 3792,
+     "rio": 5932547
     }
    ]
   }
