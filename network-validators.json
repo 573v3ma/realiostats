@@ -1,18 +1,18 @@
 {
- "as_of": "2026-11-23T16:58:49Z",
- "height": 20704700,
+ "as_of": "2026-11-24T16:47:30Z",
+ "height": 20719899,
  "source": "cosmos/staking/v1beta1/validators (BOND_STATUS_BONDED)",
- "bonded_weight": 135519722.81,
+ "bonded_weight": 135531797.18,
  "validators": [
   {
    "moniker": "Teshy RIO",
-   "weight": 7821780.46,
+   "weight": 7829402.52,
    "commission": 0.05,
    "jailed": false
   },
   {
    "moniker": "min fee \ud83d\udd25STAVR\ud83d\udd25 REStake ON\u2705",
-   "weight": 7723325.49,
+   "weight": 7727752.8,
    "commission": 0.05,
    "jailed": false
   },
@@ -66,7 +66,7 @@
   },
   {
    "moniker": "Teshy - DSTRX",
-   "weight": 5066487.52,
+   "weight": 5066512.52,
    "commission": 0.05,
    "jailed": false
   },
