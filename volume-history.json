@@ -1,14 +1,10 @@
 {
-  "generated_at": "2026-11-24T16:47:27Z",
+  "generated_at": "2026-11-25T16:34:55Z",
   "source": "coingecko",
   "note": "Exchange-reported 24h volume and price. Informational only; not used by the supply-integrity checks.",
-  "latest_usd": 161117.23,
-  "change_24h_pct": 0.76,
+  "latest_usd": 150752.1,
+  "change_24h_pct": -7.61,
   "daily": [
-    {
-      "date": "2026-10-26",
-      "volume_usd": 192129.88793131
-    },
     {
       "date": "2026-10-27",
       "volume_usd": 195059.86972263
@@ -123,16 +119,16 @@
     },
     {
       "date": "2026-11-24",
-      "volume_usd": 161117.23401902
+      "volume_usd": 154170.61643083
+    },
+    {
+      "date": "2026-11-25",
+      "volume_usd": 150752.09916763
     }
   ],
-  "price_latest_usd": 0.03183307,
-  "price_change_24h_pct": -9.74,
+  "price_latest_usd": 0.03129524,
+  "price_change_24h_pct": -2.01,
   "price_daily": [
-    {
-      "date": "2026-10-26",
-      "price_usd": 0.04509816
-    },
     {
       "date": "2026-10-27",
       "price_usd": 0.04739555
@@ -247,7 +243,11 @@
     },
     {
       "date": "2026-11-24",
-      "price_usd": 0.03183307
+      "price_usd": 0.03205332
+    },
+    {
+      "date": "2026-11-25",
+      "price_usd": 0.03129524
     }
   ]
 }

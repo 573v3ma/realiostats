@@ -1,70 +1,83 @@
 {
- "as_of": "2026-11-24T16:47:30Z",
+ "as_of": "2026-11-25T16:34:59Z",
  "threshold_rio": 100000,
  "window_days": 30,
- "window_start": "2026-10-25T16:47:30Z",
+ "window_start": "2026-10-26T16:34:59Z",
  "source": "Public keyless endpoints, see fetch_large_transfers.py. Labels from holders.json and known bridge, module and treasury addresses.",
  "chains": {
   "bnb": {
-   "cursor": 135497458,
+   "cursor": 135687731,
    "source": "alchemy",
    "status": "ok",
-   "coverage_from": 1792946850,
-   "updated": "2026-11-24T16:47:30Z",
-   "seconds": 2.1
+   "coverage_from": 1793032499,
+   "updated": "2026-11-25T16:34:59Z",
+   "seconds": 5.7
   },
   "eth": {
-   "cursor": 26486306,
+   "cursor": 26493424,
    "source": "alchemy",
    "status": "ok",
-   "coverage_from": 1792946850,
-   "updated": "2026-11-24T16:47:30Z",
-   "seconds": 0.9
+   "coverage_from": 1793032499,
+   "updated": "2026-11-25T16:34:59Z",
+   "seconds": 3.3
   },
   "base": {
-   "cursor": 61742462,
+   "cursor": 62170742,
    "source": "alchemy",
    "status": "ok",
-   "coverage_from": 1792946850,
-   "updated": "2026-11-24T16:47:30Z",
-   "seconds": 0.6
+   "coverage_from": 1793032499,
+   "updated": "2026-11-25T16:34:59Z",
+   "seconds": 2.7
   },
   "solana": {
    "cursor": "3Pptwtuwez6dAEPs87b56xzwtDEVr6LDSea26ico746R3FNCanqdQBi5R5beRiEzUKy6wMwj4Hctk9ztmofpRKGi",
    "source": "https://api.mainnet-beta.solana.com",
    "status": "ok",
-   "coverage_from": 1792946850,
-   "updated": "2026-11-24T16:47:30Z",
-   "seconds": 31.5
+   "coverage_from": 1793032499,
+   "updated": "2026-11-25T16:34:59Z",
+   "seconds": 0.5
   },
   "algorand": {
-   "cursor": 67263943,
+   "cursor": 67294106,
    "source": "https://mainnet-idx.algonode.cloud",
    "status": "ok",
-   "coverage_from": 1792946850,
-   "updated": "2026-11-24T16:47:30Z",
-   "seconds": 0.6
+   "coverage_from": 1793032499,
+   "updated": "2026-11-25T16:34:59Z",
+   "seconds": 0.2
   },
   "stellar": {
-   "cursor": 65650569,
+   "cursor": 65667693,
    "source": "https://rpc.lightsail.network",
    "status": "ok",
    "coverage_from": 1793450304,
-   "updated": "2026-11-24T16:47:30Z",
-   "seconds": 0.7
+   "updated": "2026-11-25T16:34:59Z",
+   "seconds": 0.8
   },
   "native": {
-   "cursor": 20719909,
+   "cursor": 20735094,
    "source": "https://rpc.realio.network",
-   "block_time_s": 5.641,
-   "exact_time_from_height": 20619909,
+   "block_time_s": 5.64,
+   "exact_time_from_height": 20635094,
    "status": "ok",
-   "coverage_from": 1792946850,
-   "updated": "2026-11-24T16:47:30Z",
-   "seconds": 0.7
+   "coverage_from": 1793032499,
+   "updated": "2026-11-25T16:34:59Z",
+   "seconds": 1.0
   }
  },
  "transfers": [
+  {
+   "id": "bnb:0x6f6b0539c4f9cd7d706ee0e88daf7e40bcf9a6527b42dbda2e647905f72507f2:183",
+   "chain": "bnb",
+   "ts": 1795621929,
+   "amount": 100000.0,
+   "from": "0x53f78a071d04224b8e254e243fffc6d9f2f3fa23",
+   "to": "0xcded3bb9d2dc98f6e4e772095b48051acfb84df9",
+   "tx": "0x6f6b0539c4f9cd7d706ee0e88daf7e40bcf9a6527b42dbda2e647905f72507f2",
+   "block": 135681992,
+   "kind": "withdrawal",
+   "from_label": "KuCoin",
+   "to_label": null
+  },
   {
    "id": "bnb:0xb462a2600f4f593e853fbbd6b46dcd28fa9d0c4d8a11083cd102b8f88ad05fb7:66",
    "chain": "bnb",
@@ -1670,45 +1683,6 @@
    "from_label": null,
    "to_label": "Bridge burn",
    "pair": "eth:0x0faede515eb5268d569cf110d57265cf8acec05b779190e15f7fb730d16ce378:198"
-  },
-  {
-   "id": "bnb:0xc9b4d91a485e02a6e0d19d87967a6778105be1ae98f5e3297f6577dfa9d1dcdd:390",
-   "chain": "bnb",
-   "ts": 1793005620,
-   "amount": 223868.8,
-   "from": "0xd97107064b8c7520aae6c6e6ca75bb2aa73b670d",
-   "to": "0x4e5bc1cd2c421ecfef65395b3237f90a97178c55",
-   "tx": "0xc9b4d91a485e02a6e0d19d87967a6778105be1ae98f5e3297f6577dfa9d1dcdd",
-   "block": 129870742,
-   "kind": "wallet",
-   "from_label": null,
-   "to_label": null
-  },
-  {
-   "id": "bnb:0xebe64b8a33dd6e0a0625c159719a8d9d22539f6f7fbff21e0c757336e6fd3704:109",
-   "chain": "bnb",
-   "ts": 1792989240,
-   "amount": 1186288.63,
-   "from": "0x32d9a568d5da550f7fa82b5b3f4559a3779ed858",
-   "to": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
-   "tx": "0xebe64b8a33dd6e0a0625c159719a8d9d22539f6f7fbff21e0c757336e6fd3704",
-   "block": 129834362,
-   "kind": "dex",
-   "from_label": null,
-   "to_label": "DEX pool"
-  },
-  {
-   "id": "bnb:0x723d0e1c61fe82793d15a9a3257efbfef023f471564bcf4bdc2330fa7c08b755:77",
-   "chain": "bnb",
-   "ts": 1792989205,
-   "amount": 1129587.21,
-   "from": "0x28e2ea090877bf75740558f6bfb36a5ffee9e9df",
-   "to": "0x32d9a568d5da550f7fa82b5b3f4559a3779ed858",
-   "tx": "0x723d0e1c61fe82793d15a9a3257efbfef023f471564bcf4bdc2330fa7c08b755",
-   "block": 129834283,
-   "kind": "dex",
-   "from_label": "DEX pool",
-   "to_label": null
   }
  ]
 }
